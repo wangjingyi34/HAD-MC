@@ -1,0 +1,19 @@
+{
+  "name": "NEU Surface Defect Detection",
+  "image_size": [
+    3,
+    200,
+    200
+  ],
+  "num_classes": 6,
+  "train_samples": 144,
+  "test_samples": 36,
+  "defect_types": [
+    "Crazing",
+    "Inclusion",
+    "Patches",
+    "Pitted",
+    "Rolled",
+    "Scratches"
+  ]
+}

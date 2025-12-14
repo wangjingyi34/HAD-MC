@@ -1,0 +1,33 @@
+# HAD-MC Requirements
+
+# Core dependencies
+torch>=2.0.0
+torchvision>=0.15.0
+numpy>=1.24.0
+scipy>=1.10.0
+
+# Data processing
+pandas>=2.0.0
+pillow>=9.5.0
+opencv-python>=4.7.0
+
+# Visualization
+matplotlib>=3.7.0
+seaborn>=0.12.0
+
+# Utilities
+tqdm>=4.65.0
+pyyaml>=6.0
+tensorboard>=2.13.0
+
+# Testing
+pytest>=7.3.0
+pytest-cov>=4.1.0
+
+# Documentation
+sphinx>=6.2.0
+sphinx-rtd-theme>=1.2.0
+
+# Optional: Domestic NPU support
+# cambricon-pytorch>=1.0.0  # For MLU370
+# torch-npu>=2.0.0          # For Ascend 310P
