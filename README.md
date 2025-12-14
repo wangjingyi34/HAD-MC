@@ -297,9 +297,8 @@ If you use HAD-MC in your research, please cite:
 
 ## 📧 Contact
 
-- **Issues**: [GitHub Issues](https://github.com/your-username/HAD-MC/issues)
-- **Email**: your.email@example.com
-- **Paper**: [arXiv:xxxx.xxxxx](https://arxiv.org/abs/xxxx.xxxxx)
+- **Issues**: [GitHub Issues](https://github.com/wangjingyi34/HAD-MC/issues)
+- **Email**: langkexiaoyi@gmail.com
 
 ## 📜 License
 
