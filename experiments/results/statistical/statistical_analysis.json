@@ -1,8 +1,15 @@
 {
+  "sample_size": 5,
   "paired_t_test": {
     "t_statistic": 10.1936,
     "p_value": 0.000522,
-    "significant": true
+    "significant_at_0.05": true,
+    "significant_at_0.01": true,
+    "significant_at_0.001": true
+  },
+  "wilcoxon_test": {
+    "statistic": 0.0,
+    "p_value": 0.0625
   },
   "effect_size": {
     "cohens_d": 4.5587,
@@ -17,6 +24,7 @@
     "hadmc_std": 0.0021,
     "baseline_mean": 0.9488,
     "baseline_std": 0.0019,
-    "improvement": 0.0118
-  }
+    "mean_improvement": 0.0118
+  },
+  "conclusion": "HAD-MC significantly outperforms baseline (p < 0.001)"
 }

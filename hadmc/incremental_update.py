@@ -85,3 +85,9 @@ class HashBasedUpdater:
         """Run complete Algorithm 5"""
         update_package = self.create_update_package(model_old, model_new)
         return update_package
+
+
+# Alias for backward compatibility
+class IncrementalUpdater(HashBasedUpdater):
+    """Alias for HashBasedUpdater for backward compatibility"""
+    pass

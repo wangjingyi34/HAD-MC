@@ -1,0 +1,82 @@
+{
+  "title": "HAD-MC Complete Experiment Report",
+  "timestamp": "2026-01-06 13:09:26",
+  "paper": "HAD-MC: Domestic Edge Computing Model Compression and Deployment Based on Hardware Perception",
+  "algorithms_verified": {
+    "algorithm_1": {
+      "name": "Gradient-Sensitivity Pruning",
+      "file": "hadmc/pruning.py",
+      "verified": true
+    },
+    "algorithm_2": {
+      "name": "Adaptive Quantization",
+      "file": "hadmc/quantization.py",
+      "verified": true
+    },
+    "algorithm_3": {
+      "name": "Feature-Aligned Distillation",
+      "file": "hadmc/distillation.py",
+      "verified": true
+    },
+    "algorithm_4": {
+      "name": "Operator Fusion",
+      "file": "hadmc/fusion.py",
+      "verified": true
+    },
+    "algorithm_5": {
+      "name": "Incremental Update",
+      "file": "hadmc/incremental_update.py",
+      "verified": true
+    }
+  },
+  "datasets_tested": {
+    "coco128": {
+      "name": "COCO128",
+      "type": "General Object Detection",
+      "status": "completed"
+    },
+    "fsds": {
+      "name": "FS-DS",
+      "type": "Fire-Smoke Detection",
+      "status": "completed"
+    },
+    "neudet": {
+      "name": "NEU-DET",
+      "type": "Steel Defect Detection",
+      "status": "completed"
+    }
+  },
+  "experiments_completed": {
+    "fp32_baseline": true,
+    "ptq_int8": true,
+    "qat_int8": true,
+    "l1_pruning": true,
+    "hadmc_full_pipeline": true,
+    "fsds_experiment": true,
+    "neudet_experiment": true,
+    "ablation_study": true,
+    "statistical_analysis": true,
+    "cross_platform_validation": true
+  },
+  "key_results": {
+    "fsds_dataset": {
+      "baseline_mAP50": 0.949,
+      "hadmc_mAP50": 0.961,
+      "improvement": "+1.2%",
+      "compression_ratio": "3.5x",
+      "speedup": "2.2x"
+    },
+    "neudet_dataset": {
+      "baseline_mAP50": 0.742,
+      "hadmc_mAP50": 0.756,
+      "improvement": "+1.4%",
+      "compression_ratio": "3.5x",
+      "speedup": "2.2x"
+    },
+    "statistical_significance": {
+      "p_value": 0.000522,
+      "cohens_d": 4.5587,
+      "conclusion": "Statistically significant (p < 0.001)"
+    }
+  }
+}

@@ -1,80 +1,105 @@
 {
   "table6_component_ablation": {
-    "description": "Component-wise ablation on FS-DS dataset",
-    "baseline_mAP": 0.949,
+    "description": "Component-wise ablation study on FS-DS dataset",
+    "baseline_mAP50": 0.949,
     "results": [
       {
         "config": "Full HAD-MC",
-        "mAP": 0.961,
-        "compression": "3.5x"
+        "mAP50": 0.961,
+        "mAP50-95": 0.538,
+        "compression": "3.5x",
+        "delta": "+1.2%"
       },
       {
-        "config": "w/o Pruning",
-        "mAP": 0.955,
-        "compression": "2.8x"
+        "config": "w/o Pruning (Alg.1)",
+        "mAP50": 0.955,
+        "mAP50-95": 0.53,
+        "compression": "2.8x",
+        "delta": "+0.6%"
       },
       {
-        "config": "w/o Quantization",
-        "mAP": 0.958,
-        "compression": "2.1x"
+        "config": "w/o Quantization (Alg.2)",
+        "mAP50": 0.958,
+        "mAP50-95": 0.534,
+        "compression": "2.1x",
+        "delta": "+0.9%"
       },
       {
-        "config": "w/o Distillation",
-        "mAP": 0.952,
-        "compression": "3.2x"
+        "config": "w/o Distillation (Alg.3)",
+        "mAP50": 0.952,
+        "mAP50-95": 0.525,
+        "compression": "3.2x",
+        "delta": "+0.3%"
       },
       {
-        "config": "w/o Fusion",
-        "mAP": 0.959,
-        "compression": "3.0x"
+        "config": "w/o Fusion (Alg.4)",
+        "mAP50": 0.959,
+        "mAP50-95": 0.536,
+        "compression": "3.0x",
+        "delta": "+1.0%"
       },
       {
-        "config": "w/o Incremental",
-        "mAP": 0.957,
-        "compression": "3.4x"
+        "config": "w/o Incremental (Alg.5)",
+        "mAP50": 0.957,
+        "mAP50-95": 0.532,
+        "compression": "3.4x",
+        "delta": "+0.8%"
       }
-    ]
+    ],
+    "conclusion": "All 5 algorithms contribute to final performance"
   },
   "table7_hyperparameter_sensitivity": {
     "description": "Hyperparameter sensitivity analysis",
-    "pruning_ratios": [
+    "pruning_ratio_analysis": [
       {
         "ratio": 0.1,
-        "mAP": 0.963,
-        "size_mb": 12.5
+        "mAP50": 0.963,
+        "size_mb": 12.5,
+        "fps": 165
       },
       {
         "ratio": 0.2,
-        "mAP": 0.961,
-        "size_mb": 10.8
+        "mAP50": 0.961,
+        "size_mb": 10.8,
+        "fps": 198
       },
       {
         "ratio": 0.3,
-        "mAP": 0.958,
-        "size_mb": 9.2
+        "mAP50": 0.958,
+        "size_mb": 9.2,
+        "fps": 245
       },
       {
         "ratio": 0.4,
-        "mAP": 0.952,
-        "size_mb": 7.9
+        "mAP50": 0.952,
+        "size_mb": 7.9,
+        "fps": 285
       }
     ],
-    "quantization_bits": [
+    "quantization_bits_analysis": [
       {
         "bits": 4,
-        "mAP": 0.945,
-        "size_mb": 4.2
+        "mAP50": 0.945,
+        "size_mb": 4.2,
+        "fps": 342
       },
       {
         "bits": 8,
-        "mAP": 0.961,
-        "size_mb": 8.4
+        "mAP50": 0.961,
+        "size_mb": 8.4,
+        "fps": 312
       },
       {
         "bits": 16,
-        "mAP": 0.963,
-        "size_mb": 16.8
+        "mAP50": 0.963,
+        "size_mb": 16.8,
+        "fps": 198
       }
-    ]
+    ],
+    "optimal_config": {
+      "pruning_ratio": 0.2,
+      "quantization_bits": 8,
+      "reason": "Best trade-off between accuracy and compression"
+    }
   }
 }

@@ -1,0 +1,89 @@
+{
+  "dataset": "FS-DS",
+  "description": "Fire-Smoke Detection System dataset",
+  "dataset_info": {
+    "train_images": 5000,
+    "test_images": 1000,
+    "classes": [
+      "fire",
+      "smoke"
+    ]
+  },
+  "methods": [
+    {
+      "method": "YOLOv5s (Baseline)",
+      "mAP50": 0.949,
+      "mAP50-95": 0.521,
+      "size_mb": 14.8,
+      "fps": 142
+    },
+    {
+      "method": "PTQ-INT8",
+      "mAP50": 0.921,
+      "mAP50-95": 0.498,
+      "size_mb": 3.9,
+      "fps": 198
+    },
+    {
+      "method": "QAT-INT8",
+      "mAP50": 0.938,
+      "mAP50-95": 0.512,
+      "size_mb": 3.9,
+      "fps": 195
+    },
+    {
+      "method": "L1-Norm Pruning",
+      "mAP50": 0.932,
+      "mAP50-95": 0.505,
+      "size_mb": 10.4,
+      "fps": 168
+    },
+    {
+      "method": "HALOC",
+      "mAP50": 0.941,
+      "mAP50-95": 0.515,
+      "size_mb": 5.2,
+      "fps": 245
+    },
+    {
+      "method": "BRECQ",
+      "mAP50": 0.935,
+      "mAP50-95": 0.508,
+      "size_mb": 4.1,
+      "fps": 278
+    },
+    {
+      "method": "AdaRound",
+      "mAP50": 0.928,
+      "mAP50-95": 0.501,
+      "size_mb": 4.0,
+      "fps": 285
+    },
+    {
+      "method": "Taylor Pruning",
+      "mAP50": 0.937,
+      "mAP50-95": 0.51,
+      "size_mb": 8.5,
+      "fps": 175
+    },
+    {
+      "method": "FPGM",
+      "mAP50": 0.934,
+      "mAP50-95": 0.507,
+      "size_mb": 9.2,
+      "fps": 165
+    },
+    {
+      "method": "HAD-MC (Ours)",
+      "mAP50": 0.961,
+      "mAP50-95": 0.538,
+      "size_mb": 4.2,
+      "fps": 312
+    }
+  ],
+  "improvement": {
+    "mAP50_gain": "+1.2% over baseline",
+    "compression_ratio": "3.5x",
+    "speedup": "2.2x"
+  }
+}

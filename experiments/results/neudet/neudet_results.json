@@ -1,14 +1,18 @@
 {
   "dataset": "NEU-DET",
-  "description": "Steel surface defect detection",
-  "classes": [
-    "crazing",
-    "inclusion",
-    "patches",
-    "pitted_surface",
-    "rolled-in_scale",
-    "scratches"
-  ],
+  "description": "Steel surface defect detection dataset",
+  "dataset_info": {
+    "total_images": 1800,
+    "images_per_class": 300,
+    "classes": [
+      "crazing",
+      "inclusion",
+      "patches",
+      "pitted_surface",
+      "rolled-in_scale",
+      "scratches"
+    ]
+  },
   "methods": [
     {
       "method": "YOLOv5s (Baseline)",
@@ -39,7 +43,7 @@
       "fps": 168
     },
     {
-      "method": "HAD-MC",
+      "method": "HAD-MC (Ours)",
       "mAP50": 0.756,
       "mAP50-95": 0.428,
       "size_mb": 4.2,
