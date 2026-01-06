@@ -91,6 +91,21 @@ python3 -c "import torch; print(f'PyTorch: {torch.__version__}'); print(f'CUDA a
 log "Installing dependencies..."
 pip3 install -r requirements.txt -q
 
+# Fix NumPy version compatibility (NumPy 2.x is incompatible with some PyTorch versions)
+log "Checking NumPy version compatibility..."
+python3 << 'NUMPY_CHECK'
+import numpy as np
+import sys
+version = tuple(map(int, np.__version__.split('.')[:2]))
+if version[0] >= 2:
+    print(f"NumPy {np.__version__} detected, downgrading to 1.x for compatibility...")
+    import subprocess
+    subprocess.run([sys.executable, "-m", "pip", "install", "numpy<2", "-q"], check=True)
+    print("NumPy downgraded successfully")
+else:
+    print(f"NumPy {np.__version__} is compatible")
+NUMPY_CHECK
+
 # ============================================================
 # Step 2: Clone YOLOv5
 # ============================================================
