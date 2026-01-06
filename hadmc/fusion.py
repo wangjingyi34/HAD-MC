@@ -79,3 +79,26 @@ class OperatorFuser:
         """Run complete Algorithm 4"""
         fused_model = self.fuse_operators()
         return fused_model
+
+
+# Alias for backward compatibility with run_all_experiments.sh
+class OperatorFusion:
+    """Alias for OperatorFuser for backward compatibility"""
+    
+    def __init__(self, model):
+        """Initialize operator fusion
+        
+        Args:
+            model: PyTorch model to fuse
+        """
+        self.fuser = OperatorFuser(model)
+        self.model = model
+        logger.info("OperatorFusion initialized")
+    
+    def fuse(self):
+        """Apply operator fusion
+        
+        Returns:
+            Fused model
+        """
+        return self.fuser.run()

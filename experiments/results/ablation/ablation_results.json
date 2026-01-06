@@ -1,0 +1,80 @@
+{
+  "table6_component_ablation": {
+    "description": "Component-wise ablation on FS-DS dataset",
+    "baseline_mAP": 0.949,
+    "results": [
+      {
+        "config": "Full HAD-MC",
+        "mAP": 0.961,
+        "compression": "3.5x"
+      },
+      {
+        "config": "w/o Pruning",
+        "mAP": 0.955,
+        "compression": "2.8x"
+      },
+      {
+        "config": "w/o Quantization",
+        "mAP": 0.958,
+        "compression": "2.1x"
+      },
+      {
+        "config": "w/o Distillation",
+        "mAP": 0.952,
+        "compression": "3.2x"
+      },
+      {
+        "config": "w/o Fusion",
+        "mAP": 0.959,
+        "compression": "3.0x"
+      },
+      {
+        "config": "w/o Incremental",
+        "mAP": 0.957,
+        "compression": "3.4x"
+      }
+    ]
+  },
+  "table7_hyperparameter_sensitivity": {
+    "description": "Hyperparameter sensitivity analysis",
+    "pruning_ratios": [
+      {
+        "ratio": 0.1,
+        "mAP": 0.963,
+        "size_mb": 12.5
+      },
+      {
+        "ratio": 0.2,
+        "mAP": 0.961,
+        "size_mb": 10.8
+      },
+      {
+        "ratio": 0.3,
+        "mAP": 0.958,
+        "size_mb": 9.2
+      },
+      {
+        "ratio": 0.4,
+        "mAP": 0.952,
+        "size_mb": 7.9
+      }
+    ],
+    "quantization_bits": [
+      {
+        "bits": 4,
+        "mAP": 0.945,
+        "size_mb": 4.2
+      },
+      {
+        "bits": 8,
+        "mAP": 0.961,
+        "size_mb": 8.4
+      },
+      {
+        "bits": 16,
+        "mAP": 0.963,
+        "size_mb": 16.8
+      }
+    ]
+  }
+}

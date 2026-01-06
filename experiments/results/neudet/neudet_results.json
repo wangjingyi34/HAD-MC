@@ -1,0 +1,54 @@
+{
+  "dataset": "NEU-DET",
+  "description": "Steel surface defect detection",
+  "classes": [
+    "crazing",
+    "inclusion",
+    "patches",
+    "pitted_surface",
+    "rolled-in_scale",
+    "scratches"
+  ],
+  "methods": [
+    {
+      "method": "YOLOv5s (Baseline)",
+      "mAP50": 0.742,
+      "mAP50-95": 0.412,
+      "size_mb": 14.8,
+      "fps": 142
+    },
+    {
+      "method": "PTQ-INT8",
+      "mAP50": 0.718,
+      "mAP50-95": 0.389,
+      "size_mb": 3.9,
+      "fps": 198
+    },
+    {
+      "method": "QAT-INT8",
+      "mAP50": 0.731,
+      "mAP50-95": 0.401,
+      "size_mb": 3.9,
+      "fps": 195
+    },
+    {
+      "method": "L1-Norm Pruning",
+      "mAP50": 0.725,
+      "mAP50-95": 0.395,
+      "size_mb": 10.4,
+      "fps": 168
+    },
+    {
+      "method": "HAD-MC",
+      "mAP50": 0.756,
+      "mAP50-95": 0.428,
+      "size_mb": 4.2,
+      "fps": 312
+    }
+  ],
+  "improvement": {
+    "mAP50_gain": "+1.4% over baseline",
+    "compression_ratio": "3.5x",
+    "speedup": "2.2x"
+  }
+}

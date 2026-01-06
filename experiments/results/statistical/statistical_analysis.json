@@ -1,0 +1,22 @@
+{
+  "paired_t_test": {
+    "t_statistic": 10.1936,
+    "p_value": 0.000522,
+    "significant": true
+  },
+  "effect_size": {
+    "cohens_d": 4.5587,
+    "interpretation": "large"
+  },
+  "confidence_interval_95": {
+    "lower": 0.0086,
+    "upper": 0.015
+  },
+  "descriptive_stats": {
+    "hadmc_mean": 0.9606,
+    "hadmc_std": 0.0021,
+    "baseline_mean": 0.9488,
+    "baseline_std": 0.0019,
+    "improvement": 0.0118
+  }
+}
