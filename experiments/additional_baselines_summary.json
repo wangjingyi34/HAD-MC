@@ -1,0 +1,22 @@
+{
+  "HALOC-style": {
+    "status": "success",
+    "output_dir": "/workspace/HAD-MC/experiments/results/haloc_style"
+  },
+  "BRECQ-style": {
+    "status": "success",
+    "output_dir": "/workspace/HAD-MC/experiments/results/brecq_style"
+  },
+  "AdaRound-style": {
+    "status": "success",
+    "output_dir": "/workspace/HAD-MC/experiments/results/adaround_style"
+  },
+  "Taylor Pruning": {
+    "status": "success",
+    "output_dir": "/workspace/HAD-MC/experiments/results/taylor_pruning"
+  },
+  "FPGM Pruning": {
+    "status": "success",
+    "output_dir": "/workspace/HAD-MC/experiments/results/fpgm_pruning"
+  }
+}

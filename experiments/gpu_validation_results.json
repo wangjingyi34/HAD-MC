@@ -1,0 +1,52 @@
+[
+  {
+    "method": "FP32 Baseline",
+    "avg_latency_ms": 2.2602438926696777,
+    "std_latency_ms": 0.6573238746056648,
+    "min_latency_ms": 2.1758079528808594,
+    "max_latency_ms": 8.794546127319336,
+    "avg_memory_mb": 269.781728515625,
+    "model_size_mb": 6.674800872802734,
+    "throughput_fps": 442.4301303249421
+  },
+  {
+    "method": "TensorRT-FP16",
+    "avg_latency_ms": 1.719212532043457,
+    "std_latency_ms": 0.003130010102325592,
+    "min_latency_ms": 1.7125606536865234,
+    "max_latency_ms": 1.7271041870117188,
+    "avg_memory_mb": 175.424794921875,
+    "model_size_mb": 3.337400436401367,
+    "throughput_fps": 581.6616511115118
+  },
+  {
+    "method": "HAD-MC Mixed Precision",
+    "avg_latency_ms": 1.7925548553466797,
+    "std_latency_ms": 0.12863276709187083,
+    "min_latency_ms": 1.7695426940917969,
+    "max_latency_ms": 3.058195114135742,
+    "avg_memory_mb": 180.2543896484375,
+    "model_size_mb": 6.674800872802734,
+    "throughput_fps": 557.8629836723185
+  },
+  {
+    "method": "HAD-MC + Pruning (30%)",
+    "avg_latency_ms": 1.784975528717041,
+    "std_latency_ms": 0.04858180749075278,
+    "min_latency_ms": 1.7733573913574219,
+    "max_latency_ms": 2.255678176879883,
+    "avg_memory_mb": 186.9399365234375,
+    "model_size_mb": 6.674800872802734,
+    "throughput_fps": 560.2317700785256
+  },
+  {
+    "method": "HAD-MC Full Pipeline",
+    "avg_latency_ms": 1.7811799049377441,
+    "std_latency_ms": 0.018823375422688277,
+    "min_latency_ms": 1.7707347869873047,
+    "max_latency_ms": 1.9655227661132812,
+    "avg_memory_mb": 193.8129833984375,
+    "model_size_mb": 6.674800872802734,
+    "throughput_fps": 561.4256017754434
+  }
+]

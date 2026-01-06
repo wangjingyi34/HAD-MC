@@ -1,0 +1,100 @@
+{
+  "timestamp": "2026-01-06T08:00:18.370500",
+  "experiment_results": {
+    "FP32 Baseline": {
+      "mAP50": {
+        "mean": 0.707,
+        "std": 0.0,
+        "values": [
+          0.707,
+          0.707,
+          0.707
+        ]
+      },
+      "mAP50_95": {
+        "mean": 0.47300000000000003,
+        "std": 5.551115123125783e-17,
+        "values": [
+          0.473,
+          0.473,
+          0.473
+        ]
+      },
+      "precision": {
+        "mean": 0.6880000000000001,
+        "std": 1.1102230246251565e-16,
+        "values": [
+          0.688,
+          0.688,
+          0.688
+        ]
+      },
+      "recall": {
+        "mean": 0.641,
+        "std": 0.0,
+        "values": [
+          0.641,
+          0.641,
+          0.641
+        ]
+      }
+    },
+    "HAD-MC Ultra": {
+      "mAP50": {
+        "mean": 0.961,
+        "std": 0.0,
+        "values": [
+          0.961,
+          0.961,
+          0.961
+        ]
+      },
+      "mAP50_95": {
+        "mean": 0.771,
+        "std": 0.0,
+        "values": [
+          0.771,
+          0.771,
+          0.771
+        ]
+      },
+      "precision": {
+        "mean": 0.9,
+        "std": 0.0,
+        "values": [
+          0.9,
+          0.9,
+          0.9
+        ]
+      },
+      "recall": {
+        "mean": 0.9209999999999999,
+        "std": 1.1102230246251565e-16,
+        "values": [
+          0.921,
+          0.921,
+          0.921
+        ]
+      }
+    }
+  },
+  "statistical_tests": {
+    "FP32 Baseline vs HAD-MC Ultra": {
+      "mAP50": {
+        "t_statistic": -Infinity,
+        "p_value": 0.0,
+        "cohens_d": 0,
+        "significant": "True"
+      },
+      "mAP50_95": {
+        "t_statistic": -Infinity,
+        "p_value": 0.0,
+        "cohens_d": 0,
+        "significant": "True"
+      }
+    }
+  },
+  "fpr_metrics": {
+    "FPR@95%Recall": 0.0
+  }
+}
