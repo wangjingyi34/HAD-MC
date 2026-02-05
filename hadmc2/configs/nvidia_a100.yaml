@@ -1,0 +1,38 @@
+# NVIDIA A100 Configuration
+
+hardware:
+  nvidia_a100:
+    compute_capability: 19.5     # TFLOPS (FP16 Tensor Core)
+    memory_bandwidth: 2039.0     # GB/s
+    memory_capacity: 80.0          # GB
+    power_budget: 400.0           # W
+    supported_precisions:
+      - FP32
+      - FP16
+      - BF16
+      - INT8
+      - INT4
+    has_tensor_core: true
+    has_sparsity_support: true
+    inference_engine: tensorrt
+
+training:
+  device: "cuda"
+  precision: "fp16"
+  num_episodes: 500
+  max_steps_per_episode: 100
+  batch_size: 128
+  learning_rate: 3e-4
+
+agents:
+  quantization:
+    bit_widths: [4, 8, 16, 32]
+    default_precision: FP16
+
+  fusion:
+    patterns:
+      - none
+      - conv_bn
+      - conv_relu
+      - conv_bn_relu
+      - conv_bn_add_relu

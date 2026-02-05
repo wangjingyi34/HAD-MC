@@ -1,0 +1,39 @@
+# NVIDIA Jetson Orin Configuration
+
+hardware:
+  jetson_orin:
+    compute_capability: 275.0     # TOPS (INT8)
+    memory_bandwidth: 204.8       # GB/s
+    memory_capacity: 64.0         # GB
+    power_budget: 60.0            # W
+    supported_precisions:
+      - FP32
+      - FP16
+      - INT8
+    has_tensor_core: true
+    has_sparsity_support: true
+    inference_engine: tensorrt
+
+training:
+  device: "cuda"
+  precision: "int8"
+  num_episodes: 300
+  max_steps_per_episode: 50
+  batch_size: 32
+  learning_rate: 2e-4
+
+agents:
+  quantization:
+    bit_widths: [8, 16, 32]
+    default_precision: INT8
+
+  fusion:
+    patterns:
+      - none
+      - conv_bn
+      - conv_bn_relu
+
+constraints:
+  latency_threshold: 20.0   # ms (higher for edge)
+  energy_threshold: 2.0     # J
+  size_threshold: 2.0        # MB (lower for edge)

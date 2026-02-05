@@ -1,0 +1,38 @@
+# Huawei Ascend 310 Configuration
+
+hardware:
+  ascend_310:
+    compute_capability: 22.0      # TOPS (INT8)
+    memory_bandwidth: 25.6        # GB/s
+    memory_capacity: 8.0           # GB
+    power_budget: 8.0              # W
+    supported_precisions:
+      - FP32
+      - FP16
+      - INT8
+    has_tensor_core: false
+    has_sparsity_support: false
+    inference_engine: acl
+
+training:
+  device: "npu"
+  precision: "int8"
+  num_episodes: 200
+  max_steps_per_episode: 50
+  batch_size: 16
+  learning_rate: 1e-4
+
+agents:
+  quantization:
+    bit_widths: [8, 16, 32]
+    default_precision: INT8
+
+  fusion:
+    patterns:
+      - none
+      - conv_bn
+
+constraints:
+  latency_threshold: 30.0   # ms
+  energy_threshold: 0.5     # J
+  size_threshold: 1.5        # MB

@@ -1,0 +1,35 @@
+# Hygon DCU Configuration
+
+hardware:
+  hygon_dcu:
+    compute_capability: 32.0      # TFLOPS (FP16)
+    memory_bandwidth: 1024.0      # GB/s
+    memory_capacity: 32.0           # GB
+    power_budget: 300.0            # W
+    supported_precisions:
+      - FP32
+      - FP16
+      - INT8
+    has_tensor_core: true
+    has_sparsity_support: false
+    inference_engine: rocm
+
+training:
+  device: "cpu"
+  precision: "fp16"
+  num_episodes: 250
+  max_steps_per_episode: 50
+  batch_size: 64
+  learning_rate: 2e-4
+
+agents:
+  quantization:
+    bit_widths: [8, 16, 32]
+    default_precision: FP16
+
+  fusion:
+    patterns:
+      - none
+      - conv_bn
+      - conv_relu
+      - conv_bn_relu
