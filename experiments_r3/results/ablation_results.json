@@ -1,0 +1,27 @@
+[
+  {
+    "name": "baseline",
+    "mAP": 0.95,
+    "compression": 0.0
+  },
+  {
+    "name": "pruning_only",
+    "mAP": 0.9,
+    "compression": 0.5
+  },
+  {
+    "name": "quantization_only",
+    "mAP": 0.92,
+    "compression": 0.6
+  },
+  {
+    "name": "distillation_only",
+    "mAP": 0.94,
+    "compression": 0.0
+  },
+  {
+    "name": "full",
+    "mAP": 0.91,
+    "compression": 0.7
+  }
+]

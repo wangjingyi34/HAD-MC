@@ -1,0 +1,40 @@
+# AMC (AutoML for Model Compression) Configuration
+
+# Method info
+method: "AMC"
+version: "1.0"
+paper: "AMC: AutoML for Model Compression and Acceleration on Mobile Devices (ECCV 2018)"
+
+# RL algorithm settings
+rl:
+  algorithm: "DDPG"
+  actor_lr: 0.001
+  critic_lr: 0.001
+  tau: 0.01
+  gamma: 0.99
+  buffer_size: 10000
+  batch_size: 64
+
+# Pruning settings
+pruning:
+  type: "structured"
+  granularity: "channel"
+  min_ratio: 0.1
+  max_ratio: 0.9
+  target_compression: 0.5
+
+# Reward function
+reward:
+  accuracy_weight: 1.0
+  latency_weight: 0.5
+  target_latency: 5.0  # ms
+
+# Training
+training:
+  num_episodes: 300
+  finetune_epochs: 10
+
+# Model
+model:
+  name: "yolov5s"
+  pretrained: true

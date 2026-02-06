@@ -1,0 +1,95 @@
+# HAD-MC 2.0 Main Experiment Configuration
+
+# General settings
+experiment_name: "hadmc2_third_review"
+random_seed: 42
+device: "cuda"  # cuda, cpu, npu, mlu
+
+# Dataset settings
+dataset:
+  name: "fsds"  # fsds, neudet, coco, voc
+  root_dir: "data/fsds"
+  batch_size: 32
+  num_workers: 4
+  image_size: 640
+
+# Model settings
+model:
+  name: "yolov5s"  # yolov5s, resnet50, etc.
+  pretrained: true
+  num_classes: 2  # fire, smoke
+
+# Training settings
+training:
+  num_epochs: 100
+  learning_rate: 0.01
+  optimizer: "sgd"
+  momentum: 0.9
+  weight_decay: 0.0005
+  lr_scheduler: "cosine"
+  warmup_epochs: 5
+
+# Compression settings
+compression:
+  target_compression_ratio: 0.5
+  pruning_ratio: 0.5
+  quantization_bits: 8
+  distillation_temperature: 5.0
+  distillation_alpha: 0.5
+
+# MARL settings
+marl:
+  num_episodes: 1000
+  max_steps_per_episode: 50
+  batch_size: 64
+  num_epochs: 10
+
+# PPO settings
+ppo:
+  learning_rate: 0.0003
+  gamma: 0.99
+  gae_lambda: 0.95
+  clip_epsilon: 0.2
+  value_coef: 0.5
+  entropy_coef: 0.01
+  max_grad_norm: 0.5
+
+# Reward settings
+reward:
+  weights:
+    accuracy: 1.0
+    latency: 0.5
+    energy: 0.3
+    size: 0.2
+  thresholds:
+    accuracy: 0.90
+    latency: 10.0  # ms
+    energy: 1.0    # J
+    size: 5.0      # MB
+  pareto_coefficient: 1.0
+
+# Evaluation settings
+evaluation:
+  num_runs: 5
+  metrics:
+    - mAP
+    - mAP@0.5
+    - mAP@0.5:0.95
+    - latency
+    - energy
+    - FPR
+    - model_size
+  confidence_threshold: 0.5
+
+# Output settings
+output:
+  results_dir: "experiments_r3/results"
+  log_dir: "experiments_r3/results/logs"
+  checkpoint_dir: "experiments_r3/results/checkpoints"
+  save_every_n_epochs: 10
+
+# Logging
+logging:
+  tensorboard: true
+  wandb: false
+  print_frequency: 10

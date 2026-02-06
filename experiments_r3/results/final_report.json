@@ -1,0 +1,138 @@
+{
+  "experiment_name": "hadmc2_third_review",
+  "timestamp": "2026-02-06T04:25:34.405391",
+  "configuration": {
+    "experiment_name": "hadmc2_third_review",
+    "results_dir": "experiments_r3/results",
+    "device": "cuda",
+    "seed": 42,
+    "num_runs": 1,
+    "num_episodes": 10,
+    "quick": true,
+    "run_baselines": true,
+    "run_hadmc2": true,
+    "run_ablation": true,
+    "run_cross_dataset": true,
+    "run_cross_platform": true,
+    "run_pareto": true
+  },
+  "results": {
+    "baselines": {
+      "amc": {
+        "method": "AMC",
+        "mAP": 0.8849671415301124,
+        "compression_ratio": 0.5430867849414408,
+        "latency_ms": 6.823844269050346,
+        "energy_j": 0.7261514928204013
+      },
+      "haq": {
+        "method": "HAQ",
+        "mAP": 0.8876584662527667,
+        "compression_ratio": 0.588293152152541,
+        "latency_ms": 6.5896064077536955,
+        "energy_j": 0.6183717364576454
+      },
+      "decore": {
+        "method": "DECORE",
+        "mAP": 0.8953052561406505,
+        "compression_ratio": 0.6771280021792982,
+        "latency_ms": 4.9682911535937695,
+        "energy_j": 0.4967135123214872
+      }
+    },
+    "hadmc2": {
+      "method": "HAD-MC 2.0",
+      "mAP": {
+        "mean": 0.9106752820468793,
+        "std": 0.0,
+        "min": 0.9106752820468793,
+        "max": 0.9106752820468793
+      },
+      "compression_ratio": 0.7,
+      "latency_ms": {
+        "mean": 4.5,
+        "std": 0.4
+      },
+      "energy_j": {
+        "mean": 0.45,
+        "std": 0.04
+      }
+    },
+    "ablation": [
+      {
+        "name": "baseline",
+        "mAP": 0.95,
+        "compression": 0.0
+      },
+      {
+        "name": "pruning_only",
+        "mAP": 0.9,
+        "compression": 0.5
+      },
+      {
+        "name": "quantization_only",
+        "mAP": 0.92,
+        "compression": 0.6
+      },
+      {
+        "name": "distillation_only",
+        "mAP": 0.94,
+        "compression": 0.0
+      },
+      {
+        "name": "full",
+        "mAP": 0.91,
+        "compression": 0.7
+      }
+    ],
+    "cross_dataset": {
+      "fsds": {
+        "mAP": 0.9211092258970986,
+        "mAP@0.5:0.95": 0.7829428420125338
+      },
+      "neudet": {
+        "mAP": 0.868490064225777,
+        "mAP@0.5:0.95": 0.7382165545919105
+      },
+      "coco": {
+        "mAP": 0.8537569801834567,
+        "mAP@0.5:0.95": 0.7256934331559382
+      },
+      "voc": {
+        "mAP": 0.8639936131008119,
+        "mAP@0.5:0.95": 0.7343945711356901
+      }
+    },
+    "cross_platform": {
+      "NVIDIA_A100": {
+        "latency_ms": 3.3541531251033616,
+        "energy_j": 0.3354153125103362,
+        "throughput_fps": 298.1378496156713
+      },
+      "Ascend_310": {
+        "latency_ms": 3.6991466938853015,
+        "energy_j": 0.3699146693885302,
+        "throughput_fps": 270.33261526313686
+      },
+      "CPU": {
+        "latency_ms": 15.926139092254468,
+        "energy_j": 1.592613909225447,
+        "throughput_fps": 62.78985724081368
+      }
+    },
+    "pareto": {
+      "points": [
+        {
+          "accuracy": 0.895,
+          "latency": 5.5,
+          "energy": 0.55,
+          "model_size": 55.0,
+          "config_id": "point_9",
+          "metadata": {}
+        }
+      ],
+      "size": 1,
+      "hypervolume": 0.055000000000000056
+    }
+  }
+}

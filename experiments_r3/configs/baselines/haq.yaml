@@ -1,0 +1,37 @@
+# HAQ (Hardware-Aware Automated Quantization) Configuration
+
+# Method info
+method: "HAQ"
+version: "1.0"
+paper: "HAQ: Hardware-Aware Automated Quantization with Mixed Precision (CVPR 2019)"
+
+# RL algorithm settings
+rl:
+  algorithm: "DDPG"
+  actor_lr: 0.001
+  critic_lr: 0.001
+  tau: 0.01
+  gamma: 0.99
+
+# Quantization settings
+quantization:
+  bit_widths: [4, 8, 16, 32]
+  weight_only: false
+  activation_bits: [4, 8]
+  target_compression: 0.5
+
+# Hardware settings
+hardware:
+  platform: "NVIDIA_A100"
+  latency_lookup_table: "experiments_r3/configs/latency_luts/nvidia_a100.json"
+
+# Reward function
+reward:
+  accuracy_weight: 1.0
+  latency_weight: 0.5
+  model_size_weight: 0.3
+
+# Training
+training:
+  num_episodes: 200
+  qat_epochs: 10
