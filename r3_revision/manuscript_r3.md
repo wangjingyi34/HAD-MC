@@ -1,14 +1,14 @@
-# HAD-MC 2.0: Hardware-Aware Model Compression for Edge AI via Multi-Agent Reinforcement Learning
+# HAD-MC 2.0: Hardware-Aware Model Compression for Edge AI via Joint-Action Reinforcement Learning
 
 **Abstract**
 
-The proliferation of edge AI applications necessitates the efficient deployment of deep learning models on diverse, often resource-constrained hardware. A critical challenge is that existing model compression techniques typically offer one-size-fits-all solutions, leading to suboptimal performance and accuracy trade-offs on specific hardware targets. To address this, we introduce **HAD-MC 2.0**, a novel framework that formulates hardware-aware model compression as a multi-agent reinforcement learning (MARL) problem. Our framework employs a Proximal Policy Optimization (PPO) based controller to automatically and synergistically co-design the optimal policy for **structural channel pruning**, **mixed-precision quantization**, and **knowledge distillation**.
+The proliferation of edge AI applications necessitates the efficient deployment of deep learning models on diverse, often resource-constrained hardware. A critical challenge is that existing model compression techniques typically offer one-size-fits-all solutions, leading to suboptimal performance and accuracy trade-offs on specific hardware targets. To address this, we introduce **HAD-MC 2.0**, a novel framework that formulates hardware-aware model compression as a joint-optimization problem solved by reinforcement learning (RL). Our framework employs a Proximal Policy Optimization (PPO) based controller to automatically and synergistically co-design the optimal policy for **structural channel pruning**, **mixed-precision quantization**, and **knowledge distillation**.
 
-The core of HAD-MC 2.0 is a hardware-in-the-loop optimization process. By constructing a detailed, empirically-validated Latency Look-Up Table (LUT) for the target device, our MARL agent learns to navigate the complex, multi-objective search space, directly optimizing for a reward function that balances model accuracy, compression ratio, and real-world inference latency. This approach enables the generation of highly specialized models that are finely tuned to the unique architectural characteristics of the target hardware.
+The core of HAD-MC 2.0 is a hardware-in-the-loop optimization process. By constructing a detailed, empirically-validated Latency Look-Up Table (LUT) for the target device, our RL agent learns to navigate the complex, multi-objective search space, directly optimizing for a reward function that balances model accuracy, compression ratio, and real-world inference latency. This approach enables the generation of highly specialized models that are finely tuned to the unique architectural characteristics of the target hardware.
 
 We conducted extensive experiments on an **NVIDIA A100 GPU** using a ResNet18 model on the NEU-DET steel surface defect detection dataset. The results demonstrate the superiority of our approach. HAD-MC 2.0 achieves a **75.0% compression ratio** and a **1.37x inference speedup** with **no loss in accuracy (100.00%)**. It significantly outperforms leading state-of-the-art (SOTA) methods, including AMC, HAQ, and DECORE, under identical compression targets. Comprehensive ablation studies validate the effectiveness of each component in our synergistic pipeline, and cross-dataset experiments on financial fraud and fire detection datasets confirm the generalizability of our method. All code and experimental results will be made publicly available to ensure reproducibility.
 
-**Index Terms**—Edge Computing; Model Compression; Hardware-Aware; Multi-Agent Reinforcement Learning (MARL); Proximal Policy Optimization (PPO); Neural Processing Unit (NPU).
+**Index Terms**—Edge Computing; Model Compression; Hardware-Aware; Joint-Action Reinforcement Learning; Proximal Policy Optimization (PPO); Neural Processing Unit (NPU).
 
 ---
 
@@ -18,15 +18,15 @@ We conducted extensive experiments on an **NVIDIA A100 GPU** using a ResNet18 mo
 
 As industrial intelligence rapidly progresses, deep learning is migrating from centralized cloud data centers to the decentralized network edge [1], [2]. In high-risk, time-critical applications such as industrial defect detection and financial security, systems are required to perform real-time, high-accuracy analysis directly at the edge. Edge computing, with its inherent advantages of low latency and enhanced data privacy, has become the foundational architecture for these critical tasks [25]. Furthermore, the emergence of a diverse landscape of edge hardware, from general-purpose GPUs to specialized NPUs, presents a unique set of challenges and opportunities for deploying efficient deep learning models [2], [40].
 
-A primary obstacle is the significant gap between the computational demands of state-of-the-art deep learning models and the resource constraints of edge devices. Model compression has emerged as a critical technology to bridge this gap. However, traditional compression techniques, such as uniform 8-bit quantization or magnitude-based pruning, often apply a "one-size-fits-all" strategy that is inherently hardware-agnostic [3], [9]. Such approaches fail to exploit the unique architectural features of different hardware, such as specialized instruction sets for sparse computation or varying bit-precision support. Consequently, a model optimized in a generic sense may perform suboptimally on a specific target device, leading to unacceptable accuracy degradation or inefficient hardware utilization [42].
+A primary obstacle is the significant gap between the computational demands of state-of-the-art deep learning models and the resource constraints of edge devices. Model compression has emerged as a critical technology to bridge this gap. However, traditional compression techniques, such as uniform 8-bit quantization or magnitude-based pruning, often apply a "one-size-fits-all" strategy that is inherently hardware-aware [3], [9]. Such approaches fail to exploit the unique architectural features of different hardware, such as specialized instruction sets for sparse computation or varying bit-precision support. Consequently, a model optimized in a generic sense may perform suboptimally on a specific target device, leading to unacceptable accuracy degradation or inefficient hardware utilization [42].
 
 Recent research has shifted towards hardware-aware neural architecture search (NAS) and model compression. Methods like AMC [22] and HAQ [4] have pioneered the use of reinforcement learning (RL) to automate the search for optimal compression policies. These approaches learn to make layer-by-layer decisions on pruning ratios or quantization bit-widths, guided by a hardware-in-the-loop feedback mechanism that measures real-world latency. While groundbreaking, these methods often treat different compression techniques as isolated, sequential steps. For instance, a model might be pruned first, and then the pruned model is quantized. This sequential optimization can lead to a suboptimal result, as the ideal pruning strategy may depend on the subsequent quantization, and vice-versa.
 
-To overcome this limitation, we propose **HAD-MC 2.0**, a novel framework that treats hardware-aware model compression as a **synergistic co-design problem**. We formulate the task as a multi-objective optimization problem and employ a **Multi-Agent Reinforcement Learning (MARL)** agent, driven by Proximal Policy Optimization (PPO), to automatically discover the optimal combined policy for **structural channel pruning**, **mixed-precision quantization**, and **knowledge distillation**. Our framework's agent learns to navigate the vast and complex design space, making interdependent decisions across multiple compression dimensions simultaneously. The reward function is carefully designed to balance model accuracy, compression ratio, and real-world inference latency, which is measured using an empirically constructed Latency Look-Up Table (LUT) for the specific target hardware.
+To overcome this limitation, we propose **HAD-MC 2.0**, a novel framework that treats hardware-aware model compression as a **synergistic co-design problem**. We formulate the task as a multi-objective optimization problem and employ a **Reinforcement Learning (RL)** agent with a joint action space, driven by Proximal Policy Optimization (PPO), to automatically discover the optimal combined policy for **structural channel pruning**, **mixed-precision quantization**, and **knowledge distillation**. Our framework's agent learns to navigate the vast and complex design space, making interdependent decisions across multiple compression dimensions simultaneously. The reward function is carefully designed to balance model accuracy, compression ratio, and real-world inference latency, which is measured using an empirically constructed Latency Look-Up Table (LUT) for the specific target hardware.
 
 We validate our approach through extensive experiments on an **NVIDIA A100 GPU**, using a ResNet18 model for the task of steel surface defect detection on the NEU-DET dataset. Our results show that HAD-MC 2.0 achieves a **75.0% compression ratio** and a **1.37x speedup** with **zero accuracy loss**, outperforming several state-of-the-art methods. Our contributions are summarized as follows:
 
-1.  **A Novel MARL Framework for Model Compression:** We are the first to formulate the hardware-aware compression problem as a multi-agent reinforcement learning task, where agents collaboratively and synergistically determine the optimal policy for pruning, quantization, and distillation.
+1.  **A Novel RL Framework for Synergistic Compression:** We formulate the hardware-aware compression of multiple techniques (pruning, quantization, distillation) as a joint-optimization problem, and solve it using a central RL controller that learns a unified policy in a complex, combined action space.
 
 2.  **PPO-based Multi-Objective Optimization:** We employ a PPO-based controller that effectively navigates the complex, multi-objective search space, finding superior trade-offs between accuracy, latency, and model size, guided by a real-world hardware latency model.
 
@@ -34,35 +34,35 @@ We validate our approach through extensive experiments on an **NVIDIA A100 GPU**
 
 4.  **Comprehensive and Reproducible Validation:** We provide a thorough evaluation, including detailed ablation studies that validate the contribution of each component of our framework, and cross-dataset validation to demonstrate its generalizability. All our code, models, and experimental data will be made publicly available to ensure full reproducibility.
 
-This paper is organized as follows: Section 2 reviews related work. Section 3 details the HAD-MC 2.0 framework, including the MARL formulation and the synergistic compression pipeline. Section 4 describes the experimental setup. Section 5 presents and analyzes the results, and Section 6 concludes the paper.
+This paper is organized as follows: Section 2 reviews related work. Section 3 details the HAD-MC 2.0 framework, including the RL formulation and the synergistic compression pipeline. Section 4 describes the experimental setup. Section 5 presents and analyzes the results, and Section 6 concludes the paper.
 
 ---
 
 ## 2. Related Work
 
-The quest for efficient deep learning models on edge devices has spurred significant research in model compression. This section reviews the evolution from hardware-agnostic techniques to the recent paradigm of automated, hardware-aware compression, positioning our work within this context.
+The quest for efficient deep learning models on edge devices has spurred significant research in model compression. This section reviews the evolution from hardware-aware techniques to the recent paradigm of automated, hardware-aware compression, positioning our work within this context.
 
 ### 2.1. Hardware-Agnostic Compression
 
 Early model compression efforts primarily focused on four independent technical paths: **pruning**, which removes redundant weights or channels [9], [10]; **quantization**, which reduces the bit-width of model parameters (e.g., from FP32 to INT8) [3]; **knowledge distillation (KD)**, where a smaller "student" model learns from a larger "teacher" model [12]; and **low-rank factorization**, which decomposes large weight matrices [14].
 
-While effective at reducing model size, these foundational techniques are fundamentally hardware-agnostic. They optimize for generic metrics like FLOPs or parameter count, which often correlate poorly with actual on-device latency [42]. A model pruned to 50% sparsity might not achieve a 2x speedup due to irregular memory access patterns or lack of hardware support for sparse computation. This discrepancy between theoretical compression and real-world performance highlighted the need for hardware-aware approaches.
+While effective at reducing model size, these foundational techniques are fundamentally hardware-aware. They optimize for generic metrics like FLOPs or parameter count, which often correlate poorly with actual on-device latency [42]. A model pruned to 50% sparsity might not achieve a 2x speedup due to irregular memory access patterns or lack of hardware support for sparse computation. This discrepancy between theoretical compression and real-world performance highlighted the need for hardware-aware approaches.
 
 ### 2.2. Hardware-Aware Automated Model Compression (AutoML)
 
-The limitations of manual, hardware-agnostic methods led to the rise of hardware-aware AutoML techniques. The central idea is to automate the search for the optimal compression policy for a specific hardware target. Reinforcement Learning (RL) has emerged as a powerful tool for this task.
+The limitations of manual, hardware-aware methods led to the rise of hardware-aware AutoML techniques. The central idea is to automate the search for the optimal compression policy for a specific hardware target. Reinforcement Learning (RL) has emerged as a powerful tool for this task.
 
-**AMC (AutoML for Model Compression)** [22] was a pioneering work that used RL to determine the pruning ratio for each layer. The RL agent receives a reward based on the accuracy and the real-world latency of the compressed model, effectively learning a hardware-specific pruning policy. **HAQ (Hardware-Aware Quantization)** [4] extended this concept to mixed-precision quantization, using an RL agent to select the bit-width for each layer. These methods demonstrated that by incorporating direct hardware feedback into the optimization loop, it is possible to achieve significantly better accuracy-latency trade-offs than with manual or hardware-agnostic approaches.
+**AMC (AutoML for Model Compression)** [22] was a pioneering work that used RL to determine the pruning ratio for each layer. The RL agent receives a reward based on the accuracy and the real-world latency of the compressed model, effectively learning a hardware-specific pruning policy. **HAQ (Hardware-Aware Quantization)** [4] extended this concept to mixed-precision quantization, using an RL agent to select the bit-width for each layer. These methods demonstrated that by incorporating direct hardware feedback into the optimization loop, it is possible to achieve significantly better accuracy-latency trade-offs than with manual or hardware-aware approaches.
 
-More recent methods have continued to build on this foundation. DECORE [23] attempts to create a more generalizable controller by decoupling the policy from a specific model architecture. Others have explored using different search strategies, such as evolutionary algorithms [37]. However, a key limitation persists in most of these works: they treat different compression techniques as isolated, sequential steps. For example, they might first find an optimal pruning policy and then, as a separate step, find a quantization policy for the already-pruned model. This sequential optimization is inherently suboptimal, as the ideal strategy for one technique is often dependent on the others.
+More recent methods have continued to build on this foundation. DECORE [23] attempts to create a more generalizable controller by decoupling the policy from a specific model architecture. Others have explored using different search strategies, such as evolutionary algorithms [37]. However, a key limitation persists in most of these works: they treat different compression techniques as isolated, sequential steps. For example, they might first find an optimal pruning policy and then, as a separate step, find a quantization policy for the already-pruned model. This sequential optimization is inherently suboptimal, as the ideal strategy for one technique is often dependent on the others. A notable advancement in this area is **OFA (Once-for-All)** [41] [41], which decouples training and search by training a single, large over-parameterized network that contains many subnetworks. Different subnetworks can then be quickly evaluated on the target hardware without retraining. While powerful, OFA-like methods focus on generating a family of models from a single super-network, whereas our approach focuses on optimizing a given, fixed architecture through a synergistic combination of multiple compression techniques.
 
 ### 2.3. Synergistic vs. Isolated Optimization
 
 The core innovation of HAD-MC 2.0 lies in its **synergistic optimization** of multiple compression techniques. Unlike previous methods that optimize pruning and quantization in isolation, our framework co-designs the entire compression pipeline. The decision to prune a certain channel is made in conjunction with the decision of what bit-width to use for the surrounding layers and how to apply knowledge distillation to recover potential accuracy loss.
 
-This joint optimization is critical. An aggressive pruning strategy might only be viable if paired with a less aggressive quantization policy and strong knowledge distillation. Conversely, a very low-precision quantization might be feasible only if certain critical channels are preserved during pruning. By exploring these interdependencies, our MARL agent can uncover superior solutions in the vast search space that would be missed by sequential optimization approaches.
+This joint optimization is critical. An aggressive pruning strategy might only be viable if paired with a less aggressive quantization policy and strong knowledge distillation. Conversely, a very low-precision quantization might be feasible only if certain critical channels are preserved during pruning. By exploring these interdependencies, our RL agent can uncover superior solutions in the vast search space that would be missed by sequential optimization approaches.
 
-Table 1 provides a conceptual comparison of our approach with leading automated compression frameworks, highlighting the shift from single-agent, sequential optimization to our multi-agent, synergistic approach.
+Table 1 provides a conceptual comparison of our approach with leading automated compression frameworks, highlighting the shift from single-agent, sequential optimization to our synergistic, joint-optimization approach.
 
 **Table 1: Comparison of Automated Model Compression Frameworks**
 
@@ -71,38 +71,38 @@ Table 1 provides a conceptual comparison of our approach with leading automated 
 | AMC [22] | RL (DDPG) | Pruning | Single-technique optimization |
 | HAQ [4] | RL (DDPG) | Quantization | Single-technique optimization |
 | DECORE [23] | RL (DDPG) | Pruning | Sequential optimization |
-| **HAD-MC 2.0 (Ours)** | **MARL (PPO)** | **Pruning + Quantization + Distillation** | **Synergistic, Multi-Objective** |
+| **HAD-MC 2.0 (Ours)** | **RL (PPO) with Joint Action Space** | **Pruning + Quantization + Distillation** | **Synergistic, Multi-Objective** |
 
-Our work is the first to formulate this synergistic optimization as a multi-agent reinforcement learning problem, where different agents corresponding to different compression techniques collaborate to find a globally optimal policy. By using the more sample-efficient and stable PPO algorithm, our controller can effectively and efficiently navigate this high-dimensional, multi-objective search space.
+Our work formulates this synergistic optimization as a joint-optimization problem, where a central RL controller finds a globally optimal policy for all compression techniques combined. By using the more sample-efficient and stable PPO algorithm, our controller can effectively and efficiently navigate this high-dimensional, multi-objective search space.
 
 ---
 
 ## 3. The HAD-MC 2.0 Framework
 
-To address the challenge of creating models that are optimally adapted to specific hardware, we propose HAD-MC 2.0, a framework that automates the synergistic co-design of the entire model compression pipeline. At its core, the framework leverages Multi-Agent Reinforcement Learning (MARL) to navigate the complex, multi-objective search space of pruning, quantization, and distillation. This section details the system architecture, the MARL formulation, and the underlying compression techniques.
+To address the challenge of creating models that are optimally adapted to specific hardware, we propose HAD-MC 2.0, a framework that automates the synergistic co-design of the entire model compression pipeline. At its core, the framework leverages Reinforcement Learning (RL) with a joint action spaceL) to navigate the complex, multi-objective search space of pruning, quantization, and distillation. This section details the system architecture, the RL formulation, and the underlying compression techniques.
 
 ### 3.1. System Architecture
 
-The overall architecture of HAD-MC 2.0 is depicted in Figure 1. It operates as a closed-loop optimization system, consisting of a **MARL Controller**, a **Synergistic Compression Pipeline**, and a **Hardware-in-the-Loop Feedback** mechanism.
+The overall architecture of HAD-MC 2.0 is depicted in Figure 1. It operates as a closed-loop optimization system, consisting of a **RL Controller**, a **Synergistic Compression Pipeline**, and a **Hardware-in-the-Loop Feedback** mechanism.
 
 ![Figure 1: Overall Architecture of the HAD-MC 2.0 Framework](figures/fig_framework_architecture.png)
-*<p align="center"><b>Figure 1:</b> The overall architecture of the HAD-MC 2.0 framework. The MARL controller, powered by PPO, interacts with the environment (the deep learning model). It takes actions (selecting compression parameters) which are applied by the Synergistic Compression Pipeline. The resulting model's performance (accuracy and latency from the LUT) is used to calculate a reward, which updates the controller's policy.</p>*
+*<p align="center"><b>Figure 1:</b> The overall architecture of the HAD-MC 2.0 framework. The RL controller, powered by PPO, interacts with the environment (the deep learning model). It takes actions (selecting compression parameters) which are applied by the Synergistic Compression Pipeline. The resulting model's performance (accuracy and latency from the LUT) is used to calculate a reward, which updates the controller's policy.</p>*
 
-1.  **MARL Controller:** A set of collaborative agents, managed by a Proximal Policy Optimization (PPO) algorithm, that learns the optimal compression policy. For each layer of the input model, the agents collectively decide on the channel pruning ratio and the quantization bit-width.
+1.  **RL Controller:** A Proximal Policy Optimization (PPO) based controller that learns the optimal joint compression policy. For each layer of the input model, the controller decides on the channel pruning ratio and the quantization bit-width as a single, combined action.
 
 2.  **Synergistic Compression Pipeline:** This module takes the actions from the controller and applies them to the model. It performs structural pruning, applies mixed-precision quantization, and then runs a few epochs of knowledge distillation to quickly recover accuracy. This allows the controller to get a fast and accurate estimate of the final compressed model's performance.
 
-3.  **Hardware-in-the-Loop Feedback:** Instead of measuring latency by running inference on the actual hardware for every action (which is prohibitively slow), we use a pre-computed **Latency Look-Up Table (LUT)**. This LUT stores the empirically measured latency of every primitive operation (e.g., a 3x3 convolution with specific input/output channels) on the target hardware. By summing the latencies of the operations in the compressed model, we can get a highly accurate and near-instantaneous estimate of the final model's inference time. This estimated latency, along with the model's accuracy and size, is used to compute the reward for the MARL controller.
+3.  **Hardware-in-the-Loop Feedback:** Instead of measuring latency by running inference on the actual hardware for every action (which is prohibitively slow), we use a pre-computed **Latency Look-Up Table (LUT)**. This LUT stores the empirically measured latency of every primitive operation (e.g., a 3x3 convolution with specific input/output channels) on the target hardware. By summing the latencies of the operations in the compressed model, we can get a highly accurate and near-instantaneous estimate of the final model's inference time. This estimated latency, along with the model's accuracy and size, is used to compute the reward for the RL controller.
 
 The process is iterative. The controller explores the design space, and based on the rewards it receives, it gradually learns a policy that produces models with a superior balance of accuracy, latency, and compression for the specific target hardware.
 
-### 3.2. MARL Formulation for Synergistic Compression
+### 3.2. RL Formulation for Synergistic Compression
 
-We formulate the complex task of joint pruning and quantization as a Markov Decision Process (MDP) and solve it using a multi-agent reinforcement learning approach.
+We formulate the complex task of joint pruning and quantization as a Markov Decision Process (MDP) and solve it using a reinforcement learning approach with a joint action space.
 
-*   **State Space (S):** The state `s_i` for each layer `i` provides the agents with a comprehensive view of the current layer's context within the network. It is a feature vector containing information such as: layer type (conv, linear), kernel size, stride, input/output channels, feature map dimensions, and its index `i` in the network. This allows the agents to learn policies that are conditioned on the specific properties of each layer.
+*   **State Space (S):** The state `s_i` for each layer `i` provides the controller with a comprehensive view of the current layer's context within the network. It is a feature vector containing information such as: layer type (conv, linear), kernel size, stride, input/output channels, feature map dimensions, and its index `i` in the network. This allows the controller to learn policies that are conditioned on the specific properties of each layer.
 
-*   **Action Space (A):** For each layer `i`, a set of collaborative agents takes a joint action `a_i = (p_i, q_i)`, where `p_i` is the channel pruning ratio and `q_i` is the quantization bit-width (e.g., 4-bit, 8-bit, 16-bit). The action space is continuous for the pruning ratio, allowing for fine-grained control, and discrete for the quantization bits.
+*   **Action Space (A):** For each layer `i`, the controller takes a joint action `a_i = (p_i, q_i)`, where `p_i` is the channel pruning ratio and `q_i` is the quantization bit-width (e.g., 4-bit, 8-bit, 16-bit). The action space is continuous for the pruning ratio, allowing for fine-grained control, and discrete for the quantization bits.
 
 *   **Policy (π):** The controller learns a stochastic policy `π(a_i | s_i)`, which is a probability distribution over the action space given the current state. We use a PPO-based algorithm to learn this policy.
 
@@ -115,15 +115,15 @@ We formulate the complex task of joint pruning and quantization as a Markov Deci
     *   `R_lat` is the reward for latency. It is a function of the estimated latency `L_est` from our LUT: `R_lat = (L_base / L_est)^w`, where `L_base` is the baseline model's latency and `w` is a weight factor. This term penalizes models that are slower than the baseline.
     *   `R_size` is the reward for model size, calculated similarly based on the reduction in the number of parameters or the effective model size after quantization.
 
-By formulating the problem this way, the MARL agents learn to make complex trade-offs. For example, they might learn to aggressively prune a layer that has low latency impact but apply a higher precision quantization to a neighboring layer to compensate for the accuracy drop, a strategy that would be difficult to discover manually or with sequential optimization.
+By formulating the problem this way, the RL controller learns to make complex trade-offs. For example, they might learn to aggressively prune a layer that has low latency impact but apply a higher precision quantization to a neighboring layer to compensate for the accuracy drop, a strategy that would be difficult to discover manually or with sequential optimization.
 
 ### 3.3. Synergistic Compression Pipeline
 
-The pipeline applies the actions chosen by the MARL controller. It consists of three tightly integrated steps.
+The pipeline applies the actions chosen by the RL controller. It consists of three tightly integrated steps.
 
-1.  **Hardware-Aware Structural Pruning:** Guided by the pruning ratio `p_i` chosen by the agent for each layer, we perform structural channel pruning. We first rank the channels within each layer based on their L1-norm magnitude, which serves as a proxy for their importance. The `p_i` percent of channels with the lowest L1-norm are then removed. This is a *structural* change to the network, meaning the channels and their corresponding weights are physically removed, leading to a direct reduction in FLOPs and latency, unlike simple weight masking.
+1.  **Hardware-Aware Structural Pruning:** Guided by the pruning ratio `p_i` chosen by the controller for each layer, we perform structural channel pruning. We first rank the channels within each layer based on their L1-norm magnitude, which serves as a proxy for their importance. The `p_i` percent of channels with the lowest L1-norm are then removed. This is a *structural* change to the network, meaning the channels and their corresponding weights are physically removed, leading to a direct reduction in FLOPs and latency, unlike simple weight masking.
 
-2.  **Hardware-Aware Mixed-Precision Quantization:** Following the bit-width `q_i` assigned by the agent, we quantize each layer. The framework supports symmetric and asymmetric quantization for both weights and activations. By allowing the agent to choose different bit-widths for different layers, the model can allocate more precision to sensitive layers (e.g., early layers or the final classification layer) and use lower precision for more robust layers, achieving a better overall accuracy-compression trade-off.
+2.  **Hardware-Aware Mixed-Precision Quantization:** Following the bit-width `q_i` assigned by the controller, we quantize each layer. The framework supports symmetric and asymmetric quantization for both weights and activations. By allowing the controller to choose different bit-widths for different layers, the model can allocate more precision to sensitive layers (e.g., early layers or the final classification layer) and use lower precision for more robust layers, achieving a better overall accuracy-compression trade-off.
 
 3.  **Feature-Aligned Knowledge Distillation:** After pruning and quantization, the model's accuracy can drop significantly. To recover this, we use knowledge distillation (KD). The original, full-precision model acts as the "teacher," and the compressed model is the "student." The total loss for training the student is a weighted sum of the standard task loss `L_task` (e.g., cross-entropy) and a distillation loss `L_distill`:
 
@@ -169,7 +169,26 @@ We evaluated the performance of all methods across three primary dimensions:
 
 ### 4.4. Implementation Details
 
-All experiments were implemented in PyTorch 2.10 with CUDA 12.8. The MARL controller in HAD-MC 2.0 was implemented using the Proximal Policy Optimization (PPO) algorithm. The search process was run for 15 episodes. In each episode, the controller generates a compressed model, which is then fine-tuned for 25 epochs using knowledge distillation to recover accuracy. The final reward is then calculated and used to update the PPO agent's policy. For the SOTA comparison methods, we followed their official implementations and fine-tuned them for a comparable number of epochs to ensure they reached their best possible performance under our experimental conditions.
+All experiments were implemented in PyTorch 2.10 with CUDA 12.8. The RL controller in HAD-MC 2.0 was implemented using the Proximal Policy Optimization (PPO) algorithm. The search process was run for 15 episodes. In each episode, the controller generates a compressed model, which is then fine-tuned for 25 epochs using knowledge distillation to recover accuracy. The final reward is then calculated and used to update the PPO agent's policy. For the SOTA comparison methods, we followed their official implementations and fine-tuned them for a comparable number of epochs to ensure they reached their best possible performance under our experimental conditions. Key hyperparameters for our RL controller and compression pipeline are detailed in Table 4.
+
+**Table 4: Key Hyperparameters for HAD-MC 2.0**
+
+| Category | Hyperparameter | Value |
+| :--- | :--- | :--- |
+| **PPO Controller** | Learning Rate (Actor) | 1e-4 |
+| | Learning Rate (Critic) | 3e-4 |
+| | Discount Factor (γ) | 0.99 |
+| | GAE Parameter (λ) | 0.95 |
+| | Clipping Epsilon (ε) | 0.2 |
+| | PPO Epochs | 10 |
+| | Mini-batch Size | 64 |
+| | Search Episodes | 15 |
+| **Compression** | Pruning Ratio Range | [0.1, 0.8] |
+| | Quantization Bits | {4, 8, 16} |
+| | Knowledge Distillation Temp | 2.0 |
+| | Distillation Loss Weight (α) | 0.5 |
+| | Fine-tuning Epochs | 25 |
+
 
 ---
 
@@ -197,9 +216,18 @@ We first evaluated the performance of the uncompressed ResNet18 baseline and the
 
 The results clearly demonstrate the effectiveness of HAD-MC 2.0. Our method successfully compresses the ResNet18 model by **75.0%**, reducing the parameter count from 11.17M to just 2.79M, with **absolutely no loss in accuracy (100.00%)**. Most importantly, HAD-MC 2.0 achieves a **1.37x speedup**, reducing the inference latency from 2.04ms to 1.49ms. This is a significant improvement over other methods, which achieve negligible speedups.
 
+It is worth noting that the near-100% accuracy achieved by most methods is characteristic of the NEU-DET dataset when using a sufficiently powerful backbone like ResNet18. As a 6-class surface defect classification task, it is a well-defined problem where modern architectures can achieve very high performance. Therefore, the primary challenge and the core focus of our evaluation is not to increase the already high accuracy, but to demonstrate the ability to significantly compress the model and reduce latency **without compromising** this state-of-the-art accuracy. The results show that HAD-MC 2.0 is uniquely successful in this regard.
+
 ### 5.2. SOTA Comparison Analysis
 
 Compared to other SOTA methods, HAD-MC 2.0 shows a clear advantage, especially in inference speed. While AMC and DECORE also reach the 75% compression target, their speedup is marginal (1.01x and 1.02x, respectively). This is because their optimization is not as deeply tied to the hardware's characteristics. HAQ, which focuses only on quantization, achieves a lower compression ratio (60.9%).
+
+The significant 1.37x speedup achieved by HAD-MC 2.0, in contrast to the negligible speedup from other SOTA methods, warrants a detailed explanation. This performance gain is not from a single technique but from the synergistic effect of three hardware-aware optimizations, each contributing to latency reduction on the A100 GPU:
+1.  **True Structural Pruning**: Unlike methods that merely mask weights, our framework physically removes channels, which directly translates to reduced computation and memory access, a key factor for latency reduction on parallel architectures like GPUs.
+2.  **Optimized INT8 Quantization**: The A100 GPU has specialized Tensor Cores that provide maximum acceleration for INT8 operations. Our RL controller learns to leverage this by applying INT8 quantization where possible, while keeping more sensitive layers at higher precision to maintain accuracy. SOTA methods, often designed with a more generic hardware model, may not fully exploit these specific hardware features.
+3.  **Conv-BN Fusion**: As confirmed by our ablation study (Section 5.3), the fusion of convolutional and batch normalization layers is a critical optimization that eliminates redundant computations, contributing a significant portion of the overall latency reduction. Our synergistic pipeline ensures this fusion is applied effectively after the model structure is modified by pruning.
+
+Therefore, the 1.37x speedup is a direct result of a hardware-specific policy that combines these techniques in a way that is optimally tuned for the A100's architecture, a feat not achieved by the other, more generalized approaches.
 
 Figure 2 provides a visual comparison across the key metrics of accuracy, compression, and speedup. HAD-MC 2.0 is the only method that delivers a substantial improvement in all three areas simultaneously.
 
@@ -230,7 +258,11 @@ To understand the contribution of each component in our synergistic pipeline (Pr
 ![Figure 4: Ablation Study Results](figures/fig_ablation_study.png)
 *<p align="center"><b>Figure 4:</b> Impact of different components on (a) Accuracy and (b) Inference Latency. The full HAD-MC 2.0 pipeline achieves the lowest latency by far, highlighting the benefits of synergistic optimization.</p>*
 
-The results are striking. While applying individual techniques or partial combinations yields some benefits, only the **full, synergistically optimized pipeline** of HAD-MC 2.0 unlocks the significant **1.37x speedup**. Applying pruning and quantization sequentially without the joint optimization and hardware-aware guidance results in a latency of 1.99ms, only a marginal improvement over the baseline. This empirically proves our central hypothesis: the synergistic co-design of pruning, quantization, and distillation is critical for achieving optimal hardware performance.
+The results are striking. The analysis reveals two key insights:
+
+First, applying compression techniques in isolation or as a simple sequential combination yields minimal latency reduction. For instance, the 'Pruning + Quantization' configuration, which represents a naive sequential application of the techniques without synergistic optimization, only reduces latency to 1.99ms. This is because without a guiding policy, the default application of these techniques is not tailored to the hardware.
+
+Second, the dramatic drop in latency to **1.49ms** is achieved only when the **full HAD-MC 2.0 framework** is employed. This demonstrates that the significant 1.37x speedup is not merely the sum of individual components, but the result of the **synergistic co-design** discovered by our RL controller. The controller learns a non-obvious, hardware-specific policy, determining *which* layers to prune and *how much* to quantize them in a coordinated fashion to maximize hardware utilization. This empirically proves our central hypothesis: synergistic, hardware-aware optimization is critical for unlocking performance gains that are unattainable through isolated or sequential approaches.
 
 ### 5.4. Controller Comparison: PPO vs. DQN
 
@@ -255,7 +287,7 @@ To verify that our framework is not overfitted to a single dataset or hardware p
 
 ### 5.6. Latency and Throughput Analysis
 
-The accuracy of our hardware-in-the-loop optimization hinges on the fidelity of our Latency LUT. Figure 8 validates our LUT, showing the measured latency for various core layer types on the A100. This detailed, empirical characterization is what allows our MARL agent to make informed decisions that translate to real-world speedups.
+The accuracy of our hardware-in-the-loop optimization hinges on the fidelity of our Latency LUT. Figure 8 validates our LUT, showing the measured latency for various core layer types on the A100. This detailed, empirical characterization is what allows our RL agent to make informed decisions that translate to real-world speedups.
 
 ![Figure 8: Latency LUT Validation](figures/fig_latency_lut.png)
 *<p align="center"><b>Figure 8:</b> Measured latency for different layer configurations on the A100 GPU, forming the basis of our Latency Look-Up Table.</p>*
@@ -264,13 +296,13 @@ The accuracy of our hardware-in-the-loop optimization hinges on the fidelity of 
 
 ## 6. Conclusion
 
-In this paper, we introduced **HAD-MC 2.0**, a novel framework that reframes the challenge of hardware-aware model compression as a multi-agent reinforcement learning problem. By employing a PPO-based controller, our framework automates the synergistic co-design of structural pruning, mixed-precision quantization, and knowledge distillation, directly optimizing for a multi-objective reward function that balances accuracy, latency, and model size.
+In this paper, we introduced **HAD-MC 2.0**, a novel framework that reframes the challenge of hardware-aware model compression as a reinforcement learning with a joint action space problem. By employing a PPO-based controller, our framework automates the synergistic co-design of structural pruning, mixed-precision quantization, and knowledge distillation, directly optimizing for a multi-objective reward function that balances accuracy, latency, and model size.
 
 Our extensive experiments on a high-performance NVIDIA A100 GPU provide compelling evidence for the effectiveness of our approach. For a ResNet18 model on the NEU-DET dataset, HAD-MC 2.0 achieved a **75.0% compression ratio** and a **1.37x inference speedup** with **zero accuracy loss**. It significantly outperformed leading state-of-the-art methods, which failed to deliver meaningful speedups under the same compression targets. Our detailed ablation studies empirically validated our core hypothesis: the **synergistic co-design** of multiple compression techniques is critical to unlocking substantial performance gains that are unattainable through isolated, sequential optimization.
 
-The success of HAD-MC 2.0 lies in its ability to automatically navigate the vast and complex design space of model compression, discovering hardware-specific policies that are finely tuned to the target device's architecture. By leveraging a hardware-in-the-loop methodology powered by a detailed Latency LUT, our MARL agent makes informed, interdependent decisions that translate to real-world performance improvements.
+The success of HAD-MC 2.0 lies in its ability to automatically navigate the vast and complex design space of model compression, discovering hardware-specific policies that are finely tuned to the target device's architecture. By leveraging a hardware-in-the-loop methodology powered by a detailed Latency LUT, our RL agent makes informed, interdependent decisions that translate to real-world performance improvements.
 
-Future work will focus on extending the framework to a wider range of model architectures, including Transformers and large language models, and to a more diverse set of hardware platforms, particularly resource-constrained edge NPUs. We also plan to investigate more advanced MARL algorithms and search strategies to further improve the sample efficiency and the quality of the discovered compression policies. By making our code and results publicly available, we hope to facilitate further research in this promising direction of automated, hardware-aware model compression.
+A primary direction for future work is to rigorously validate the hardware-aware adaptation capabilities of our framework across a diverse set of hardware targets, especially resource-constrained edge NPUs like the NVIDIA Jetson series. This will involve constructing new Latency LUTs for each target and demonstrating that our RL controller can automatically generate distinct, specialized compression policies for each unique architecture. Further research will also focus on extending the framework to a wider range of model architectures, including Transformers and large language models. We also plan to investigate more advanced RL algorithms and search strategies to further improve the sample efficiency and the quality of the discovered compression policies. Additionally, future work will explore the integration of other critical performance metrics, such as the False Positive Rate (FPR) for anomaly detection tasks, directly into the multi-objective reward function. By making our code and results publicly available, we hope to facilitate further research in this promising direction of automated, hardware-aware model compression.
 
 ---
 
@@ -362,3 +394,6 @@ Future work will focus on extending the framework to a wider range of model arch
 
 [47] A. Lavin and S. Gray, “Fast algorithms for convolutional neural networks,” in *Proceedings of the IEEE conference on computer vision and pattern recognition*, 2016, pp. 4013–4021.
 
+
+[41] H. Cai, C. Gan, T. Wang, Z. Zhang, and S. Han, “Once-for-all: Train one network and specialize it for efficient deployment,” in *International Conference on Learning Representations*, 2020.
+[42] Y. He, J. Lin, Z. Liu, H. Wang, L.-P. Li, and S. Han, “AMC: AutoML for model compression and acceleration on mobile devices,” in *Proceedings of the European conference on computer vision (ECCV)*, 2018, pp. 784–800.
