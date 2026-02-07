@@ -1,0 +1,116 @@
+{
+  "experiment_metadata": {
+    "timestamp": "2026-02-07T03:31:03.750374",
+    "device": "cuda:0",
+    "gpu_name": "Tesla T4",
+    "cuda_version": "12.1",
+    "pytorch_version": "2.3.0+cu121",
+    "experiment_type": "REAL_GPU_STRUCTURED_PRUNING",
+    "random_seed": 42
+  },
+  "data_info": {
+    "X_train_shape": [
+      1000,
+      3,
+      224,
+      224
+    ],
+    "X_test_shape": [
+      200,
+      3,
+      224,
+      224
+    ],
+    "num_train_samples": 1000,
+    "num_test_samples": 200,
+    "num_classes": 2,
+    "image_size": [
+      224,
+      224
+    ],
+    "num_channels": 3
+  },
+  "baseline": {
+    "accuracy": 100.0,
+    "loss": 0.0,
+    "latency_ms_mean": 18.020851142604702,
+    "latency_ms_std": 5.262357344631721,
+    "throughput_fps": 55.491274639953645,
+    "inference_times": [
+      20.143828995060176,
+      20.195574004901573,
+      20.181042986223474,
+      20.16380801796913,
+      20.15512000070885,
+      20.175765006570145,
+      5.130818986799568
+    ],
+    "model_path": "experiments_r3/results/models/baseline_model_structured.pth",
+    "num_parameters": 25784578,
+    "model_size_mb": 98.36035919189453
+  },
+  "pruned": {
+    "accuracy": 100.0,
+    "loss": 3.576278036884365e-07,
+    "latency_ms_mean": 7.92849385678502,
+    "latency_ms_std": 2.218110707459578,
+    "throughput_fps": 126.12736013463936,
+    "inference_times": [
+      8.831911982269958,
+      8.846254990203306,
+      8.812901010969654,
+      8.827237994410098,
+      8.83923500077799,
+      8.846595999784768,
+      2.4953200190793723
+    ],
+    "model_path": "experiments_r3/results/models/pruned_model_structured.pth",
+    "num_parameters": 12869634,
+    "model_size_mb": 49.09375762939453,
+    "pruning_ratio": 0.5008786259755735
+  },
+  "quantized": {
+    "accuracy": 100.0,
+    "loss": 0.0,
+    "latency_ms_mean": 18.017417289749055,
+    "latency_ms_std": 5.251792390467147,
+    "throughput_fps": 55.50185045494542,
+    "inference_times": [
+      20.16959901084192,
+      20.18156199483201,
+      20.171205018414184,
+      20.12529197963886,
+      20.138624007813632,
+      20.182339008897543,
+      5.153300007805228
+    ],
+    "model_path": "experiments_r3/results/models/quantized_model_structured.pth",
+    "num_parameters": 25784578,
+    "bit_width": 8
+  },
+  "hadmc2_full": {
+    "accuracy": 100.0,
+    "loss": 1.0132779380001011e-06,
+    "latency_ms_mean": 7.958691001736692,
+    "latency_ms_std": 2.240327714457764,
+    "throughput_fps": 125.6488032745318,
+    "inference_times": [
+      8.836290013277903,
+      8.876695996150374,
+      8.930113981477916,
+      8.876672014594078,
+      8.87282402254641,
+      8.846793993143365,
+      2.471446990966797
+    ],
+    "model_path": "experiments_r3/results/models/hadmc2_model_structured.pth",
+    "num_parameters": 12869634,
+    "compression_ratio": 0.5008786259755735
+  },
+  "performance_summary": {
+    "hadmc2_vs_baseline_accuracy": 0.0,
+    "hadmc2_vs_baseline_speedup": 2.26429838005676,
+    "hadmc2_compression_ratio": 0.5008786259755735,
+    "throughput_improvement": 126.429838005676
+  }
+}

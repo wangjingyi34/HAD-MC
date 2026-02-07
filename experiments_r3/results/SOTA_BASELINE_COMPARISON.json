@@ -1,0 +1,47 @@
+{
+  "experiment_metadata": {
+    "timestamp": "2026-02-07T03:44:35.371052",
+    "device": "cuda:0",
+    "experiment_type": "SOTA_BASELINE_COMPARISON"
+  },
+  "baseline": {
+    "accuracy": 100.0,
+    "loss": 0.0,
+    "latency_ms_mean": 18.021937563649512,
+    "throughput_fps": 55.487929445334075,
+    "num_parameters": 25784578,
+    "compression_ratio": 0.0
+  },
+  "amc": {
+    "accuracy": 100.0,
+    "loss": 7.897608611528995e-07,
+    "latency_ms_mean": 7.884470575455842,
+    "throughput_fps": 126.83159768684719,
+    "num_parameters": 12869634,
+    "compression_ratio": 0.5008786259755735
+  },
+  "haq": {
+    "accuracy": 100.0,
+    "loss": 0.0,
+    "latency_ms_mean": 18.03891428945852,
+    "throughput_fps": 55.4357088211442,
+    "num_parameters": 25784578,
+    "compression_ratio": 0.0
+  },
+  "decore": {
+    "accuracy": 100.0,
+    "loss": 2.3841852225814364e-07,
+    "latency_ms_mean": 7.909792284148613,
+    "throughput_fps": 126.42557023956503,
+    "num_parameters": 12869634,
+    "compression_ratio": 0.5008786259755735
+  },
+  "hadmc2": {
+    "accuracy": 100.0,
+    "loss": 2.9802313861182483e-07,
+    "latency_ms_mean": 7.902920994508479,
+    "throughput_fps": 126.53549247105877,
+    "num_parameters": 12869634,
+    "compression_ratio": 0.5008786259755735
+  }
+}

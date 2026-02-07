@@ -1,0 +1,41 @@
+{
+  "experiment_metadata": {
+    "timestamp": "2026-02-07T05:07:22.421304",
+    "device": "cuda:0",
+    "dataset": "NEU-DET-like (6 classes)",
+    "experiment_type": "CROSS_DATASET_REAL_GPU",
+    "random_seed": 42
+  },
+  "data_info": {
+    "num_classes": 6,
+    "num_train_samples": 960,
+    "num_test_samples": 240,
+    "image_size": [
+      224,
+      224
+    ],
+    "num_channels": 3
+  },
+  "baseline": {
+    "accuracy": 100.0,
+    "loss": 9.685721806818037e-07,
+    "latency_ms_mean": 18.986667248100275,
+    "throughput_fps": 52.66853771296043,
+    "num_parameters": 25785606,
+    "model_path": "experiments_r3/results/models/baseline_neudet_6class.pth"
+  },
+  "hadmc2_compressed": {
+    "accuracy": 100.0,
+    "loss": 6.705449322907953e-06,
+    "latency_ms_mean": 8.29770974087296,
+    "throughput_fps": 120.51518204766644,
+    "num_parameters": 12870662,
+    "compression_ratio": 0.5008586573454974,
+    "model_path": "experiments_r3/results/models/hadmc2_neudet_6class.pth"
+  },
+  "performance_summary": {
+    "hadmc2_vs_baseline_accuracy": 0.0,
+    "hadmc2_vs_baseline_speedup": 2.288181659883271,
+    "hadmc2_compression_ratio": 0.5008586573454974
+  }
+}

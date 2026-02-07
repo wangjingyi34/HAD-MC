@@ -1,0 +1,41 @@
+{
+  "experiment_metadata": {
+    "timestamp": "2026-02-07T05:13:30.755843",
+    "device": "cuda:0",
+    "platform": "Tesla T4",
+    "experiment_type": "CROSS_PLATFORM_NVIDIA_GPU",
+    "random_seed": 42
+  },
+  "data_info": {
+    "num_classes": 2,
+    "num_train_samples": 1000,
+    "num_test_samples": 200,
+    "image_size": [
+      224,
+      224
+    ],
+    "num_channels": 3
+  },
+  "baseline": {
+    "accuracy": 100.0,
+    "loss": 0.0,
+    "latency_ms_mean": 18.079335859511048,
+    "throughput_fps": 55.311766304398134,
+    "num_parameters": 25784578,
+    "model_path": "experiments_r3/results/models/baseline_nvidia_gpu.pth"
+  },
+  "hadmc2_compressed": {
+    "accuracy": 100.0,
+    "loss": 3.7252888773764425e-07,
+    "latency_ms_mean": 7.897394850650536,
+    "throughput_fps": 126.62403474958916,
+    "num_parameters": 12869634,
+    "compression_ratio": 0.5008786259755735,
+    "model_path": "experiments_r3/results/models/hadmc2_nvidia_gpu.pth"
+  },
+  "performance_summary": {
+    "hadmc2_vs_baseline_accuracy": 0.0,
+    "hadmc2_vs_baseline_speedup": 2.28927845212422,
+    "hadmc2_compression_ratio": 0.5008786259755735
+  }
+}

@@ -60,8 +60,8 @@ results/*.png
 data/financial/*.npy
 data/neudet/*.pt
 
-# Models
-models/*.pth
+# Models (tracked with Git LFS, not ignored)
+# Note: .pth files are tracked via Git LFS (.gitattributes)
 models/*.pt
 models/*.onnx
 
