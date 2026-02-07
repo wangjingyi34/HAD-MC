@@ -1,20 +1,23 @@
 # PAPER READ - 第三阶段论文修改和升级详细指导
 
-**版本**: 1.0
-**创建日期**: 2026-02-07 05:40 UTC
+**版本**: 2.0 (完整升级版)
+**创建日期**: 2026-02-07 08:30 UTC
 **针对阶段**: HAD-MC 2.0第三审查论文全文修改和升级
+**核心升级**: hadmc2/ (MARL框架) + experiments_r3/ (实验升级)
 
 ---
 
 ## 📋 目录导航
 
-### 1. 核心算法升级 - 必读
-### 2. 实验数据和结果 - 必读
-### 3. 模型文件和检查点 - 必读
-### 4. 论文结构 - 必读
-### 5. 绘图和数据 - 必读
-### 6. 实验脚本和代码 - 必读
-### 7. GitHub仓库导航 - 必读
+### 1. 核心算法升级 (hadmc2/) - 必读
+### 2. 算法文档 (hadmc2/文档) - 必读
+### 3. 实验升级 (experiments_r3/) - 必读
+### 4. 实验数据和结果 - 必读
+### 5. 模型文件和检查点 - 必读
+### 6. 论文结构 - 必读
+### 7. 绘图和数据 - 必读
+### 8. 实验脚本和代码 - 必读
+### 9. GitHub仓库导航 - 必读
 
 ---
 
@@ -35,28 +38,249 @@
 
 ---
 
-## 1. 核心算法升级 - 必读
+## 1. 核心算法升级 (hadmc2/) - 必读
 
-### 1.1 核心算法框架架构
+### 1.1 hadmc2/ 文件夹结构总览
 
-HAD-MC 2.0框架采用多智能体协作（5 agents）+ PPO控制器 + 硬件抽象层（HAL）架构。
+**⚠️ 重要提示**：HAD-MC 2.0的核心升级在`hadmc2/`文件夹中，采用**多智能体强化学习（MARL）框架**！
 
-**📂 必读文件**：
+```
+hadmc2/                                    # 核心算法升级目录
+├── __init__.py                              # 包初始化
+├── ALGORITHM_UPGRADE_README.md                # ✅ 算法升级总览（必读）
+├── PAPER_ALGORITHM_AGENTS.md                 # ✅ 5个agents详细文档（必读）
+├── PAPER_ALGORITHM_HAL.md                    # ✅ 硬件抽象层文档（必读）
+├── PAPER_ALGORITHM_MARL.md                  # ✅ MARL框架文档（必读）
+├── PAPER_ALGORITHM_PPO.md                  # ✅ PPO控制器文档（必读）
+├── PAPER_READY_DOCUMENTATION.md              # ✅ 论文就绪文档
+├── agents/                                 # 5个压缩智能体实现
+│   ├── __init__.py
+│   ├── AGENT_DOCUMENTATION.md               # Agents详细文档
+│   ├── pruning_agent.py                     # Agent 1: 梯度敏感度剪枝
+│   ├── quantization_agent.py                 # Agent 2: 层级精度量化
+│   ├── distillation_agent.py               # Agent 3: 特征对齐蒸馏
+│   ├── fusion_agent.py                     # Agent 4: 算子融合
+│   └── update_agent.py                    # Agent 5: 增量更新
+├── controllers/                            # MARL协调控制器
+│   ├── __init__.py
+│   ├── ppo_controller.py                  # PPO算法实现
+│   └── marl_coordinator.py               # MARL协调器
+├── hardware/                              # 硬件抽象层（HAL）
+│   ├── __init__.py
+│   ├── hal.py                           # HAL核心实现
+│   ├── latency_lut.py                    # 延迟查找表
+│   └── profiler.py                      # 硬件性能分析器
+├── inference/                             # 推理引擎优化
+│   ├── __init__.py
+│   ├── die.py                           # Dedicated Inference Engine (DIE)
+│   └── tensorrt_backend.py               # TensorRT后端
+├── rewards/                              # 多目标优化奖励函数
+│   ├── __init__.py
+│   └── reward_function.py                # Pareto优化奖励
+├── training/                              # MARL训练系统
+│   ├── __init__.py
+│   ├── trainer.py                       # HAD-MC 2.0训练器
+│   └── buffer.py                       # PPO rollout buffer
+├── utils/                                 # 工具模块
+│   ├── __init__.py
+│   ├── state.py                        # 状态表示
+│   ├── action.py                       # 动作空间
+│   ├── metrics.py                      # 指标计算
+│   ├── config.py                       # 配置加载
+│   └── device.py                      # 设备管理
+├── configs/                               # 硬件特定配置
+│   ├── default.yaml
+│   ├── nvidia_a100.yaml
+│   ├── jetson_orin.yaml
+│   ├── ascend_310.yaml
+│   └── hygon_dcu.yaml
+├── tests/                                 # 单元和集成测试
+│   ├── unit/
+│   └── integration/
+└── experiments/                           # MARL实验脚本
+```
+
+### 1.2 hadmc2/ 核心算法框架架构
+
+HAD-MC 2.0框架采用**多智能体协作（5 agents）+ PPO控制器 + 硬件抽象层（HAL）架构**。
+
+**📂 必读文档文件**：
 
 | 文件 | 路径 | 关键内容 | 后续AI重点关注 |
 |------|------|-----------|----------------|
-| `hadmc/quantization.py` | 核心量化算法 | ✅ 理解bit-width自适应分配、精度-敏感度计算 |
-| `hadmc/pruning.py` | 核心剪枝算法 | ✅ 理解梯度敏感度剪枝、结构化剪枝方法 |
-| `hadmc/distillation.py` | 知识蒸馏算法 | ✅ 理解特征对齐蒸馏、软标签损失 |
-| `hadmc/fusion.py` | 算子融合算法 | ✅ 理解Conv+BN+ReLU融合模式、检测常见模式 |
-| `hadmc/incremental_update.py` | 增量更新算法 | ✅ 理解SHA256哈希、差分更新、压缩传输 |
-| `hadmc/controller.py` | PPO控制器 | ✅ 理解多智能体协调、策略梯度更新、硬件约束优化 |
+| `ALGORITHM_UPGRADE_README.md` | hadmc2/ | ✅ 算法升级总览、组件详情 |
+| `PAPER_ALGORITHM_AGENTS.md` | hadmc2/ | ✅ 5个agents数学理论和算法 |
+| `PAPER_ALGORITHM_MARL.md` | hadmc2/ | ✅ MARL框架、状态/动作空间、GAE |
+| `PAPER_ALGORITHM_PPO.md` | hadmc2/ | ✅ PPO算法详解、剪裁、优势函数 |
+| `PAPER_ALGORITHM_HAL.md` | hadmc2/ | ✅ 硬件抽象层设计 |
+| `PAPER_READY_DOCUMENTATION.md` | hadmc2/ | ✅ 论文就绪的完整文档 |
+
+**📂 必读代码实现文件**：
+
+| 文件 | 路径 | 关键内容 | 后续AI重点关注 |
+|------|------|-----------|----------------|
+| `agents/pruning_agent.py` | hadmc2/agents/ | ✅ 梯度敏感度剪枝、Taylor展开 |
+| `agents/quantization_agent.py` | hadmc2/agents/ | ✅ 精度敏感度计算、bit-width分配 |
+| `agents/distillation_agent.py` | hadmc2/agents/ | ✅ KL散度、特征对齐、温度参数 |
+| `agents/fusion_agent.py` | hadmc2/agents/ | ✅ Conv+BN+ReLU融合模式 |
+| `agents/update_agent.py` | hadmc2/agents/ | ✅ SHA256哈希、增量更新 |
+| `controllers/ppo_controller.py` | hadmc2/controllers/ | ✅ Actor-Critic、PPO剪裁、GAE |
+| `controllers/marl_coordinator.py` | hadmc2/controllers/ | ✅ MARL协调、多智能体通信 |
+| `hardware/hal.py` | hadmc2/hardware/ | ✅ 硬件抽象、延迟估计 |
+| `rewards/reward_function.py` | hadmc2/rewards/ | ✅ Pareto优化、多目标奖励 |
+| `training/trainer.py` | hadmc2/training/ | ✅ 完整MARL训练循环 |
 
 **⚠️ 必读重点**：
 1. **多智能体协同机制**：5个agents如何协作完成剪枝+量化+蒸馏
 2. **PPO控制策略**：如何平衡探索和利用、如何处理硬件约束
 3. **硬件感知优化**：HAL如何抽象不同硬件平台的差异
 4. **增量更新机制**：云-边模型更新的高效实现
+5. **MARL框架设计**：状态表示、动作空间、奖励函数设计
+
+---
+
+## 2. 算法文档 (hadmc2/文档) - 必读
+
+### 2.1 ALGORITHM_UPGRADE_README.md（总览文档）
+
+**文件路径**：`hadmc2/ALGORITHM_UPGRADE_README.md`
+
+**核心内容**：
+1. **架构演进对比**（HAD-MC 1.0 vs 2.0）
+   - 1.0：顺序流水线（剪枝→量化→蒸馏→融合）
+   - 2.0：并行MARL（5 agents协同 + PPO控制）
+
+2. **5个Compression Agents详解**
+   - **Pruning Agent**：梯度敏感度剪枝、Taylor展开重要性
+   - **Quantization Agent**：层级精度分配、校准、混合精度
+   - **Distillation Agent**：特征对齐蒸馏、软标签损失
+   - **Fusion Agent**：模式匹配融合（Conv+BN+ReLU）
+   - **Update Agent**：增量更新、SHA256哈希、差分传输
+
+3. **核心组件**
+   - **State Representation**：模型状态 + 硬件状态 + 压缩状态
+   - **Action Space**：5个agents的联合动作空间
+   - **PPO Controller**：Actor-Critic架构、GAE、剪裁
+   - **Hardware Abstraction Layer**：跨平台支持
+   - **Reward Function**：多目标Pareto优化
+
+**⚠️ 后续AI必读重点**：
+- [ ] 理解HAD-MC 1.0到2.0的架构变化（顺序→并行）
+- [ ] 理解MARL如何解决协同优化问题
+- [ ] 理解HAL如何支持多硬件平台
+
+### 2.2 PAPER_ALGORITHM_AGENTS.md（5个Agents详解）
+
+**文件路径**：`hadmc2/PAPER_ALGORITHM_AGENTS.md`
+
+**核心内容**：
+
+**Agent 1: Pruning Agent（剪枝智能体）**
+- **数学公式**：`I(ℓ, j) = |Σ W^(ℓ)_j · ∂L/∂O^(ℓ)_j|`（L1范数）
+- **问题形式化**：`min E[L(Prune(M, r), D_val] subject to Σ_ℓ r_ℓ ≤ R_total`
+- **理论保证**：定理1（Taylor展开重要性）、定理2（准确率下界）
+
+**Agent 2: Quantization Agent（量化智能体）**
+- **数学公式**：`Q_b(w) = s · round(w / s + z) + z`（仿射量化）
+- **优化问题**：`min Σ_{x∈D} |Q_{s,z}(M) - x|²`
+- **误差界限**：定理3（量化误差上界）
+
+**Agent 3: Distillation Agent（蒸馏智能体）**
+- **损失函数**：`L_total = α · L_soft + (1-α) · L_hard + λ · L_feature`
+- **软标签损失**：`L_soft = T² · KL(π_T(y/T) || π_S(y/T))`
+- **特征对齐**：`L_feature = ||F_S(x) - F_T(x)||²`
+- **温度敏感性**：定理4（温度效应）、最优α推导
+
+**Agent 4: Fusion Agent（融合智能体）**
+- **Conv+BN融合公式**：`W' = W · (γ/√(σ²+ε)), b' = (b-μ) · (γ/√(σ²+ε)) + β`
+- **正确性保证**：定理5（融合正确性证明）
+- **加速比**：Conv+BN ≈ 50%, Conv+BN+ReLU ≈ 33%
+
+**Agent 5: Update Agent（更新智能体）**
+- **带宽分析**：Full vs Incremental vs Hash-based
+- **哈希算法**：K-means聚类 + SHA256哈希
+- **收敛保证**：定理6（增量更新收敛）
+
+**⚠️ 后续AI必读重点**：
+- [ ] 理解每个Agent的数学基础（定理和证明）
+- [ ] 理解Agents之间的依赖关系（剪枝→量化→蒸馏→融合→更新）
+- [ ] 理解Pareto最优性的定义和应用
+
+### 2.3 PAPER_ALGORITHM_MARL.md（MARL框架详解）
+
+**文件路径**：`hadmc2/PAPER_ALGORITHM_MARL.md`
+
+**核心内容**：
+
+**状态空间定义**：
+- `S_t = [S^model_t || S^hardware_t || S^compression_t]`
+- **Model State**：层类型、通道数、FLOPs、参数量
+- **Hardware State**：计算能力、内存带宽、能耗预算、精度支持
+- **Compression State**：剪枝比例、bit-width、蒸馏进度、当前指标
+
+**动作空间定义**：
+- `A_t = {A^pruning_t, A^quantization_t, A^distillation_t, A^fusion_t, A^update_t}`
+- **Pruning**：离散 `[1, n_layers] × 10`（层索引 + 剪枝比例）
+- **Quantization**：离散 `[1, n_layers] × 4`（层索引 + bit-width）
+- **Distillation**：连续 `R²`（温度T ∈ [1,20], 权重α ∈ [0,1]）
+- **Fusion**：离散模式选择
+- **Update**：离散 `[1, 30]`（策略 + 更新比例）
+
+**理论分析**：
+- **定理1**：单调改进保证（PPO剪裁）
+- **定理2**：样本复杂度（O(|S|·|A|·H·log(Π/δ))）
+- **定理3**：MARL通信复杂度
+
+**⚠️ 后续AI必读重点**：
+- [ ] 理解状态表示如何编码模型、硬件、压缩状态
+- [ ] 理解动作空间的离散/连续区分
+- [ ] 理解GAE（广义优势估计）的作用
+- [ ] 理解MARL与单智能体RL的区别
+
+### 2.4 PAPER_ALGORITHM_PPO.md（PPO算法详解）
+
+**文件路径**：`hadmc2/PAPER_ALGORITHM_PPO.md`
+
+**核心内容**：
+
+**PPO算法**：
+- **剪裁目标函数**：`L^CLIP(θ) = E_t[min(r_t(θ)·A^CLIP, r_t(θ))]`
+- **概率比率**：`r_t(θ) = π_θ(A_t|S_t) / π_θ_old(A_t|S_t)`
+- **GAE计算**：`A_t = Σ_{k=0}^∞ (γ·λ)^k · δ_{t+k}`
+- **完整损失**：`L = L^policy + c1·L^value - c2·H`（含熵正则化）
+
+**超参数敏感性**：
+- **ε (clip)**：[0.1, 0.3]，推荐0.2（高敏感度）
+- **γ (discount)**：[0.95, 0.999]，推荐0.99（中敏感度）
+- **λ (GAE)**：[0.9, 0.99]，推荐0.95（中敏感度）
+
+**⚠️ 后续AI必读重点**：
+- [ ] 理解PPO剪裁的数学原理（为什么需要剪裁）
+- [ ] 理解GAE如何减少方差（bias-variance trade-off）
+- [ ] 理解熵正则化的作用（鼓励探索）
+- [ ] 理解多智能体动作编码（离散vs连续）
+
+### 2.5 PAPER_ALGORITHM_HAL.md（硬件抽象层详解）
+
+**文件路径**：`hadmc2/PAPER_ALGORITHM_HAL.md`
+
+**核心内容**：
+
+**HAL设计理念**：
+- **抽象硬件差异**：统一接口适配NVIDIA、Ascend、MLU、CPU
+- **性能建模**：计算能力、内存带宽、能耗预算
+- **延迟估计**：`Latency = FLOPs/compute + memory/bandwidth`
+
+**支持平台**：
+- NVIDIA A100（数据中心GPU）
+- NVIDIA Jetson Orin（边缘GPU）
+- Huawei Ascend 310（边缘NPU）
+- Hygon DCU（国产加速器）
+
+**⚠️ 后续AI必读重点**：
+- [ ] 理解HAL如何实现跨平台兼容性
+- [ ] 理解延迟估计的数学模型
+- [ ] 理解TensorRT/ONNX优化原理
 
 ### 1.2 算法核心实现细节
 
@@ -214,9 +438,100 @@ class PPOController:
 
 ---
 
-## 2. 实验数据和结果 - 必读
+## 3. 实验升级 (experiments_r3/) - 必读
 
-### 2.1 实验结果JSON文件
+### 3.1 experiments_r3/ 文件夹结构总览
+
+**⚠️ 重要提示**：`experiments_r3/`是HAD-MC 2.0第三审查的核心实验升级目录！
+
+```
+experiments_r3/                                 # 第三审查实验升级目录
+├── __init__.py
+├── main_experiment_runner.py                # ✅ 完整实验编排框架（必读）
+├── run_real_gpu_structured_pruning.py      # ✅ 核心结构化剪枝实验
+├── run_sota_baselines_gpu.py             # ✅ SOTA基线对比实验
+├── run_cross_dataset_real_gpu.py         # ✅ 交叉数据集实验（NEU-DET 6类）
+├── run_cross_platform_real_gpu.py          # ✅ 交叉平台实验（NVIDIA Tesla T4）
+├── ablation/                              # 消融实验
+│   ├── run_ablation_pruning.py
+│   ├── run_ablation_quantization.py
+│   └── run_ablation_distillation.py
+├── baselines/                             # SOTA基线实现
+│   ├── amc.py                           # AMC (DDPG剪枝)
+│   ├── haq.py                           # HAQ (混合精度量化)
+│   └── decore.py                        # DECORE (PPO联合优化)
+├── configs/                               # 实验配置
+│   ├── default.yaml
+│   └── nvidia_tesla_t4.yaml
+├── cross_dataset/                          # 交叉数据集实验
+│   └── neudet_6class_generator.py
+├── cross_platform/                         # 交叉平台实验
+│   └── hardware_abstraction_layer.py
+├── pareto/                                # 帕累托前沿分析
+│   └── pareto_frontier.py
+├── results/                               # ⭐ 所有实验结果和模型文件
+│   ├── STRUCTURED_PRUNING_RESULTS.json      # 核心实验结果
+│   ├── SOTA_BASELINE_COMPARISON.json      # SOTA对比结果
+│   ├── CROSS_DATASET_NEUDET_6CLASS.json  # 交叉数据集结果
+│   ├── CROSS_PLATFORM_NVIDIA_GPU.json      # 交叉平台结果
+│   ├── models/                           # 模型检查点目录
+│   │   ├── baseline_model_real.pth         # 基线模型（99MB）
+│   │   ├── baseline_model_structured.pth    # 基线模型结构化（99MB）
+│   │   ├── baseline_neudet_6class.pth      # 6类基线模型（99MB）
+│   │   ├── baseline_nvidia_gpu.pth         # NVIDIA GPU基线（99MB）
+│   │   ├── pruned_model_real.pth           # 剪枝模型（50MB）
+│   │   ├── pruned_model_structured.pth      # 剪枝模型结构化（50MB）
+│   │   ├── quantized_model_real.pth        # INT8量化模型（99MB）
+│   │   ├── quantized_model_structured.pth   # INT8量化结构化（99MB）
+│   │   ├── hadmc2_model_real.pth          # HAD-MC 2.0完整模型（50MB）
+│   │   ├── hadmc2_model_structured.pth     # HAD-MC 2.0结构化（50MB）
+│   │   ├── hadmc2_neudet_6class.pth      # HAD-MC 2.0 6类（50MB）
+│   │   └── hadmc2_nvidia_gpu.pth         # HAD-MC 2.0 NVIDIA GPU（50MB）
+│   ├── HAD_MC_2_0_THIRD_REVIEW_REPORT.md   # 完整报告
+│   ├── COMPLETION_SUMMARY.md                 # 完成总结
+│   ├── FINAL_SUBMISSION_SUMMARY.md           # 提交总结
+│   ├── FINAL_VERIFICATION_CHECKLIST.md       # 验证清单
+│   └── FINAL_STATUS_CONFIRMATION.md         # 状态确认
+├── scripts/                               # 辅助脚本
+├── utils/                                 # 实验工具
+├── visualization/                          # 可视化工具
+├── statistical/                           # 统计分析
+└── docs/                                  # 文档
+```
+
+### 3.2 实验脚本详细说明
+
+**📂 必读实验脚本**：
+
+| 脚本 | 路径 | 功能 | 关键函数 | 后续AI重点 |
+|------|------|---------|---------|--------|
+| `main_experiment_runner.py` | experiments_r3/ | 完整实验编排 | run_baselines(), run_hadmc2(), run_ablation() | ✅ 理解实验协调框架 |
+| `run_real_gpu_structured_pruning.py` | experiments_r3/ | 核心结构化剪枝 | train_model(), evaluate_model() | ✅ 理解训练循环 |
+| `run_sota_baselines_gpu.py` | experiments_r3/ | SOTA基线对比 | AMC, HAQ, DECORE实现 | ✅ 理解对比逻辑 |
+| `run_cross_dataset_real_gpu.py` | experiments_r3/ | 交叉数据集实验 | NEU-DET 6类生成 | ✅ 理解数据模式 |
+| `run_cross_platform_real_gpu.py` | experiments_r3/ | 交叉平台实验 | NVIDIA Tesla T4验证 | ✅ 理解平台适配 |
+
+### 3.3 SOTA Baseline实现
+
+**📂 必读SOTA实现**：
+
+| 基线 | 文件 | 核心算法 | 关键类 | 后续AI重点 |
+|------|------|---------|---------|--------|
+| AMC | `experiments_r3/baselines/amc.py` | DDPG剪枝 | DDPGPolicy、DDPGAgent | ✅ 理解actor-critic架构 |
+| HAQ | `experiments_r3/baselines/haq.py` | 混合精度量化 | LayerwisePrecisionAllocator | ✅ 理解梯度敏感度计算 |
+| DECORE | `experiments_r3/baselines/decore.py` | PPO联合优化 | PPOController、JointOptimizer | ✅ 理解联合剪枝+量化 |
+
+**⚠️ 后续AI必读重点**：
+- [ ] 理解DDPG的核心概念（确定性策略梯度）
+- [ ] 理解AMC如何将剪枝建模为RL问题
+- [ ] 理解HAQ的硬件感知机制
+- [ ] 理解DECORE的PPO实现
+
+---
+
+## 4. 实验数据和结果 - 必读
+
+### 4.1 实验结果JSON文件
 
 **📂 必读结果文件**：
 
@@ -241,7 +556,7 @@ class PPOController:
 - [ ] 理解INT8量化的实际效果（精度损失vs 速度提升）
 - [ ] 掌握不同实验设置的差异（2类vs 6类）
 
-### 2.2 实验数据生成方法
+### 4.2 实验数据生成方法
 
 **数据生成脚本**：`run_real_gpu_structured_pruning.py`、`run_sota_baselines_gpu.py`等
 
@@ -280,7 +595,7 @@ def generate_real_images(num_samples=1000, img_size=224):
 - [ ] 理解在论文中如何描述数据集（如果使用合成数据，需要明确声明）
 - [ ] 了解真实数据集下载方法（NEU-DET、COCO、VOC等）
 
-### 2.3 模型训练和评估方法
+### 4.3 模型训练和评估方法
 
 **训练设置**：
 - 优化器：SGD (lr=0.01, momentum=0.9, weight_decay=1e-4)
@@ -1065,5 +1380,109 @@ RuntimeError: CUDA error: CUBLAS_STATUS_NOT_INITIALIZED
 ---
 
 **指南创建日期**：2026-02-07 05:45 UTC
+**最后更新日期**：2026-02-07 08:45 UTC
 **创建者**：Claude Sonnet 4.5
 **针对阶段**：HAD-MC 2.0第三审查 - 论文全文修改和升级
+
+---
+
+## 📖 附录：升级文件夹关系总览
+
+### HAD-MC 2.0升级完整架构
+
+```
+HAD-MC项目根目录
+├── hadmc/                           # 主框架代码（原始算法）
+│   ├── quantization.py
+│   ├── pruning.py
+│   ├── distillation.py
+│   ├── fusion.py
+│   ├── incremental_update.py
+│   ├── controller.py
+│   └── device_manager.py
+│
+├── hadmc2/                          # ⭐ 核心算法升级（MARL框架）
+│   ├── ALGORITHM_UPGRADE_README.md       # ✅ 算法升级总览
+│   ├── PAPER_ALGORITHM_AGENTS.md         # ✅ 5个Agents数学理论
+│   ├── PAPER_ALGORITHM_MARL.md          # ✅ MARL框架详解
+│   ├── PAPER_ALGORITHM_PPO.md          # ✅ PPO算法详解
+│   ├── PAPER_ALGORITHM_HAL.md           # ✅ 硬件抽象层详解
+│   ├── agents/                          # 5个智能体实现
+│   │   ├── pruning_agent.py
+│   │   ├── quantization_agent.py
+│   │   ├── distillation_agent.py
+│   │   ├── fusion_agent.py
+│   │   └── update_agent.py
+│   ├── controllers/                     # PPO控制器
+│   │   ├── ppo_controller.py
+│   │   └── marl_coordinator.py
+│   ├── hardware/                        # 硬件抽象层
+│   ├── rewards/                         # 奖励函数
+│   ├── training/                        # MARL训练系统
+│   └── utils/                           # 工具模块
+│
+└── experiments_r3/                    # ⭐ 实验升级目录（第三审查）
+    ├── main_experiment_runner.py         # ✅ 完整实验编排框架
+    ├── run_real_gpu_structured_pruning.py  # ✅ 核心结构化剪枝实验
+    ├── run_sota_baselines_gpu.py         # ✅ SOTA基线对比实验
+    ├── run_cross_dataset_real_gpu.py      # ✅ 交叉数据集实验
+    ├── run_cross_platform_real_gpu.py      # ✅ 交叉平台实验
+    ├── baselines/                       # SOTA基线实现
+    │   ├── amc.py
+    │   ├── haq.py
+    │   └── decore.py
+    ├── results/                         # ⭐ 所有实验结果和模型文件
+    │   ├── models/                     # 模型检查点（.pth文件）
+    │   ├── STRUCTURED_PRUNING_RESULTS.json
+    │   ├── SOTA_BASELINE_COMPARISON.json
+    │   ├── CROSS_DATASET_NEUDET_6CLASS.json
+    │   ├── CROSS_PLATFORM_NVIDIA_GPU.json
+    │   └── *.md                       # 文档文件
+    └── docs/                            # 实验文档
+```
+
+### hadmc2/ 和 experiments_r3/ 的关系
+
+| 方面 | hadmc2/ | experiments_r3/ | 关系 |
+|------|-----------|------------------|--------|
+| **核心算法** | MARL框架实现 | 使用hadmc2/的算法进行实验 | hadmc2/提供算法，experiments_r3/进行验证 |
+| **文档** | PAPER_ALGORITHM_*.md | HAD_MC_2_0_*.md | 算法文档 vs 实验结果文档 |
+| **代码** | agents/、controllers/等 | run_*.py脚本 | 算法实现 vs 实验脚本 |
+| **模型文件** | - | results/models/*.pth | 训练的模型检查点 |
+| **结果文件** | - | results/*.json | 实验结果JSON |
+| **硬件抽象** | hardware/hal.py | cross_platform/hardware_abstraction_layer.py | HAL实现 vs 应用 |
+
+**⚠️ 后续AI必读重点**：
+1. hadmc2/是核心算法升级，包含MARL框架的理论和实现
+2. experiments_r3/是实验升级，使用hadmc2/的算法进行验证
+3. 两者是**相互依赖**的关系：hadmc2/提供算法，experiments_r3/验证效果
+4. 论文需要综合描述hadmc2/的算法理论和experiments_r3/的实验结果
+5. 在修改论文时，必须同时参考hadmc2/的文档和experiments_r3/的结果
+
+### 第三审查升级完整清单
+
+**算法升级（hadmc2/）**：
+- [ ] ALGORITHM_UPGRADE_README.md - 算法升级总览
+- [ ] PAPER_ALGORITHM_AGENTS.md - 5个Agents详解
+- [ ] PAPER_ALGORITHM_MARL.md - MARL框架详解
+- [ ] PAPER_ALGORITHM_PPO.md - PPO算法详解
+- [ ] PAPER_ALGORITHM_HAL.md - 硬件抽象层详解
+- [ ] agents/*.py - 5个agents实现代码
+- [ ] controllers/*.py - PPO控制器代码
+- [ ] hardware/*.py - HAL实现
+- [ ] rewards/*.py - 奖励函数
+- [ ] training/*.py - 训练系统
+
+**实验升级（experiments_r3/）**：
+- [ ] main_experiment_runner.py - 完整实验编排框架
+- [ ] run_real_gpu_structured_pruning.py - 核心实验
+- [ ] run_sota_baselines_gpu.py - SOTA对比
+- [ ] run_cross_dataset_real_gpu.py - 交叉数据集
+- [ ] run_cross_platform_real_gpu.py - 交叉平台
+- [ ] baselines/*.py - SOTA基线实现
+- [ ] results/*.json - 实验结果文件
+- [ ] results/models/*.pth - 模型检查点
+- [ ] results/*.md - 实验文档
+
+**⚠️ 验证完成标志**：
+所有hadmc2/和experiments_r3/的文件已成功提交到GitHub！
