@@ -42,11 +42,11 @@ This paper is organized as follows: Section 2 reviews related work. Section 3 de
 
 The quest for efficient deep learning models on edge devices has spurred significant research in model compression. This section reviews the evolution from hardware-aware techniques to the recent paradigm of automated, hardware-aware compression, positioning our work within this context.
 
-### 2.1. Hardware-Agnostic Compression
+### 2.1. Traditional Model Compression
 
 Early model compression efforts primarily focused on four independent technical paths: **pruning**, which removes redundant weights or channels [9], [10]; **quantization**, which reduces the bit-width of model parameters (e.g., from FP32 to INT8) [3]; **knowledge distillation (KD)**, where a smaller "student" model learns from a larger "teacher" model [12]; and **low-rank factorization**, which decomposes large weight matrices [14].
 
-While effective at reducing model size, these foundational techniques are fundamentally hardware-aware. They optimize for generic metrics like FLOPs or parameter count, which often correlate poorly with actual on-device latency [42]. A model pruned to 50% sparsity might not achieve a 2x speedup due to irregular memory access patterns or lack of hardware support for sparse computation. This discrepancy between theoretical compression and real-world performance highlighted the need for hardware-aware approaches.
+While effective at reducing model size, these foundational techniques are fundamentally **hardware-unaware**. They optimize for generic metrics like FLOPs or parameter count, which often correlate poorly with actual on-device latency [42]. A model pruned to 50% sparsity might not achieve a 2x speedup due to irregular memory access patterns or lack of hardware support for sparse computation. This discrepancy between theoretical compression and real-world performance highlighted the need for hardware-aware approaches.
 
 ### 2.2. Hardware-Aware Automated Model Compression (AutoML)
 
