@@ -42,6 +42,10 @@ HAD-MC/
 │   ├── generate_figures.py            # Figure generation script
 │   ├── run_all.sh                     # One-click reproduction script
 │   ├── requirements.txt               # Python dependencies
+│   ├── REPRODUCIBILITY_REPORT.md      # Two-run reproducibility verification
+│   ├── code_review_issues.md          # Code review and audit report
+│   ├── deep_review_report_r3.md       # Deep review against reviewer comments
+│   ├── expert_review_synthesis.md     # 12-expert review synthesis
 │   └── figures/                       # All paper figures (PNG + PDF)
 │       ├── fig_sota_comparison.png
 │       ├── fig_ablation_study.png
