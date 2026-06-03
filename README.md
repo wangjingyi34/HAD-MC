@@ -337,7 +337,7 @@ HAD-MC 2.0 introduces a **Proximal Policy Optimization (PPO)**-based reinforceme
 
 <p align="center">
   <img src="r3_revision/figures/fig_dcu_supplementary.png" alt="DCU Supplementary" width="850"/>
-  <br><em>Figure: DCU §5.7 supplementary — (a) 4-condition decomposition on NEU-DET shows runtime-only 1.261×, compression-only 1.048×, combined 1.415× (synergy 1.122×); (b) CIFAR-10 full 50k/10k public benchmark shows compressed model is 1.499× faster and +3.00 acc points over the FP32 baseline. (Synthetic NEU-DET accuracy is near-saturated and is therefore reported via latency-based decomposition here; CIFAR-10 provides the discriminative accuracy comparison.)</em>
+  <br><em>Figure: DCU §5.7 supplementary — (a) 4-condition decomposition on NEU-DET shows runtime-only 1.261×, compression-only 1.048×, combined 1.415× (synergy 1.122×); (b) CIFAR-10 full 50k/10k public benchmark shows compressed model is 1.499× faster and +3.00 acc points over the FP32 baseline at a matched 15-epoch training budget. (Synthetic NEU-DET accuracy is near-saturated, so we report latency-based decomposition there. The CIFAR-10 +3.00 acc gain reflects the regularization effect of pruning + distillation at matched budget — not a claim that compression alone raises accuracy — see §5.7(f); the latency and size numbers are independent of this caveat.)</em>
 </p>
 
 ### Experiments
@@ -419,7 +419,7 @@ Loaded via the torchvision-free [`_load_cifar10_binary`](r3_revision/code/tpds_s
 | Baseline ResNet18 (FP32) | 82.54 | 4.900 | 11.17 M | 42.63 | 42.63 |
 | **HAD-MC compressed**    | **85.54** | **3.269** | **2.80 M** | 10.66 | **2.67** |
 
-→ **1.499× speedup**, **+3.00 acc points** (pruning + distillation acts as a regulariser at this data scale), **4.0× weight-storage reduction** (16.0× with INT8 analytic storage).
+→ **1.499× speedup**, **+3.00 acc points**, **4.0× weight-storage reduction** (16.0× with INT8 analytic storage). *Caveat:* the 82.54 % baseline is well below the ~93 % typically reported for a fully-trained CIFAR-10 ResNet18 — both models use a 15-epoch train-from-scratch budget constrained by the DCU queue, so the +3.00 acc gain reflects the regularization effect of pruning + distillation at a matched training budget, **not** a claim that compression magically improves accuracy. Latency/size numbers are independent of this caveat. See [§5.7(f)](r3_revision/manuscript_r3.md) of the manuscript.
 
 #### (g) NVIDIA V100 Cross-Platform — *Deferred placeholder*
 
