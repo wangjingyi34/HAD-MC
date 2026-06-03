@@ -354,6 +354,16 @@ HAD-MC 2.0 includes 7 comprehensive experiments:
 
 All experiments are fully reproducible via the one-click script in `r3_revision/run_all.sh`.
 
+### Dual-Platform TPDS Supplementary (DCU)
+
+The R3 revision adds a dual-platform supplementary validation block (manuscript §5.7) executed on a Hygon DCU node. All six sub-experiments are measured (no skipped placeholders); only the optional NVIDIA V100 cross-platform block remains a deliberate placeholder for later fill-in.
+
+- **Driver**: [`r3_revision/code/tpds_supplementary_experiments.py`](r3_revision/code/tpds_supplementary_experiments.py)
+- **Cached rerun**: [`r3_revision/code/tpds_rerun_extras.py`](r3_revision/code/tpds_rerun_extras.py)
+- **Combined results**: [`r3_revision/results/tpds_full_dcu_detached2/TPDS_SUPPLEMENTARY_RESULTS.json`](r3_revision/results/tpds_full_dcu_detached2/TPDS_SUPPLEMENTARY_RESULTS.json)
+
+Sub-experiments: (a) 5-seed variance, (b) 4-condition decomposition, (c) per-operator latency LUT with affine LOO calibration (MAPE 7.08%), (d) reward-weight sensitivity (9-point weighted-sum grid + multiplicative + constrained Pareto), (e) matched-condition baseline fairness vs AMC/HAQ/DECORE, (f) CIFAR-10 full public benchmark (50 000 train / 10 000 test) via a torchvision-free binary loader (`_load_cifar10_binary`) — baseline 82.54 % / 4.900 ms, HAD-MC compressed 85.54 % / 3.269 ms (1.499× speedup, +3.00 acc points, 4.0× weight-storage reduction).
+
 ### Documentation
 
 - **Manuscript**: `r3_revision/manuscript_r3.md`
