@@ -336,8 +336,8 @@ HAD-MC 2.0 introduces a **Proximal Policy Optimization (PPO)**-based reinforceme
 </p>
 
 <p align="center">
-  <img src="r3_revision/figures/fig_ablation_study.png" alt="Ablation Study" width="800"/>
-  <br><em>Figure: Ablation study demonstrating the importance of synergistic optimization</em>
+  <img src="r3_revision/figures/fig_dcu_supplementary.png" alt="DCU Supplementary" width="850"/>
+  <br><em>Figure: DCU §5.7 supplementary — (a) 4-condition decomposition on NEU-DET shows runtime-only 1.261×, compression-only 1.048×, combined 1.415× (synergy 1.122×); (b) CIFAR-10 full 50k/10k public benchmark shows compressed model is 1.499× faster and +3.00 acc points over the FP32 baseline. (Synthetic NEU-DET accuracy is near-saturated and is therefore reported via latency-based decomposition here; CIFAR-10 provides the discriminative accuracy comparison.)</em>
 </p>
 
 ### Experiments
