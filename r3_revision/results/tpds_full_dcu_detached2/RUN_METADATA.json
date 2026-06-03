@@ -1,0 +1,18 @@
+{
+  "timestamp": "2026-06-03T13:32:45.713893",
+  "platform_tag": "dcu",
+  "device": "cuda",
+  "gpu": "K500SM_AI",
+  "cuda": null,
+  "hip": "6.3.26093",
+  "pytorch": "2.9.0",
+  "git_commit": null,
+  "seeds": [
+    11,
+    22,
+    33,
+    44,
+    55
+  ],
+  "results_dir": "/root/HAD-MC-worktree/r3_revision/results/tpds_full_dcu_detached2"
+}

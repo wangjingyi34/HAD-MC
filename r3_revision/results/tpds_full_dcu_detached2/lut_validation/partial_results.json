@@ -1,0 +1,234 @@
+{
+  "candidates": [
+    {
+      "candidate": "baseline_fp32",
+      "num_operator_calls": 21,
+      "predicted_latency_ms": 14.82627,
+      "measured_latency_ms": 14.980118,
+      "measured_latency_std_ms": 0.330351,
+      "abs_pct_error": 1.027015,
+      "accuracy": 99.7222,
+      "num_params": 11171910
+    },
+    {
+      "candidate": "baseline_fused",
+      "num_operator_calls": 21,
+      "predicted_latency_ms": 16.721504,
+      "measured_latency_ms": 15.255569,
+      "measured_latency_std_ms": 0.11557,
+      "abs_pct_error": 9.609179,
+      "accuracy": 99.7222,
+      "num_params": 11167110
+    },
+    {
+      "candidate": "baseline_int8",
+      "num_operator_calls": 21,
+      "predicted_latency_ms": 16.721504,
+      "measured_latency_ms": 15.247731,
+      "measured_latency_std_ms": 0.10216,
+      "abs_pct_error": 9.665523,
+      "accuracy": 99.7222,
+      "num_params": 11167110
+    },
+    {
+      "candidate": "reference_compressed",
+      "num_operator_calls": 21,
+      "predicted_latency_ms": 6.947495,
+      "measured_latency_ms": 6.008104,
+      "measured_latency_std_ms": 0.29587,
+      "abs_pct_error": 15.635398,
+      "accuracy": 100.0,
+      "num_params": 2796582
+    },
+    {
+      "candidate": "reference_full_hadmc",
+      "num_operator_calls": 21,
+      "predicted_latency_ms": 7.916703,
+      "measured_latency_ms": 6.0998,
+      "measured_latency_std_ms": 0.127389,
+      "abs_pct_error": 29.786272,
+      "accuracy": 100.0,
+      "num_params": 2794182
+    },
+    {
+      "candidate": "pruned_0p1",
+      "num_operator_calls": 21,
+      "predicted_latency_ms": 12.290842,
+      "measured_latency_ms": 12.092383,
+      "measured_latency_std_ms": 0.136923,
+      "abs_pct_error": 1.64119,
+      "accuracy": 18.0556,
+      "num_params": 8555070
+    },
+    {
+      "candidate": "pruned_fused_0p1",
+      "num_operator_calls": 21,
+      "predicted_latency_ms": 13.756271,
+      "measured_latency_ms": 12.38747,
+      "measured_latency_std_ms": 0.331719,
+      "abs_pct_error": 11.049883,
+      "accuracy": 18.0556,
+      "num_params": 8550870
+    },
+    {
+      "candidate": "pruned_int8_0p1",
+      "num_operator_calls": 21,
+      "predicted_latency_ms": 13.756271,
+      "measured_latency_ms": 12.354034,
+      "measured_latency_std_ms": 0.327295,
+      "abs_pct_error": 11.350438,
+      "accuracy": 17.7778,
+      "num_params": 8550870
+    },
+    {
+      "candidate": "pruned_0p2",
+      "num_operator_calls": 21,
+      "predicted_latency_ms": 10.909066,
+      "measured_latency_ms": 10.230746,
+      "measured_latency_std_ms": 0.312709,
+      "abs_pct_error": 6.630211,
+      "accuracy": 17.2222,
+      "num_params": 6286902
+    },
+    {
+      "candidate": "pruned_fused_0p2",
+      "num_operator_calls": 21,
+      "predicted_latency_ms": 11.883603,
+      "measured_latency_ms": 10.420898,
+      "measured_latency_std_ms": 0.325429,
+      "abs_pct_error": 14.036266,
+      "accuracy": 17.2222,
+      "num_params": 6283302
+    },
+    {
+      "candidate": "pruned_int8_0p2",
+      "num_operator_calls": 21,
+      "predicted_latency_ms": 11.883603,
+      "measured_latency_ms": 10.403746,
+      "measured_latency_std_ms": 0.306971,
+      "abs_pct_error": 14.224271,
+      "accuracy": 17.2222,
+      "num_params": 6283302
+    },
+    {
+      "candidate": "pruned_0p3",
+      "num_operator_calls": 21,
+      "predicted_latency_ms": 9.161093,
+      "measured_latency_ms": 8.523984,
+      "measured_latency_std_ms": 0.136122,
+      "abs_pct_error": 7.47431,
+      "accuracy": 17.2222,
+      "num_params": 4367406
+    },
+    {
+      "candidate": "pruned_fused_0p3",
+      "num_operator_calls": 21,
+      "predicted_latency_ms": 10.535266,
+      "measured_latency_ms": 8.664533,
+      "measured_latency_std_ms": 0.086568,
+      "abs_pct_error": 21.590696,
+      "accuracy": 17.2222,
+      "num_params": 4364406
+    },
+    {
+      "candidate": "pruned_int8_0p3",
+      "num_operator_calls": 21,
+      "predicted_latency_ms": 10.535266,
+      "measured_latency_ms": 8.643095,
+      "measured_latency_std_ms": 0.064092,
+      "abs_pct_error": 21.892285,
+      "accuracy": 17.2222,
+      "num_params": 4364406
+    },
+    {
+      "candidate": "pruned_0p4",
+      "num_operator_calls": 21,
+      "predicted_latency_ms": 6.947495,
+      "measured_latency_ms": 6.022202,
+      "measured_latency_std_ms": 0.387979,
+      "abs_pct_error": 15.364696,
+      "accuracy": 17.2222,
+      "num_params": 2796582
+    },
+    {
+      "candidate": "pruned_fused_0p4",
+      "num_operator_calls": 21,
+      "predicted_latency_ms": 7.916703,
+      "measured_latency_ms": 6.105917,
+      "measured_latency_std_ms": 0.09134,
+      "abs_pct_error": 29.65625,
+      "accuracy": 17.2222,
+      "num_params": 2794182
+    },
+    {
+      "candidate": "pruned_int8_0p4",
+      "num_operator_calls": 21,
+      "predicted_latency_ms": 7.916703,
+      "measured_latency_ms": 6.093971,
+      "measured_latency_std_ms": 0.084917,
+      "abs_pct_error": 29.910415,
+      "accuracy": 17.2222,
+      "num_params": 2794182
+    },
+    {
+      "candidate": "pruned_0p5",
+      "num_operator_calls": 21,
+      "predicted_latency_ms": 6.947495,
+      "measured_latency_ms": 6.08478,
+      "measured_latency_std_ms": 0.445458,
+      "abs_pct_error": 14.178245,
+      "accuracy": 17.2222,
+      "num_params": 2796582
+    },
+    {
+      "candidate": "pruned_fused_0p5",
+      "num_operator_calls": 21,
+      "predicted_latency_ms": 7.916703,
+      "measured_latency_ms": 6.24417,
+      "measured_latency_std_ms": 0.934828,
+      "abs_pct_error": 26.785514,
+      "accuracy": 17.2222,
+      "num_params": 2794182
+    },
+    {
+      "candidate": "pruned_int8_0p5",
+      "num_operator_calls": 21,
+      "predicted_latency_ms": 7.916703,
+      "measured_latency_ms": 6.130061,
+      "measured_latency_std_ms": 0.266843,
+      "abs_pct_error": 29.145583,
+      "accuracy": 17.2222,
+      "num_params": 2794182
+    },
+    {
+      "candidate": "pruned_0p6",
+      "num_operator_calls": 21,
+      "predicted_latency_ms": 5.388774,
+      "measured_latency_ms": 4.549187,
+      "measured_latency_std_ms": 0.423891,
+      "abs_pct_error": 18.455759,
+      "accuracy": 17.2222,
+      "num_params": 1574430
+    },
+    {
+      "candidate": "pruned_fused_0p6",
+      "num_operator_calls": 21,
+      "predicted_latency_ms": 6.254723,
+      "measured_latency_ms": 4.414924,
+      "measured_latency_std_ms": 0.304996,
+      "abs_pct_error": 41.672269,
+      "accuracy": 17.2222,
+      "num_params": 1572630
+    },
+    {
+      "candidate": "pruned_int8_0p6",
+      "num_operator_calls": 21,
+      "predicted_latency_ms": 6.254723,
+      "measured_latency_ms": 4.375051,
+      "measured_latency_std_ms": 0.240824,
+      "abs_pct_error": 42.963431,
+      "accuracy": 17.2222,
+      "num_params": 1572630
+    }
+  ]
+}

@@ -1,0 +1,134 @@
+======================================================================
+HAD-MC 2.0 Complete Experiment Suite
+======================================================================
+Device: cuda
+GPU: K500SM_AI
+CUDA: None
+Memory: 68.7 GB
+PyTorch: 2.9.0
+Platform Tag: dcu
+  Supplementary run metadata saved to: /root/HAD-MC-worktree/r3_revision/results/tpds_full_dcu_detached2/RUN_METADATA.json
+
+======================================================================
+SUPPLEMENTARY EXPERIMENT 1: Multi-Seed Variance
+======================================================================
+
+[Variance] Seed 11 (1/5)
+
+[Dataset] Creating NEU-DET style dataset: 300×6 samples, 64×64
+  Train: torch.Size([1440, 3, 64, 64]), Test: torch.Size([360, 3, 64, 64])
+  Classes: [0, 1, 2, 3, 4, 5]
+  Epoch 5/40: loss=0.0238, acc=99.38%
+  Epoch 10/40: loss=0.0036, acc=100.00%
+  Epoch 15/40: loss=0.0028, acc=100.00%
+  Epoch 20/40: loss=0.0041, acc=99.93%
+  Epoch 25/40: loss=0.0020, acc=100.00%
+  Epoch 30/40: loss=0.0012, acc=100.00%
+  Epoch 35/40: loss=0.0032, acc=99.93%
+  Epoch 40/40: loss=0.0018, acc=100.00%
+    Distill Epoch 5/25: loss=0.2308, acc=99.72%
+    Distill Epoch 10/25: loss=0.1623, acc=99.93%
+    Distill Epoch 15/25: loss=0.1979, acc=99.72%
+    Distill Epoch 20/25: loss=0.1427, acc=99.93%
+    Distill Epoch 25/25: loss=0.1132, acc=99.93%
+
+[Variance] Seed 22 (2/5)
+
+[Dataset] Creating NEU-DET style dataset: 300×6 samples, 64×64
+  Train: torch.Size([1440, 3, 64, 64]), Test: torch.Size([360, 3, 64, 64])
+  Classes: [0, 1, 2, 3, 4, 5]
+  Epoch 5/40: loss=0.0124, acc=99.93%
+  Epoch 10/40: loss=0.0034, acc=100.00%
+  Epoch 15/40: loss=0.0036, acc=100.00%
+  Epoch 20/40: loss=0.0018, acc=100.00%
+  Epoch 25/40: loss=0.0028, acc=99.86%
+  Epoch 30/40: loss=0.0010, acc=100.00%
+  Epoch 35/40: loss=0.0022, acc=100.00%
+  Epoch 40/40: loss=0.0015, acc=100.00%
+    Distill Epoch 5/25: loss=0.2972, acc=99.65%
+    Distill Epoch 10/25: loss=0.1778, acc=100.00%
+    Distill Epoch 15/25: loss=0.1494, acc=100.00%
+    Distill Epoch 20/25: loss=0.1108, acc=100.00%
+    Distill Epoch 25/25: loss=0.1161, acc=100.00%
+
+[Variance] Seed 33 (3/5)
+
+[Dataset] Creating NEU-DET style dataset: 300×6 samples, 64×64
+  Train: torch.Size([1440, 3, 64, 64]), Test: torch.Size([360, 3, 64, 64])
+  Classes: [0, 1, 2, 3, 4, 5]
+  Epoch 5/40: loss=0.0133, acc=99.86%
+  Epoch 10/40: loss=0.0030, acc=100.00%
+  Epoch 15/40: loss=0.0023, acc=99.93%
+  Epoch 20/40: loss=0.0049, acc=99.93%
+  Epoch 25/40: loss=0.0015, acc=100.00%
+  Epoch 30/40: loss=0.0011, acc=100.00%
+  Epoch 35/40: loss=0.0011, acc=100.00%
+  Epoch 40/40: loss=0.0011, acc=100.00%
+    Distill Epoch 5/25: loss=0.2586, acc=99.65%
+    Distill Epoch 10/25: loss=0.2629, acc=99.93%
+    Distill Epoch 15/25: loss=0.1020, acc=100.00%
+    Distill Epoch 20/25: loss=0.1036, acc=100.00%
+    Distill Epoch 25/25: loss=0.1086, acc=100.00%
+
+[Variance] Seed 44 (4/5)
+
+[Dataset] Creating NEU-DET style dataset: 300×6 samples, 64×64
+  Train: torch.Size([1440, 3, 64, 64]), Test: torch.Size([360, 3, 64, 64])
+  Classes: [0, 1, 2, 3, 4, 5]
+  Epoch 5/40: loss=0.0170, acc=99.58%
+  Epoch 10/40: loss=0.0037, acc=100.00%
+  Epoch 15/40: loss=0.0027, acc=100.00%
+  Epoch 20/40: loss=0.0017, acc=100.00%
+  Epoch 25/40: loss=0.0019, acc=100.00%
+  Epoch 30/40: loss=0.0014, acc=100.00%
+  Epoch 35/40: loss=0.0016, acc=100.00%
+  Epoch 40/40: loss=0.0011, acc=100.00%
+    Distill Epoch 5/25: loss=0.2870, acc=99.79%
+    Distill Epoch 10/25: loss=0.1805, acc=99.93%
+    Distill Epoch 15/25: loss=0.1805, acc=99.86%
+    Distill Epoch 20/25: loss=0.1016, acc=100.00%
+    Distill Epoch 25/25: loss=0.1152, acc=100.00%
+
+[Variance] Seed 55 (5/5)
+
+[Dataset] Creating NEU-DET style dataset: 300×6 samples, 64×64
+  Train: torch.Size([1440, 3, 64, 64]), Test: torch.Size([360, 3, 64, 64])
+  Classes: [0, 1, 2, 3, 4, 5]
+  Epoch 5/40: loss=0.0088, acc=99.86%
+  Epoch 10/40: loss=0.0049, acc=99.93%
+  Epoch 15/40: loss=0.0019, acc=100.00%
+  Epoch 20/40: loss=0.0020, acc=100.00%
+  Epoch 25/40: loss=0.0009, acc=100.00%
+  Epoch 30/40: loss=0.0013, acc=100.00%
+  Epoch 35/40: loss=0.0009, acc=100.00%
+  Epoch 40/40: loss=0.0011, acc=100.00%
+    Distill Epoch 5/25: loss=0.3040, acc=99.58%
+    Distill Epoch 10/25: loss=0.2186, acc=99.93%
+    Distill Epoch 15/25: loss=0.1596, acc=100.00%
+    Distill Epoch 20/25: loss=0.1356, acc=100.00%
+    Distill Epoch 25/25: loss=0.1355, acc=100.00%
+
+======================================================================
+SUPPLEMENTARY EXPERIMENT 2: Compression vs Deployment Decomposition
+======================================================================
+
+[Dataset] Creating NEU-DET style dataset: 300×6 samples, 64×64
+  Train: torch.Size([1440, 3, 64, 64]), Test: torch.Size([360, 3, 64, 64])
+  Classes: [0, 1, 2, 3, 4, 5]
+
+======================================================================
+SUPPLEMENTARY EXPERIMENT 3: Whole-Model LUT Validation
+======================================================================
+
+[Dataset] Creating NEU-DET style dataset: 300×6 samples, 64×64
+  Train: torch.Size([1440, 3, 64, 64]), Test: torch.Size([360, 3, 64, 64])
+  Classes: [0, 1, 2, 3, 4, 5]
+
+======================================================================
+SUPPLEMENTARY EXPERIMENT 4: Public Benchmark
+======================================================================
+
+======================================================================
+TPDS supplementary experiments completed
+Results saved to: /root/HAD-MC-worktree/r3_revision/results/tpds_full_dcu_detached2/TPDS_SUPPLEMENTARY_RESULTS.json
+======================================================================

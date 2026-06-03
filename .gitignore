@@ -55,6 +55,9 @@ logs/
 results/*.json
 results/*.csv
 results/*.png
+r3_revision/results/**
+experiments/results/**
+experiments_r3/results/**
 
 # Data (keep structure, ignore content)
 data/financial/*.npy

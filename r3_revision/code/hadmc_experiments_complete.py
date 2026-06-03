@@ -19,6 +19,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 from torch.utils.data import DataLoader, TensorDataset, random_split
+import argparse
 import numpy as np
 import json
 import os
@@ -36,7 +37,51 @@ print("=" * 70)
 print("HAD-MC 2.0 Complete Experiment Suite")
 print("=" * 70)
 
+
+def parse_args(argv=None, strict=None):
+    parser = argparse.ArgumentParser(
+        description="HAD-MC 2.0 complete experiment suite with dual-platform output control"
+    )
+    parser.add_argument(
+        "--results-dir",
+        default=os.environ.get(
+            "HADMC_RESULTS_DIR",
+            os.path.expanduser("~/HAD-MC/experiments_r3/results_final")
+        ),
+        help="Directory used to store models, metadata, and JSON results",
+    )
+    parser.add_argument(
+        "--platform-tag",
+        default=os.environ.get("HADMC_PLATFORM_TAG"),
+        help="Logical platform label such as gpu, v100, a100, or dcu",
+    )
+    parser.add_argument(
+        "--allow-missing-financial",
+        action="store_true",
+        default=os.environ.get("HADMC_ALLOW_MISSING_FINANCIAL", "0") == "1",
+        help="Skip the proprietary financial cross-dataset experiment when the data files are unavailable",
+    )
+    if strict is None:
+        strict = __name__ == '__main__'
+    if strict:
+        return parser.parse_args(argv)
+    args, _ = parser.parse_known_args(argv)
+    return args
+
+
+ARGS = parse_args(strict=False)
+
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
+if ARGS.platform_tag:
+    PLATFORM_TAG = ARGS.platform_tag
+elif getattr(torch.version, 'hip', None):
+    PLATFORM_TAG = 'dcu'
+elif torch.cuda.is_available():
+    PLATFORM_TAG = 'gpu'
+else:
+    PLATFORM_TAG = 'cpu'
+
 print(f"Device: {device}")
 if torch.cuda.is_available():
     print(f"GPU: {torch.cuda.get_device_name(0)}")
@@ -44,17 +89,45 @@ if torch.cuda.is_available():
     print(f"Memory: {torch.cuda.get_device_properties(0).total_memory / 1e9:.1f} GB")
     torch.cuda.empty_cache()
 print(f"PyTorch: {torch.__version__}")
+print(f"Platform Tag: {PLATFORM_TAG}")
 
-torch.manual_seed(42)
-np.random.seed(42)
-if torch.cuda.is_available():
-    torch.cuda.manual_seed_all(42)
-    torch.backends.cudnn.deterministic = True
-    torch.backends.cudnn.benchmark = False
+def set_global_seed(seed):
+    torch.manual_seed(seed)
+    np.random.seed(seed)
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed_all(seed)
+        torch.backends.cudnn.deterministic = True
+        torch.backends.cudnn.benchmark = False
 
-RESULTS_DIR = os.path.expanduser('~/HAD-MC/experiments_r3/results_final')
+
+set_global_seed(42)
+
+RESULTS_DIR = os.path.abspath(os.path.expanduser(ARGS.results_dir))
 MODELS_DIR = os.path.join(RESULTS_DIR, 'models')
 os.makedirs(MODELS_DIR, exist_ok=True)
+
+
+def write_run_metadata(metadata):
+    metadata_path = os.path.join(RESULTS_DIR, 'RUN_METADATA.json')
+    with open(metadata_path, 'w') as f:
+        json.dump(metadata, f, indent=2)
+    print(f"  Run metadata saved to: {metadata_path}")
+
+
+def clean_for_json(obj):
+    if isinstance(obj, dict):
+        return {k: clean_for_json(v) for k, v in obj.items()}
+    if isinstance(obj, list):
+        return [clean_for_json(v) for v in obj]
+    if isinstance(obj, (np.integer,)):
+        return int(obj)
+    if isinstance(obj, (np.floating,)):
+        return float(obj)
+    if isinstance(obj, np.ndarray):
+        return obj.tolist()
+    if isinstance(obj, torch.Tensor):
+        return obj.tolist()
+    return obj
 
 # ============================================================
 # 1. Dataset Generation - NEU-DET Style (6-class defect detection)
@@ -432,11 +505,31 @@ def get_conv_layers(model):
     return conv_layers
 
 
-def compute_channel_importance(conv_layer):
-    """Compute L1-norm based channel importance."""
+def compute_channel_importance(conv_layer, metric='l1', bn_layer=None):
+    """Compute channel importance with a configurable metric.
+
+    Supported metrics:
+      - 'l1'      : L1-norm of weight per output channel (default)
+      - 'l2'      : L2-norm of weight per output channel
+      - 'bn_gamma': absolute value of the following BN's gamma (scale)
+      - 'geomean' : sqrt(l1 * |bn_gamma|) when bn_layer is provided, else falls back to l1
+    """
     weight = conv_layer.weight.data
-    # L1-norm of each output channel
-    importance = weight.abs().sum(dim=(1, 2, 3))
+    if metric == 'l2':
+        importance = (weight ** 2).sum(dim=(1, 2, 3)).sqrt()
+    elif metric == 'bn_gamma':
+        if bn_layer is None:
+            importance = weight.abs().sum(dim=(1, 2, 3))
+        else:
+            importance = bn_layer.weight.data.abs()
+    elif metric == 'geomean':
+        l1 = weight.abs().sum(dim=(1, 2, 3))
+        if bn_layer is None:
+            importance = l1
+        else:
+            importance = (l1 * bn_layer.weight.data.abs()).sqrt()
+    else:
+        importance = weight.abs().sum(dim=(1, 2, 3))
     return importance
 
 
@@ -477,30 +570,122 @@ def structural_prune_resnet(model, prune_ratio=0.5):
     return new_model
 
 
-def smart_structural_prune(model, prune_ratio=0.5):
-    """
-    Smart structural pruning that preserves important channels.
-    Returns a new, genuinely smaller model.
+def smart_structural_prune(model, prune_ratio=0.5, importance_metric='l1'):
+    """Structurally prune a ResNet18Small and TRANSFER WEIGHTS for every layer.
+
+    Unlike the previous version (which only transferred conv1/bn1 and left layer1-4
+    Kaiming-initialised), this implementation:
+      * Selects per-stage Top-k output channel indices via the chosen importance
+        metric, aggregated across all conv layers that produce that stage's output
+        (so the residual addition stays consistent).
+      * Copies conv weights with both output-channel slicing (kept channels) and
+        input-channel slicing (matching the previous stage's kept channels).
+      * Copies BN weight/bias/running stats with the same indices.
+      * Copies downsample 1x1 conv + BN for layer2/3/4.
+      * Slices fc input columns by stage-4 indices.
+
+    Args:
+      model: a ResNet18Small instance.
+      prune_ratio: target fraction of channels to remove per stage.
+      importance_metric: passed to compute_channel_importance ('l1' | 'l2' |
+        'bn_gamma' | 'geomean'). Different SOTA baselines pick different metrics.
     """
     num_classes = model.fc.out_features
     original_base = model.conv1.out_channels
-    pruned_base = max(16, int(original_base * (1 - prune_ratio)))
-    pruned_base = (pruned_base // 8) * 8  # Round to multiple of 8
+    pruned_base = max(8, int(original_base * (1 - prune_ratio)))
+    pruned_base = max(8, (pruned_base // 8) * 8)  # multiple of 8
 
     new_model = ResNet18Small(num_classes=num_classes, base_width=pruned_base)
 
-    # Transfer knowledge: copy weights from most important channels
-    with torch.no_grad():
-        # Conv1
-        importance = compute_channel_importance(model.conv1)
-        _, top_idx = importance.topk(pruned_base)
-        top_idx = top_idx.sort()[0]
-        new_model.conv1.weight.data.copy_(model.conv1.weight.data[top_idx])
-        new_model.bn1.weight.data.copy_(model.bn1.weight.data[top_idx])
-        new_model.bn1.bias.data.copy_(model.bn1.bias.data[top_idx])
-        new_model.bn1.running_mean.data.copy_(model.bn1.running_mean.data[top_idx])
-        new_model.bn1.running_var.data.copy_(model.bn1.running_var.data[top_idx])
+    stage_widths_old = [original_base, original_base, original_base * 2,
+                        original_base * 4, original_base * 8]
+    stage_widths_new = [pruned_base, pruned_base, pruned_base * 2,
+                        pruned_base * 4, pruned_base * 8]
 
+    layers_old = [model.layer1, model.layer2, model.layer3, model.layer4]
+    layers_new = [new_model.layer1, new_model.layer2, new_model.layer3, new_model.layer4]
+
+    def stage_output_modules(stage_idx):
+        """Return list of (conv, bn) pairs whose output defines the stage's channels."""
+        if stage_idx == 0:
+            return [(model.conv1, model.bn1)]
+        pairs = []
+        layer = layers_old[stage_idx - 1]
+        for block in layer:
+            pairs.append((block.conv2, block.bn2))
+            if block.downsample is not None:
+                pairs.append((block.downsample[0], block.downsample[1]))
+        return pairs
+
+    def aggregate_importance(pairs, k, metric):
+        total = None
+        for conv, bn in pairs:
+            imp = compute_channel_importance(conv, metric=metric, bn_layer=bn)
+            total = imp.clone() if total is None else total + imp
+        _, idx = total.topk(k)
+        return idx.sort()[0]
+
+    def copy_conv(new_conv, old_conv, out_idx, in_idx):
+        w = old_conv.weight.data.index_select(0, out_idx).index_select(1, in_idx)
+        new_conv.weight.data.copy_(w)
+        if old_conv.bias is not None and new_conv.bias is not None:
+            new_conv.bias.data.copy_(old_conv.bias.data.index_select(0, out_idx))
+
+    def copy_bn(new_bn, old_bn, idx):
+        new_bn.weight.data.copy_(old_bn.weight.data.index_select(0, idx))
+        new_bn.bias.data.copy_(old_bn.bias.data.index_select(0, idx))
+        new_bn.running_mean.data.copy_(old_bn.running_mean.data.index_select(0, idx))
+        new_bn.running_var.data.copy_(old_bn.running_var.data.index_select(0, idx))
+        new_bn.num_batches_tracked.data.copy_(old_bn.num_batches_tracked.data)
+
+    with torch.no_grad():
+        # Move the new (target) model to the same device as the source for safe
+        # tensor copies, then we let the caller re-place it as needed.
+        src_device = model.conv1.weight.device
+        new_model = new_model.to(src_device)
+
+        # Per-stage selected output channel indices (live on src_device)
+        stage_indices = [
+            aggregate_importance(stage_output_modules(s), stage_widths_new[s], importance_metric)
+            for s in range(5)
+        ]
+
+        # Stage 0: stem conv1 + bn1 (in = 3 RGB channels, kept entirely)
+        in_idx_prev = torch.arange(3, device=src_device)
+        copy_conv(new_model.conv1, model.conv1, stage_indices[0], in_idx_prev)
+        copy_bn(new_model.bn1, model.bn1, stage_indices[0])
+
+        in_idx_stage = stage_indices[0]
+        for s_i, (layer_old, layer_new) in enumerate(zip(layers_old, layers_new), start=1):
+            out_idx_stage = stage_indices[s_i]
+            for b_i, (block_old, block_new) in enumerate(zip(layer_old, layer_new)):
+                # First block of a stage takes the previous stage's kept channels as input;
+                # subsequent blocks of the same stage feed the stage's own output back in.
+                in_idx_block = in_idx_stage if b_i == 0 else out_idx_stage
+                # Block conv1: in_block -> stage_out
+                copy_conv(block_new.conv1, block_old.conv1, out_idx_stage, in_idx_block)
+                copy_bn(block_new.bn1, block_old.bn1, out_idx_stage)
+                # Block conv2: stage_out -> stage_out
+                copy_conv(block_new.conv2, block_old.conv2, out_idx_stage, out_idx_stage)
+                copy_bn(block_new.bn2, block_old.bn2, out_idx_stage)
+                # Optional downsample 1x1 conv + BN (only on first block of layer2/3/4)
+                if block_old.downsample is not None and block_new.downsample is not None:
+                    copy_conv(block_new.downsample[0], block_old.downsample[0],
+                              out_idx_stage, in_idx_block)
+                    copy_bn(block_new.downsample[1], block_old.downsample[1], out_idx_stage)
+            in_idx_stage = out_idx_stage
+
+        # fc: rows are class scores (kept entirely), columns are stage-4 indices
+        new_model.fc.weight.data.copy_(model.fc.weight.data.index_select(1, in_idx_stage))
+        new_model.fc.bias.data.copy_(model.fc.bias.data)
+
+    new_model._pruning_info = {
+        'importance_metric': importance_metric,
+        'stage_widths_old': stage_widths_old,
+        'stage_widths_new': stage_widths_new,
+        'target_prune_ratio': prune_ratio,
+        'weight_transfer': 'full_all_layers',
+    }
     return new_model
 
 
@@ -563,13 +748,20 @@ def distill_model(teacher, student, train_loader, num_epochs=20, temperature=4.0
 # 6. Simulated INT8 Quantization (with real weight transformation)
 # ============================================================
 def quantize_model_int8(model):
-    """
-    Apply simulated INT8 quantization to all Conv2d and Linear layers.
-    This quantizes weights to INT8 range and dequantizes back,
-    simulating the accuracy impact of INT8 deployment.
-    The model size is reported as 1/4 of FP32 (INT8 = 1 byte vs 4 bytes).
+    """Simulated (fake) INT8 quantization.
+
+    IMPORTANT honesty note: this routine does NOT replace kernels with real
+    INT8 ones. It only round-trips each Conv2d/Linear weight tensor through an
+    8-bit grid and writes the dequantized FP32 values back. As a result:
+      * Accuracy degradation from 8-bit weight precision IS measured.
+      * Inference latency does NOT change (FP32 kernels still run).
+      * Reported model_size_mb / 4 is an analytic estimate, not a measurement.
+
+    The returned model has model._quantization_info set so downstream code can
+    report this faithfully.
     """
     model = copy.deepcopy(model)
+    n_layers = 0
     with torch.no_grad():
         for name, module in model.named_modules():
             if isinstance(module, (nn.Conv2d, nn.Linear)):
@@ -581,6 +773,15 @@ def quantize_model_int8(model):
                     w_q = torch.clamp(torch.round(w / scale) + zp, 0, 255)
                     w_dq = (w_q - zp) * scale
                     module.weight.data.copy_(w_dq)
+                    n_layers += 1
+    model._quantization_info = {
+        'mode': 'fake_int8_per_tensor_weight_only',
+        'is_simulated': True,
+        'kernels_are_int8': False,
+        'latency_reflects_int8': False,
+        'size_mb_is_analytic': True,
+        'quantized_layers': n_layers,
+    }
     return model
 
 
@@ -675,37 +876,41 @@ def hadmc2_compress(teacher_model, train_loader, test_loader, prune_ratio=0.5, n
 # 9. SOTA Baseline Implementations
 # ============================================================
 def amc_compress(model, train_loader, prune_ratio=0.5, num_classes=6):
+    """AMC-style baseline: L1-norm channel pruning + fine-tune, no KD.
+
+    Differentiator: L1-norm channel importance (the AMC paper's reward is
+    accuracy-driven; here we use L1 as the structural surrogate). No INT8 step.
     """
-    AMC (AutoML for Model Compression) baseline.
-    Uses uniform pruning ratio across all layers (simplified AMC).
-    No knowledge distillation, only fine-tuning.
-    """
-    pruned = smart_structural_prune(model, prune_ratio=prune_ratio)
-    # AMC: fine-tune only, no distillation
+    pruned = smart_structural_prune(model, prune_ratio=prune_ratio, importance_metric='l1')
     pruned, _, _ = train_model(pruned, train_loader, num_epochs=30, lr=0.01, verbose=False)
+    pruned._compression_method = 'amc_simplified_l1_no_kd'
     return pruned
 
 
 def haq_compress(model, train_loader, prune_ratio=0.3, num_classes=6):
+    """HAQ-style baseline: light L2-norm pruning + simulated INT8 quantization.
+
+    Differentiator: L2-norm importance metric and lower target prune ratio,
+    followed by the simulated INT8 step (HAQ's signature is hardware-aware
+    quantization; here we use the same fake-quant path but flag it honestly).
     """
-    HAQ (Hardware-Aware Automated Quantization) baseline.
-    Mixed-precision quantization + light pruning.
-    """
-    # Light pruning
-    pruned = smart_structural_prune(model, prune_ratio=prune_ratio)
+    pruned = smart_structural_prune(model, prune_ratio=prune_ratio, importance_metric='l2')
     pruned, _, _ = train_model(pruned, train_loader, num_epochs=25, lr=0.01, verbose=False)
-    # INT8 quantization
     quantized = quantize_model_int8(pruned)
+    quantized._compression_method = 'haq_simplified_l2_plus_sim_int8'
     return quantized
 
 
 def decore_compress(model, train_loader, prune_ratio=0.4, num_classes=6):
+    """DECORE-style baseline: BN-gamma channel selection + fine-tune.
+
+    Differentiator: BN-gamma based channel importance (decoupling magnitude
+    from raw conv weight), no INT8 step. This is the most distinct of the three
+    baselines in terms of selection criterion.
     """
-    DECORE (DECoupled ORE) baseline.
-    Decoupled pruning + fine-tuning.
-    """
-    pruned = smart_structural_prune(model, prune_ratio=prune_ratio)
+    pruned = smart_structural_prune(model, prune_ratio=prune_ratio, importance_metric='bn_gamma')
     pruned, _, _ = train_model(pruned, train_loader, num_epochs=30, lr=0.008, verbose=False)
+    pruned._compression_method = 'decore_simplified_bn_gamma_no_kd'
     return pruned
 
 
@@ -920,13 +1125,19 @@ def run_all_experiments():
     all_results = {
         'metadata': {
             'timestamp': datetime.now().isoformat(),
+            'platform_tag': PLATFORM_TAG,
+            'results_dir': RESULTS_DIR,
             'device': str(device),
             'gpu': torch.cuda.get_device_name(0) if torch.cuda.is_available() else 'CPU',
             'cuda': torch.version.cuda if torch.cuda.is_available() else None,
+            'hip': getattr(torch.version, 'hip', None),
             'pytorch': torch.__version__,
             'seed': 42,
+            'allow_missing_financial': bool(ARGS.allow_missing_financial),
         }
     }
+
+    write_run_metadata(all_results['metadata'])
 
     # ================================================================
     # Experiment 1: NEU-DET Baseline + HAD-MC 2.0 Compression
@@ -1141,28 +1352,38 @@ def run_all_experiments():
 
     # 5a. Financial dataset
     print("\n  [Cross-Dataset] Financial Fraud Detection...")
-    fin_X_train, fin_y_train, fin_X_test, fin_y_test = create_financial_dataset()
-    fin_train_ds = TensorDataset(fin_X_train, fin_y_train)
-    fin_test_ds = TensorDataset(fin_X_test, fin_y_test)
-    fin_train_loader = DataLoader(fin_train_ds, batch_size=128, shuffle=True)
-    fin_test_loader = DataLoader(fin_test_ds, batch_size=128, shuffle=False)
+    try:
+        fin_X_train, fin_y_train, fin_X_test, fin_y_test = create_financial_dataset()
+        fin_train_ds = TensorDataset(fin_X_train, fin_y_train)
+        fin_test_ds = TensorDataset(fin_X_test, fin_y_test)
+        fin_train_loader = DataLoader(fin_train_ds, batch_size=128, shuffle=True)
+        fin_test_loader = DataLoader(fin_test_ds, batch_size=128, shuffle=False)
 
-    fin_baseline = FinancialMLP(input_dim=32, num_classes=2)
-    fin_baseline, _, _ = train_model(fin_baseline, fin_train_loader, num_epochs=30, lr=0.01)
-    fin_base_results = evaluate_model(fin_baseline, fin_test_loader)
+        fin_baseline = FinancialMLP(input_dim=32, num_classes=2)
+        fin_baseline, _, _ = train_model(fin_baseline, fin_train_loader, num_epochs=30, lr=0.01)
+        fin_base_results = evaluate_model(fin_baseline, fin_test_loader)
 
-    # Compress financial model
-    fin_compressed = FinancialMLP(input_dim=32, hidden_dims=[128, 64, 32], num_classes=2)
-    fin_compressed, _ = distill_model(fin_baseline, fin_compressed, fin_train_loader, num_epochs=20)
-    fin_comp_results = evaluate_model(fin_compressed, fin_test_loader)
+        # Compress financial model
+        fin_compressed = FinancialMLP(input_dim=32, hidden_dims=[128, 64, 32], num_classes=2)
+        fin_compressed, _ = distill_model(fin_baseline, fin_compressed, fin_train_loader, num_epochs=20)
+        fin_comp_results = evaluate_model(fin_compressed, fin_test_loader)
 
-    cross_dataset_results['financial'] = {
-        'baseline': fin_base_results,
-        'compressed': fin_comp_results,
-        'compression_ratio': 1.0 - fin_comp_results['num_params'] / fin_base_results['num_params'],
-    }
-    print(f"  Financial: baseline_acc={fin_base_results['accuracy']:.2f}%, "
-          f"compressed_acc={fin_comp_results['accuracy']:.2f}%")
+        cross_dataset_results['financial'] = {
+            'baseline': fin_base_results,
+            'compressed': fin_comp_results,
+            'compression_ratio': 1.0 - fin_comp_results['num_params'] / fin_base_results['num_params'],
+        }
+        print(f"  Financial: baseline_acc={fin_base_results['accuracy']:.2f}%, "
+              f"compressed_acc={fin_comp_results['accuracy']:.2f}%")
+    except Exception as exc:
+        if ARGS.allow_missing_financial:
+            cross_dataset_results['financial'] = {
+                'skipped': True,
+                'reason': str(exc),
+            }
+            print(f"  Financial: skipped ({exc})")
+        else:
+            raise
 
     # 5b. Fire-Smoke dataset
     print("\n  [Cross-Dataset] Fire-Smoke Detection...")
@@ -1240,19 +1461,27 @@ def run_all_experiments():
         }
         print(f"  Batch {bs}: latency={np.mean(lats):.4f}ms, throughput={bs*1000.0/np.mean(lats):.1f} FPS")
 
-    # Simulated cross-platform latency (based on known hardware specs)
-    # A100 = 1.0x, Jetson Orin = ~5x slower, Ascend 310 = ~3x, Hygon DCU = ~4x
+    # SIMULATED cross-platform latency (NOT measured on the listed devices).
+    # Factors below are hardware-spec heuristics, used ONLY as illustration.
+    # Real cross-platform numbers must come from running this same script on
+    # each target (e.g., DCU via run_full_experiment_dcu.sh, V100 via the GPU
+    # wrapper). Do NOT report these factor-based numbers as measurements.
     a100_lat = platform_results['batch_1']['latency_ms']
+    SIM_DISCLAIMER = (
+        'Heuristic scaling from A100 single-batch latency. Not a measurement. '
+        'Replace with real on-device runs before citing in any publication.'
+    )
     simulated_platforms = {
-        'NVIDIA_A100': {'latency_ms': a100_lat, 'factor': 1.0, 'power_w': 250},
-        'NVIDIA_Jetson_Orin': {'latency_ms': round(a100_lat * 5.2, 4), 'factor': 5.2, 'power_w': 15},
-        'Huawei_Ascend_310': {'latency_ms': round(a100_lat * 3.1, 4), 'factor': 3.1, 'power_w': 8},
-        'Hygon_DCU': {'latency_ms': round(a100_lat * 4.0, 4), 'factor': 4.0, 'power_w': 150},
+        'NVIDIA_A100':         {'latency_ms': a100_lat,                  'factor': 1.0, 'power_w': 250, 'is_simulated': False, 'note': 'Measured on the current platform if device==cuda'},
+        'NVIDIA_Jetson_Orin':  {'latency_ms': round(a100_lat * 5.2, 4),  'factor': 5.2, 'power_w': 15,  'is_simulated': True,  'note': SIM_DISCLAIMER},
+        'Huawei_Ascend_310':   {'latency_ms': round(a100_lat * 3.1, 4),  'factor': 3.1, 'power_w': 8,   'is_simulated': True,  'note': SIM_DISCLAIMER},
+        'Hygon_DCU':           {'latency_ms': round(a100_lat * 4.0, 4),  'factor': 4.0, 'power_w': 150, 'is_simulated': True,  'note': SIM_DISCLAIMER},
     }
 
     all_results['cross_platform'] = {
         'a100_batch_profiling': platform_results,
-        'cross_platform_latency': simulated_platforms,
+        'cross_platform_latency_simulated': simulated_platforms,
+        'cross_platform_disclaimer': SIM_DISCLAIMER,
     }
 
     # ================================================================
@@ -1316,22 +1545,6 @@ def run_all_experiments():
     print("Saving all results...")
     print("=" * 70)
 
-    # Clean results for JSON serialization
-    def clean_for_json(obj):
-        if isinstance(obj, dict):
-            return {k: clean_for_json(v) for k, v in obj.items()}
-        elif isinstance(obj, list):
-            return [clean_for_json(v) for v in obj]
-        elif isinstance(obj, (np.integer,)):
-            return int(obj)
-        elif isinstance(obj, (np.floating,)):
-            return float(obj)
-        elif isinstance(obj, np.ndarray):
-            return obj.tolist()
-        elif isinstance(obj, torch.Tensor):
-            return obj.tolist()
-        return obj
-
     clean_results = clean_for_json(all_results)
 
     results_path = os.path.join(RESULTS_DIR, 'COMPLETE_EXPERIMENT_RESULTS.json')
@@ -1346,8 +1559,10 @@ def run_all_experiments():
     print("COMPLETE EXPERIMENT SUMMARY")
     print("=" * 70)
 
-    print(f"\n  GPU: {all_results['metadata']['gpu']}")
+    print(f"\n  Platform: {all_results['metadata']['platform_tag']}")
+    print(f"  GPU: {all_results['metadata']['gpu']}")
     print(f"  CUDA: {all_results['metadata']['cuda']}")
+    print(f"  HIP: {all_results['metadata']['hip']}")
     print(f"  PyTorch: {all_results['metadata']['pytorch']}")
 
     print(f"\n  NEU-DET Results:")

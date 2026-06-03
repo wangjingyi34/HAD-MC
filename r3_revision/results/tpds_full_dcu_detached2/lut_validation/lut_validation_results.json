@@ -1,0 +1,9110 @@
+{
+  "reference_seed": 11,
+  "lut_batch_size": 32,
+  "measurement_protocol": {
+    "model_latency": "_measure_model_latency_at_batch with matching lut_batch_size",
+    "operator_latency": "benchmark_signature with batch_size from operator signature",
+    "warmup_iterations": 15,
+    "timed_iterations": 60,
+    "rationale": "At batch=1 on this platform, HIP/CUDA kernel-launch overhead dominates per-operator latency, breaking the additive LUT model. Measuring at a deployment-style batch size lets compute dominate launch overhead so the per-operator additive model becomes physically meaningful."
+  },
+  "summary": {
+    "lut_batch_size": 32,
+    "raw": {
+      "candidate_count": 23,
+      "mape": 18.4237,
+      "median_abs_pct_error": 15.364696,
+      "p95_abs_pct_error": 40.496083,
+      "max_abs_pct_error": 42.963431,
+      "pearson": 0.987203,
+      "spearman": 0.981225
+    },
+    "calibrated_loo": {
+      "candidate_count": 23,
+      "mape": 7.078566,
+      "median_abs_pct_error": 7.560208,
+      "p95_abs_pct_error": 11.176878,
+      "max_abs_pct_error": 15.790865,
+      "pearson": 0.984429,
+      "spearman": 0.968379
+    },
+    "candidate_count": 23,
+    "mape": 18.4237,
+    "median_abs_pct_error": 15.364696,
+    "p95_abs_pct_error": 40.496083,
+    "pearson": 0.987203,
+    "spearman": 0.981225
+  },
+  "calibration": {
+    "method": "affine_per_platform_lut_calibration_loo",
+    "features": [
+      "raw_predicted_ms",
+      "num_operator_calls",
+      "1"
+    ],
+    "full_fit_coefficients": {
+      "alpha_raw_predicted": 1.0347548948615586,
+      "beta_num_ops": -0.07852024825669299,
+      "gamma_intercept": -0.0037390594407949035
+    },
+    "loo_predicted_ms": [
+      13.491478,
+      15.759643,
+      15.761822,
+      5.494505,
+      6.567937,
+      10.996249,
+      12.602594,
+      12.60619,
+      9.606633,
+      10.657323,
+      10.658351,
+      7.792729,
+      9.275883,
+      9.276878,
+      5.493256,
+      6.567537,
+      6.568319,
+      5.487714,
+      6.558489,
+      6.565957,
+      3.830831,
+      4.864446,
+      4.868882
+    ],
+    "note": "Per-candidate prediction comes from a least-squares fit on the other n-1 candidates only; the held-out candidate never influences its own predicted value."
+  },
+  "candidates": [
+    {
+      "candidate": "baseline_fp32",
+      "num_operator_calls": 21,
+      "predicted_latency_ms": 14.82627,
+      "measured_latency_ms": 14.980118,
+      "measured_latency_std_ms": 0.330351,
+      "abs_pct_error": 1.027015,
+      "accuracy": 99.7222,
+      "num_params": 11171910,
+      "raw_abs_pct_error": 1.027015,
+      "calibrated_predicted_ms": 13.491478,
+      "calibrated_abs_pct_error": 9.937438
+    },
+    {
+      "candidate": "baseline_fused",
+      "num_operator_calls": 21,
+      "predicted_latency_ms": 16.721504,
+      "measured_latency_ms": 15.255569,
+      "measured_latency_std_ms": 0.11557,
+      "abs_pct_error": 9.609179,
+      "accuracy": 99.7222,
+      "num_params": 11167110,
+      "raw_abs_pct_error": 9.609179,
+      "calibrated_predicted_ms": 15.759643,
+      "calibrated_abs_pct_error": 3.304197
+    },
+    {
+      "candidate": "baseline_int8",
+      "num_operator_calls": 21,
+      "predicted_latency_ms": 16.721504,
+      "measured_latency_ms": 15.247731,
+      "measured_latency_std_ms": 0.10216,
+      "abs_pct_error": 9.665523,
+      "accuracy": 99.7222,
+      "num_params": 11167110,
+      "raw_abs_pct_error": 9.665523,
+      "calibrated_predicted_ms": 15.761822,
+      "calibrated_abs_pct_error": 3.37159
+    },
+    {
+      "candidate": "reference_compressed",
+      "num_operator_calls": 21,
+      "predicted_latency_ms": 6.947495,
+      "measured_latency_ms": 6.008104,
+      "measured_latency_std_ms": 0.29587,
+      "abs_pct_error": 15.635398,
+      "accuracy": 100.0,
+      "num_params": 2796582,
+      "raw_abs_pct_error": 15.635398,
+      "calibrated_predicted_ms": 5.494505,
+      "calibrated_abs_pct_error": 8.548437
+    },
+    {
+      "candidate": "reference_full_hadmc",
+      "num_operator_calls": 21,
+      "predicted_latency_ms": 7.916703,
+      "measured_latency_ms": 6.0998,
+      "measured_latency_std_ms": 0.127389,
+      "abs_pct_error": 29.786272,
+      "accuracy": 100.0,
+      "num_params": 2794182,
+      "raw_abs_pct_error": 29.786272,
+      "calibrated_predicted_ms": 6.567937,
+      "calibrated_abs_pct_error": 7.674629
+    },
+    {
+      "candidate": "pruned_0p1",
+      "num_operator_calls": 21,
+      "predicted_latency_ms": 12.290842,
+      "measured_latency_ms": 12.092383,
+      "measured_latency_std_ms": 0.136923,
+      "abs_pct_error": 1.64119,
+      "accuracy": 18.0556,
+      "num_params": 8555070,
+      "raw_abs_pct_error": 1.64119,
+      "calibrated_predicted_ms": 10.996249,
+      "calibrated_abs_pct_error": 9.064665
+    },
+    {
+      "candidate": "pruned_fused_0p1",
+      "num_operator_calls": 21,
+      "predicted_latency_ms": 13.756271,
+      "measured_latency_ms": 12.38747,
+      "measured_latency_std_ms": 0.331719,
+      "abs_pct_error": 11.049883,
+      "accuracy": 18.0556,
+      "num_params": 8550870,
+      "raw_abs_pct_error": 11.049883,
+      "calibrated_predicted_ms": 12.602594,
+      "calibrated_abs_pct_error": 1.736626
+    },
+    {
+      "candidate": "pruned_int8_0p1",
+      "num_operator_calls": 21,
+      "predicted_latency_ms": 13.756271,
+      "measured_latency_ms": 12.354034,
+      "measured_latency_std_ms": 0.327295,
+      "abs_pct_error": 11.350438,
+      "accuracy": 17.7778,
+      "num_params": 8550870,
+      "raw_abs_pct_error": 11.350438,
+      "calibrated_predicted_ms": 12.60619,
+      "calibrated_abs_pct_error": 2.041082
+    },
+    {
+      "candidate": "pruned_0p2",
+      "num_operator_calls": 21,
+      "predicted_latency_ms": 10.909066,
+      "measured_latency_ms": 10.230746,
+      "measured_latency_std_ms": 0.312709,
+      "abs_pct_error": 6.630211,
+      "accuracy": 17.2222,
+      "num_params": 6286902,
+      "raw_abs_pct_error": 6.630211,
+      "calibrated_predicted_ms": 9.606633,
+      "calibrated_abs_pct_error": 6.100366
+    },
+    {
+      "candidate": "pruned_fused_0p2",
+      "num_operator_calls": 21,
+      "predicted_latency_ms": 11.883603,
+      "measured_latency_ms": 10.420898,
+      "measured_latency_std_ms": 0.325429,
+      "abs_pct_error": 14.036266,
+      "accuracy": 17.2222,
+      "num_params": 6283302,
+      "raw_abs_pct_error": 14.036266,
+      "calibrated_predicted_ms": 10.657323,
+      "calibrated_abs_pct_error": 2.268758
+    },
+    {
+      "candidate": "pruned_int8_0p2",
+      "num_operator_calls": 21,
+      "predicted_latency_ms": 11.883603,
+      "measured_latency_ms": 10.403746,
+      "measured_latency_std_ms": 0.306971,
+      "abs_pct_error": 14.224271,
+      "accuracy": 17.2222,
+      "num_params": 6283302,
+      "raw_abs_pct_error": 14.224271,
+      "calibrated_predicted_ms": 10.658351,
+      "calibrated_abs_pct_error": 2.447244
+    },
+    {
+      "candidate": "pruned_0p3",
+      "num_operator_calls": 21,
+      "predicted_latency_ms": 9.161093,
+      "measured_latency_ms": 8.523984,
+      "measured_latency_std_ms": 0.136122,
+      "abs_pct_error": 7.47431,
+      "accuracy": 17.2222,
+      "num_params": 4367406,
+      "raw_abs_pct_error": 7.47431,
+      "calibrated_predicted_ms": 7.792729,
+      "calibrated_abs_pct_error": 8.578794
+    },
+    {
+      "candidate": "pruned_fused_0p3",
+      "num_operator_calls": 21,
+      "predicted_latency_ms": 10.535266,
+      "measured_latency_ms": 8.664533,
+      "measured_latency_std_ms": 0.086568,
+      "abs_pct_error": 21.590696,
+      "accuracy": 17.2222,
+      "num_params": 4364406,
+      "raw_abs_pct_error": 21.590696,
+      "calibrated_predicted_ms": 9.275883,
+      "calibrated_abs_pct_error": 7.055776
+    },
+    {
+      "candidate": "pruned_int8_0p3",
+      "num_operator_calls": 21,
+      "predicted_latency_ms": 10.535266,
+      "measured_latency_ms": 8.643095,
+      "measured_latency_std_ms": 0.064092,
+      "abs_pct_error": 21.892285,
+      "accuracy": 17.2222,
+      "num_params": 4364406,
+      "raw_abs_pct_error": 21.892285,
+      "calibrated_predicted_ms": 9.276878,
+      "calibrated_abs_pct_error": 7.332825
+    },
+    {
+      "candidate": "pruned_0p4",
+      "num_operator_calls": 21,
+      "predicted_latency_ms": 6.947495,
+      "measured_latency_ms": 6.022202,
+      "measured_latency_std_ms": 0.387979,
+      "abs_pct_error": 15.364696,
+      "accuracy": 17.2222,
+      "num_params": 2796582,
+      "raw_abs_pct_error": 15.364696,
+      "calibrated_predicted_ms": 5.493256,
+      "calibrated_abs_pct_error": 8.783266
+    },
+    {
+      "candidate": "pruned_fused_0p4",
+      "num_operator_calls": 21,
+      "predicted_latency_ms": 7.916703,
+      "measured_latency_ms": 6.105917,
+      "measured_latency_std_ms": 0.09134,
+      "abs_pct_error": 29.65625,
+      "accuracy": 17.2222,
+      "num_params": 2794182,
+      "raw_abs_pct_error": 29.65625,
+      "calibrated_predicted_ms": 6.567537,
+      "calibrated_abs_pct_error": 7.560208
+    },
+    {
+      "candidate": "pruned_int8_0p4",
+      "num_operator_calls": 21,
+      "predicted_latency_ms": 7.916703,
+      "measured_latency_ms": 6.093971,
+      "measured_latency_std_ms": 0.084917,
+      "abs_pct_error": 29.910415,
+      "accuracy": 17.2222,
+      "num_params": 2794182,
+      "raw_abs_pct_error": 29.910415,
+      "calibrated_predicted_ms": 6.568319,
+      "calibrated_abs_pct_error": 7.78389
+    },
+    {
+      "candidate": "pruned_0p5",
+      "num_operator_calls": 21,
+      "predicted_latency_ms": 6.947495,
+      "measured_latency_ms": 6.08478,
+      "measured_latency_std_ms": 0.445458,
+      "abs_pct_error": 14.178245,
+      "accuracy": 17.2222,
+      "num_params": 2796582,
+      "raw_abs_pct_error": 14.178245,
+      "calibrated_predicted_ms": 5.487714,
+      "calibrated_abs_pct_error": 9.81245
+    },
+    {
+      "candidate": "pruned_fused_0p5",
+      "num_operator_calls": 21,
+      "predicted_latency_ms": 7.916703,
+      "measured_latency_ms": 6.24417,
+      "measured_latency_std_ms": 0.934828,
+      "abs_pct_error": 26.785514,
+      "accuracy": 17.2222,
+      "num_params": 2794182,
+      "raw_abs_pct_error": 26.785514,
+      "calibrated_predicted_ms": 6.558489,
+      "calibrated_abs_pct_error": 5.0338
+    },
+    {
+      "candidate": "pruned_int8_0p5",
+      "num_operator_calls": 21,
+      "predicted_latency_ms": 7.916703,
+      "measured_latency_ms": 6.130061,
+      "measured_latency_std_ms": 0.266843,
+      "abs_pct_error": 29.145583,
+      "accuracy": 17.2222,
+      "num_params": 2794182,
+      "raw_abs_pct_error": 29.145583,
+      "calibrated_predicted_ms": 6.565957,
+      "calibrated_abs_pct_error": 7.110794
+    },
+    {
+      "candidate": "pruned_0p6",
+      "num_operator_calls": 21,
+      "predicted_latency_ms": 5.388774,
+      "measured_latency_ms": 4.549187,
+      "measured_latency_std_ms": 0.423891,
+      "abs_pct_error": 18.455759,
+      "accuracy": 17.2222,
+      "num_params": 1574430,
+      "raw_abs_pct_error": 18.455759,
+      "calibrated_predicted_ms": 3.830831,
+      "calibrated_abs_pct_error": 15.790865
+    },
+    {
+      "candidate": "pruned_fused_0p6",
+      "num_operator_calls": 21,
+      "predicted_latency_ms": 6.254723,
+      "measured_latency_ms": 4.414924,
+      "measured_latency_std_ms": 0.304996,
+      "abs_pct_error": 41.672269,
+      "accuracy": 17.2222,
+      "num_params": 1572630,
+      "raw_abs_pct_error": 41.672269,
+      "calibrated_predicted_ms": 4.864446,
+      "calibrated_abs_pct_error": 10.181874
+    },
+    {
+      "candidate": "pruned_int8_0p6",
+      "num_operator_calls": 21,
+      "predicted_latency_ms": 6.254723,
+      "measured_latency_ms": 4.375051,
+      "measured_latency_std_ms": 0.240824,
+      "abs_pct_error": 42.963431,
+      "accuracy": 17.2222,
+      "num_params": 1572630,
+      "raw_abs_pct_error": 42.963431,
+      "calibrated_predicted_ms": 4.868882,
+      "calibrated_abs_pct_error": 11.287434
+    }
+  ],
+  "operator_lut": [
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "conv1",
+        "batch_size": 32,
+        "input_shape": [
+          64,
+          64
+        ],
+        "in_channels": 3,
+        "out_channels": 64,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.329613,
+        "latency_std_ms": 0.045057,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer1.0.conv1",
+        "batch_size": 32,
+        "input_shape": [
+          64,
+          64
+        ],
+        "in_channels": 64,
+        "out_channels": 64,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.900792,
+        "latency_std_ms": 0.297851,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer1.0.conv2",
+        "batch_size": 32,
+        "input_shape": [
+          64,
+          64
+        ],
+        "in_channels": 64,
+        "out_channels": 64,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.870896,
+        "latency_std_ms": 0.024272,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer1.1.conv1",
+        "batch_size": 32,
+        "input_shape": [
+          64,
+          64
+        ],
+        "in_channels": 64,
+        "out_channels": 64,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.908283,
+        "latency_std_ms": 0.347085,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer1.1.conv2",
+        "batch_size": 32,
+        "input_shape": [
+          64,
+          64
+        ],
+        "in_channels": 64,
+        "out_channels": 64,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.858746,
+        "latency_std_ms": 0.004051,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer2.0.conv1",
+        "batch_size": 32,
+        "input_shape": [
+          64,
+          64
+        ],
+        "in_channels": 64,
+        "out_channels": 128,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          2,
+          2
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.671574,
+        "latency_std_ms": 0.006105,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer2.0.conv2",
+        "batch_size": 32,
+        "input_shape": [
+          32,
+          32
+        ],
+        "in_channels": 128,
+        "out_channels": 128,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.790108,
+        "latency_std_ms": 0.003503,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer2.0.downsample.0",
+        "batch_size": 32,
+        "input_shape": [
+          64,
+          64
+        ],
+        "in_channels": 64,
+        "out_channels": 128,
+        "kernel_size": [
+          1,
+          1
+        ],
+        "stride": [
+          2,
+          2
+        ],
+        "padding": [
+          0,
+          0
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.265781,
+        "latency_std_ms": 0.003886,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer2.1.conv1",
+        "batch_size": 32,
+        "input_shape": [
+          32,
+          32
+        ],
+        "in_channels": 128,
+        "out_channels": 128,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.789435,
+        "latency_std_ms": 0.004823,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer2.1.conv2",
+        "batch_size": 32,
+        "input_shape": [
+          32,
+          32
+        ],
+        "in_channels": 128,
+        "out_channels": 128,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.789127,
+        "latency_std_ms": 0.003859,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer3.0.conv1",
+        "batch_size": 32,
+        "input_shape": [
+          32,
+          32
+        ],
+        "in_channels": 128,
+        "out_channels": 256,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          2,
+          2
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.752027,
+        "latency_std_ms": 0.005319,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer3.0.conv2",
+        "batch_size": 32,
+        "input_shape": [
+          16,
+          16
+        ],
+        "in_channels": 256,
+        "out_channels": 256,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.829904,
+        "latency_std_ms": 0.005199,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer3.0.downsample.0",
+        "batch_size": 32,
+        "input_shape": [
+          32,
+          32
+        ],
+        "in_channels": 128,
+        "out_channels": 256,
+        "kernel_size": [
+          1,
+          1
+        ],
+        "stride": [
+          2,
+          2
+        ],
+        "padding": [
+          0,
+          0
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.208878,
+        "latency_std_ms": 0.004151,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer3.1.conv1",
+        "batch_size": 32,
+        "input_shape": [
+          16,
+          16
+        ],
+        "in_channels": 256,
+        "out_channels": 256,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.867282,
+        "latency_std_ms": 0.262355,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer3.1.conv2",
+        "batch_size": 32,
+        "input_shape": [
+          16,
+          16
+        ],
+        "in_channels": 256,
+        "out_channels": 256,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.829268,
+        "latency_std_ms": 0.004366,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer4.0.conv1",
+        "batch_size": 32,
+        "input_shape": [
+          16,
+          16
+        ],
+        "in_channels": 256,
+        "out_channels": 512,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          2,
+          2
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.958469,
+        "latency_std_ms": 0.0452,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer4.0.conv2",
+        "batch_size": 32,
+        "input_shape": [
+          8,
+          8
+        ],
+        "in_channels": 512,
+        "out_channels": 512,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.944715,
+        "latency_std_ms": 0.029778,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer4.0.downsample.0",
+        "batch_size": 32,
+        "input_shape": [
+          16,
+          16
+        ],
+        "in_channels": 256,
+        "out_channels": 512,
+        "kernel_size": [
+          1,
+          1
+        ],
+        "stride": [
+          2,
+          2
+        ],
+        "padding": [
+          0,
+          0
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.245428,
+        "latency_std_ms": 0.003539,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer4.1.conv1",
+        "batch_size": 32,
+        "input_shape": [
+          8,
+          8
+        ],
+        "in_channels": 512,
+        "out_channels": 512,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.941026,
+        "latency_std_ms": 0.006096,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer4.1.conv2",
+        "batch_size": 32,
+        "input_shape": [
+          8,
+          8
+        ],
+        "in_channels": 512,
+        "out_channels": 512,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.942358,
+        "latency_std_ms": 0.006888,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "linear",
+        "name": "fc",
+        "batch_size": 32,
+        "in_features": 512,
+        "out_features": 6,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.13256,
+        "latency_std_ms": 0.003005,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "conv1",
+        "batch_size": 32,
+        "input_shape": [
+          64,
+          64
+        ],
+        "in_channels": 3,
+        "out_channels": 64,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.497072,
+        "latency_std_ms": 0.035335,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer1.0.conv1",
+        "batch_size": 32,
+        "input_shape": [
+          64,
+          64
+        ],
+        "in_channels": 64,
+        "out_channels": 64,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 1.011875,
+        "latency_std_ms": 0.004513,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer1.0.conv2",
+        "batch_size": 32,
+        "input_shape": [
+          64,
+          64
+        ],
+        "in_channels": 64,
+        "out_channels": 64,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 1.020868,
+        "latency_std_ms": 0.019923,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer1.1.conv1",
+        "batch_size": 32,
+        "input_shape": [
+          64,
+          64
+        ],
+        "in_channels": 64,
+        "out_channels": 64,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 1.016429,
+        "latency_std_ms": 0.008992,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer1.1.conv2",
+        "batch_size": 32,
+        "input_shape": [
+          64,
+          64
+        ],
+        "in_channels": 64,
+        "out_channels": 64,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 1.179995,
+        "latency_std_ms": 0.987886,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer2.0.conv1",
+        "batch_size": 32,
+        "input_shape": [
+          64,
+          64
+        ],
+        "in_channels": 64,
+        "out_channels": 128,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          2,
+          2
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.751661,
+        "latency_std_ms": 0.002727,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer2.0.conv2",
+        "batch_size": 32,
+        "input_shape": [
+          32,
+          32
+        ],
+        "in_channels": 128,
+        "out_channels": 128,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.875582,
+        "latency_std_ms": 0.004418,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer2.0.downsample.0",
+        "batch_size": 32,
+        "input_shape": [
+          64,
+          64
+        ],
+        "in_channels": 64,
+        "out_channels": 128,
+        "kernel_size": [
+          1,
+          1
+        ],
+        "stride": [
+          2,
+          2
+        ],
+        "padding": [
+          0,
+          0
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.34415,
+        "latency_std_ms": 0.003261,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer2.1.conv1",
+        "batch_size": 32,
+        "input_shape": [
+          32,
+          32
+        ],
+        "in_channels": 128,
+        "out_channels": 128,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.874776,
+        "latency_std_ms": 0.003363,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer2.1.conv2",
+        "batch_size": 32,
+        "input_shape": [
+          32,
+          32
+        ],
+        "in_channels": 128,
+        "out_channels": 128,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.876692,
+        "latency_std_ms": 0.003753,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer3.0.conv1",
+        "batch_size": 32,
+        "input_shape": [
+          32,
+          32
+        ],
+        "in_channels": 128,
+        "out_channels": 256,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          2,
+          2
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.841083,
+        "latency_std_ms": 0.28273,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer3.0.conv2",
+        "batch_size": 32,
+        "input_shape": [
+          16,
+          16
+        ],
+        "in_channels": 256,
+        "out_channels": 256,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.882697,
+        "latency_std_ms": 0.005689,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer3.0.downsample.0",
+        "batch_size": 32,
+        "input_shape": [
+          32,
+          32
+        ],
+        "in_channels": 128,
+        "out_channels": 256,
+        "kernel_size": [
+          1,
+          1
+        ],
+        "stride": [
+          2,
+          2
+        ],
+        "padding": [
+          0,
+          0
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.258358,
+        "latency_std_ms": 0.004578,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer3.1.conv1",
+        "batch_size": 32,
+        "input_shape": [
+          16,
+          16
+        ],
+        "in_channels": 256,
+        "out_channels": 256,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.929914,
+        "latency_std_ms": 0.355628,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer3.1.conv2",
+        "batch_size": 32,
+        "input_shape": [
+          16,
+          16
+        ],
+        "in_channels": 256,
+        "out_channels": 256,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.881552,
+        "latency_std_ms": 0.005301,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer4.0.conv1",
+        "batch_size": 32,
+        "input_shape": [
+          16,
+          16
+        ],
+        "in_channels": 256,
+        "out_channels": 512,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          2,
+          2
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 1.003477,
+        "latency_std_ms": 0.041959,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer4.0.conv2",
+        "batch_size": 32,
+        "input_shape": [
+          8,
+          8
+        ],
+        "in_channels": 512,
+        "out_channels": 512,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 1.012766,
+        "latency_std_ms": 0.21761,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer4.0.downsample.0",
+        "batch_size": 32,
+        "input_shape": [
+          16,
+          16
+        ],
+        "in_channels": 256,
+        "out_channels": 512,
+        "kernel_size": [
+          1,
+          1
+        ],
+        "stride": [
+          2,
+          2
+        ],
+        "padding": [
+          0,
+          0
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.272507,
+        "latency_std_ms": 0.00331,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer4.1.conv1",
+        "batch_size": 32,
+        "input_shape": [
+          8,
+          8
+        ],
+        "in_channels": 512,
+        "out_channels": 512,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.972538,
+        "latency_std_ms": 0.001581,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer4.1.conv2",
+        "batch_size": 32,
+        "input_shape": [
+          8,
+          8
+        ],
+        "in_channels": 512,
+        "out_channels": 512,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 1.084952,
+        "latency_std_ms": 0.59991,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "conv1",
+        "batch_size": 32,
+        "input_shape": [
+          64,
+          64
+        ],
+        "in_channels": 3,
+        "out_channels": 32,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.258432,
+        "latency_std_ms": 0.005099,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer1.0.conv1",
+        "batch_size": 32,
+        "input_shape": [
+          64,
+          64
+        ],
+        "in_channels": 32,
+        "out_channels": 32,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.37717,
+        "latency_std_ms": 0.003131,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer1.0.conv2",
+        "batch_size": 32,
+        "input_shape": [
+          64,
+          64
+        ],
+        "in_channels": 32,
+        "out_channels": 32,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.377515,
+        "latency_std_ms": 0.003601,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer1.1.conv1",
+        "batch_size": 32,
+        "input_shape": [
+          64,
+          64
+        ],
+        "in_channels": 32,
+        "out_channels": 32,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.377363,
+        "latency_std_ms": 0.004022,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer1.1.conv2",
+        "batch_size": 32,
+        "input_shape": [
+          64,
+          64
+        ],
+        "in_channels": 32,
+        "out_channels": 32,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.377714,
+        "latency_std_ms": 0.004287,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer2.0.conv1",
+        "batch_size": 32,
+        "input_shape": [
+          64,
+          64
+        ],
+        "in_channels": 32,
+        "out_channels": 64,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          2,
+          2
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.28896,
+        "latency_std_ms": 0.004367,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer2.0.conv2",
+        "batch_size": 32,
+        "input_shape": [
+          32,
+          32
+        ],
+        "in_channels": 64,
+        "out_channels": 64,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.363893,
+        "latency_std_ms": 0.031409,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer2.0.downsample.0",
+        "batch_size": 32,
+        "input_shape": [
+          64,
+          64
+        ],
+        "in_channels": 32,
+        "out_channels": 64,
+        "kernel_size": [
+          1,
+          1
+        ],
+        "stride": [
+          2,
+          2
+        ],
+        "padding": [
+          0,
+          0
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.159197,
+        "latency_std_ms": 0.003978,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer2.1.conv1",
+        "batch_size": 32,
+        "input_shape": [
+          32,
+          32
+        ],
+        "in_channels": 64,
+        "out_channels": 64,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.356607,
+        "latency_std_ms": 0.004821,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer2.1.conv2",
+        "batch_size": 32,
+        "input_shape": [
+          32,
+          32
+        ],
+        "in_channels": 64,
+        "out_channels": 64,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.357051,
+        "latency_std_ms": 0.004724,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer3.0.conv1",
+        "batch_size": 32,
+        "input_shape": [
+          32,
+          32
+        ],
+        "in_channels": 64,
+        "out_channels": 128,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          2,
+          2
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.351465,
+        "latency_std_ms": 0.008007,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer3.0.conv2",
+        "batch_size": 32,
+        "input_shape": [
+          16,
+          16
+        ],
+        "in_channels": 128,
+        "out_channels": 128,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.378243,
+        "latency_std_ms": 0.029813,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer3.0.downsample.0",
+        "batch_size": 32,
+        "input_shape": [
+          32,
+          32
+        ],
+        "in_channels": 64,
+        "out_channels": 128,
+        "kernel_size": [
+          1,
+          1
+        ],
+        "stride": [
+          2,
+          2
+        ],
+        "padding": [
+          0,
+          0
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.15813,
+        "latency_std_ms": 0.004309,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer3.1.conv1",
+        "batch_size": 32,
+        "input_shape": [
+          16,
+          16
+        ],
+        "in_channels": 128,
+        "out_channels": 128,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.371078,
+        "latency_std_ms": 0.004029,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer3.1.conv2",
+        "batch_size": 32,
+        "input_shape": [
+          16,
+          16
+        ],
+        "in_channels": 128,
+        "out_channels": 128,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.37133,
+        "latency_std_ms": 0.004434,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer4.0.conv1",
+        "batch_size": 32,
+        "input_shape": [
+          16,
+          16
+        ],
+        "in_channels": 128,
+        "out_channels": 256,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          2,
+          2
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.440297,
+        "latency_std_ms": 0.006107,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer4.0.conv2",
+        "batch_size": 32,
+        "input_shape": [
+          8,
+          8
+        ],
+        "in_channels": 256,
+        "out_channels": 256,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.464478,
+        "latency_std_ms": 0.289899,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer4.0.downsample.0",
+        "batch_size": 32,
+        "input_shape": [
+          16,
+          16
+        ],
+        "in_channels": 128,
+        "out_channels": 256,
+        "kernel_size": [
+          1,
+          1
+        ],
+        "stride": [
+          2,
+          2
+        ],
+        "padding": [
+          0,
+          0
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.160974,
+        "latency_std_ms": 0.00445,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer4.1.conv1",
+        "batch_size": 32,
+        "input_shape": [
+          8,
+          8
+        ],
+        "in_channels": 256,
+        "out_channels": 256,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.424032,
+        "latency_std_ms": 0.004208,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer4.1.conv2",
+        "batch_size": 32,
+        "input_shape": [
+          8,
+          8
+        ],
+        "in_channels": 256,
+        "out_channels": 256,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.423695,
+        "latency_std_ms": 0.006269,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "linear",
+        "name": "fc",
+        "batch_size": 32,
+        "in_features": 256,
+        "out_features": 6,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.109871,
+        "latency_std_ms": 0.003157,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "conv1",
+        "batch_size": 32,
+        "input_shape": [
+          64,
+          64
+        ],
+        "in_channels": 3,
+        "out_channels": 32,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.339978,
+        "latency_std_ms": 0.00294,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer1.0.conv1",
+        "batch_size": 32,
+        "input_shape": [
+          64,
+          64
+        ],
+        "in_channels": 32,
+        "out_channels": 32,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.456591,
+        "latency_std_ms": 0.003121,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer1.0.conv2",
+        "batch_size": 32,
+        "input_shape": [
+          64,
+          64
+        ],
+        "in_channels": 32,
+        "out_channels": 32,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.456524,
+        "latency_std_ms": 0.004144,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer1.1.conv1",
+        "batch_size": 32,
+        "input_shape": [
+          64,
+          64
+        ],
+        "in_channels": 32,
+        "out_channels": 32,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.4977,
+        "latency_std_ms": 0.320113,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer1.1.conv2",
+        "batch_size": 32,
+        "input_shape": [
+          64,
+          64
+        ],
+        "in_channels": 32,
+        "out_channels": 32,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.464186,
+        "latency_std_ms": 0.010149,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer2.0.conv1",
+        "batch_size": 32,
+        "input_shape": [
+          64,
+          64
+        ],
+        "in_channels": 32,
+        "out_channels": 64,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          2,
+          2
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.384533,
+        "latency_std_ms": 0.285121,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer2.0.conv2",
+        "batch_size": 32,
+        "input_shape": [
+          32,
+          32
+        ],
+        "in_channels": 64,
+        "out_channels": 64,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.401064,
+        "latency_std_ms": 0.002582,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer2.0.downsample.0",
+        "batch_size": 32,
+        "input_shape": [
+          64,
+          64
+        ],
+        "in_channels": 32,
+        "out_channels": 64,
+        "kernel_size": [
+          1,
+          1
+        ],
+        "stride": [
+          2,
+          2
+        ],
+        "padding": [
+          0,
+          0
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.205665,
+        "latency_std_ms": 0.002726,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer2.1.conv1",
+        "batch_size": 32,
+        "input_shape": [
+          32,
+          32
+        ],
+        "in_channels": 64,
+        "out_channels": 64,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.399614,
+        "latency_std_ms": 0.002799,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer2.1.conv2",
+        "batch_size": 32,
+        "input_shape": [
+          32,
+          32
+        ],
+        "in_channels": 64,
+        "out_channels": 64,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.400947,
+        "latency_std_ms": 0.003134,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer3.0.conv1",
+        "batch_size": 32,
+        "input_shape": [
+          32,
+          32
+        ],
+        "in_channels": 64,
+        "out_channels": 128,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          2,
+          2
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.378418,
+        "latency_std_ms": 0.004942,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer3.0.conv2",
+        "batch_size": 32,
+        "input_shape": [
+          16,
+          16
+        ],
+        "in_channels": 128,
+        "out_channels": 128,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.402744,
+        "latency_std_ms": 0.00719,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer3.0.downsample.0",
+        "batch_size": 32,
+        "input_shape": [
+          32,
+          32
+        ],
+        "in_channels": 64,
+        "out_channels": 128,
+        "kernel_size": [
+          1,
+          1
+        ],
+        "stride": [
+          2,
+          2
+        ],
+        "padding": [
+          0,
+          0
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.187525,
+        "latency_std_ms": 0.00292,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer3.1.conv1",
+        "batch_size": 32,
+        "input_shape": [
+          16,
+          16
+        ],
+        "in_channels": 128,
+        "out_channels": 128,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.400283,
+        "latency_std_ms": 0.003159,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer3.1.conv2",
+        "batch_size": 32,
+        "input_shape": [
+          16,
+          16
+        ],
+        "in_channels": 128,
+        "out_channels": 128,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.400756,
+        "latency_std_ms": 0.002945,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer4.0.conv1",
+        "batch_size": 32,
+        "input_shape": [
+          16,
+          16
+        ],
+        "in_channels": 128,
+        "out_channels": 256,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          2,
+          2
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.459992,
+        "latency_std_ms": 0.005086,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer4.0.conv2",
+        "batch_size": 32,
+        "input_shape": [
+          8,
+          8
+        ],
+        "in_channels": 256,
+        "out_channels": 256,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.481279,
+        "latency_std_ms": 0.235505,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer4.0.downsample.0",
+        "batch_size": 32,
+        "input_shape": [
+          16,
+          16
+        ],
+        "in_channels": 128,
+        "out_channels": 256,
+        "kernel_size": [
+          1,
+          1
+        ],
+        "stride": [
+          2,
+          2
+        ],
+        "padding": [
+          0,
+          0
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.180949,
+        "latency_std_ms": 0.003458,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer4.1.conv1",
+        "batch_size": 32,
+        "input_shape": [
+          8,
+          8
+        ],
+        "in_channels": 256,
+        "out_channels": 256,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.4538,
+        "latency_std_ms": 0.006692,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer4.1.conv2",
+        "batch_size": 32,
+        "input_shape": [
+          8,
+          8
+        ],
+        "in_channels": 256,
+        "out_channels": 256,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.454284,
+        "latency_std_ms": 0.005036,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "conv1",
+        "batch_size": 32,
+        "input_shape": [
+          64,
+          64
+        ],
+        "in_channels": 3,
+        "out_channels": 56,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.332512,
+        "latency_std_ms": 0.047161,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer1.0.conv1",
+        "batch_size": 32,
+        "input_shape": [
+          64,
+          64
+        ],
+        "in_channels": 56,
+        "out_channels": 56,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.779326,
+        "latency_std_ms": 0.004199,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer1.0.conv2",
+        "batch_size": 32,
+        "input_shape": [
+          64,
+          64
+        ],
+        "in_channels": 56,
+        "out_channels": 56,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.781772,
+        "latency_std_ms": 0.009887,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer1.1.conv1",
+        "batch_size": 32,
+        "input_shape": [
+          64,
+          64
+        ],
+        "in_channels": 56,
+        "out_channels": 56,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.895468,
+        "latency_std_ms": 0.861163,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer1.1.conv2",
+        "batch_size": 32,
+        "input_shape": [
+          64,
+          64
+        ],
+        "in_channels": 56,
+        "out_channels": 56,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.778994,
+        "latency_std_ms": 0.003954,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer2.0.conv1",
+        "batch_size": 32,
+        "input_shape": [
+          64,
+          64
+        ],
+        "in_channels": 56,
+        "out_channels": 112,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          2,
+          2
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.595223,
+        "latency_std_ms": 0.004133,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer2.0.conv2",
+        "batch_size": 32,
+        "input_shape": [
+          32,
+          32
+        ],
+        "in_channels": 112,
+        "out_channels": 112,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.712049,
+        "latency_std_ms": 0.004761,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer2.0.downsample.0",
+        "batch_size": 32,
+        "input_shape": [
+          64,
+          64
+        ],
+        "in_channels": 56,
+        "out_channels": 112,
+        "kernel_size": [
+          1,
+          1
+        ],
+        "stride": [
+          2,
+          2
+        ],
+        "padding": [
+          0,
+          0
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.240264,
+        "latency_std_ms": 0.004775,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer2.1.conv1",
+        "batch_size": 32,
+        "input_shape": [
+          32,
+          32
+        ],
+        "in_channels": 112,
+        "out_channels": 112,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.711342,
+        "latency_std_ms": 0.003896,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer2.1.conv2",
+        "batch_size": 32,
+        "input_shape": [
+          32,
+          32
+        ],
+        "in_channels": 112,
+        "out_channels": 112,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.744634,
+        "latency_std_ms": 0.22989,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer3.0.conv1",
+        "batch_size": 32,
+        "input_shape": [
+          32,
+          32
+        ],
+        "in_channels": 112,
+        "out_channels": 224,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          2,
+          2
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.674537,
+        "latency_std_ms": 0.004314,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer3.0.conv2",
+        "batch_size": 32,
+        "input_shape": [
+          16,
+          16
+        ],
+        "in_channels": 224,
+        "out_channels": 224,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.629863,
+        "latency_std_ms": 0.004287,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer3.0.downsample.0",
+        "batch_size": 32,
+        "input_shape": [
+          32,
+          32
+        ],
+        "in_channels": 112,
+        "out_channels": 224,
+        "kernel_size": [
+          1,
+          1
+        ],
+        "stride": [
+          2,
+          2
+        ],
+        "padding": [
+          0,
+          0
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.197156,
+        "latency_std_ms": 0.003795,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer3.1.conv1",
+        "batch_size": 32,
+        "input_shape": [
+          16,
+          16
+        ],
+        "in_channels": 224,
+        "out_channels": 224,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.666652,
+        "latency_std_ms": 0.289566,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer3.1.conv2",
+        "batch_size": 32,
+        "input_shape": [
+          16,
+          16
+        ],
+        "in_channels": 224,
+        "out_channels": 224,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.62945,
+        "latency_std_ms": 0.004593,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer4.0.conv1",
+        "batch_size": 32,
+        "input_shape": [
+          16,
+          16
+        ],
+        "in_channels": 224,
+        "out_channels": 448,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          2,
+          2
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.689551,
+        "latency_std_ms": 0.002985,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer4.0.conv2",
+        "batch_size": 32,
+        "input_shape": [
+          8,
+          8
+        ],
+        "in_channels": 448,
+        "out_channels": 448,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.616923,
+        "latency_std_ms": 0.005096,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer4.0.downsample.0",
+        "batch_size": 32,
+        "input_shape": [
+          16,
+          16
+        ],
+        "in_channels": 224,
+        "out_channels": 448,
+        "kernel_size": [
+          1,
+          1
+        ],
+        "stride": [
+          2,
+          2
+        ],
+        "padding": [
+          0,
+          0
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.224219,
+        "latency_std_ms": 0.003827,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer4.1.conv1",
+        "batch_size": 32,
+        "input_shape": [
+          8,
+          8
+        ],
+        "in_channels": 448,
+        "out_channels": 448,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.616998,
+        "latency_std_ms": 0.004666,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer4.1.conv2",
+        "batch_size": 32,
+        "input_shape": [
+          8,
+          8
+        ],
+        "in_channels": 448,
+        "out_channels": 448,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.646629,
+        "latency_std_ms": 0.168133,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "linear",
+        "name": "fc",
+        "batch_size": 32,
+        "in_features": 448,
+        "out_features": 6,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.12728,
+        "latency_std_ms": 0.003061,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "conv1",
+        "batch_size": 32,
+        "input_shape": [
+          64,
+          64
+        ],
+        "in_channels": 3,
+        "out_channels": 56,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.536069,
+        "latency_std_ms": 0.442602,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer1.0.conv1",
+        "batch_size": 32,
+        "input_shape": [
+          64,
+          64
+        ],
+        "in_channels": 56,
+        "out_channels": 56,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.93455,
+        "latency_std_ms": 0.034838,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer1.0.conv2",
+        "batch_size": 32,
+        "input_shape": [
+          64,
+          64
+        ],
+        "in_channels": 56,
+        "out_channels": 56,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.919519,
+        "latency_std_ms": 0.003702,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer1.1.conv1",
+        "batch_size": 32,
+        "input_shape": [
+          64,
+          64
+        ],
+        "in_channels": 56,
+        "out_channels": 56,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.919704,
+        "latency_std_ms": 0.006314,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer1.1.conv2",
+        "batch_size": 32,
+        "input_shape": [
+          64,
+          64
+        ],
+        "in_channels": 56,
+        "out_channels": 56,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.923484,
+        "latency_std_ms": 0.007705,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer2.0.conv1",
+        "batch_size": 32,
+        "input_shape": [
+          64,
+          64
+        ],
+        "in_channels": 56,
+        "out_channels": 112,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          2,
+          2
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.680456,
+        "latency_std_ms": 0.013655,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer2.0.conv2",
+        "batch_size": 32,
+        "input_shape": [
+          32,
+          32
+        ],
+        "in_channels": 112,
+        "out_channels": 112,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.793517,
+        "latency_std_ms": 0.010144,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer2.0.downsample.0",
+        "batch_size": 32,
+        "input_shape": [
+          64,
+          64
+        ],
+        "in_channels": 56,
+        "out_channels": 112,
+        "kernel_size": [
+          1,
+          1
+        ],
+        "stride": [
+          2,
+          2
+        ],
+        "padding": [
+          0,
+          0
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.313028,
+        "latency_std_ms": 0.004148,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer2.1.conv1",
+        "batch_size": 32,
+        "input_shape": [
+          32,
+          32
+        ],
+        "in_channels": 112,
+        "out_channels": 112,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.836711,
+        "latency_std_ms": 0.306889,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer2.1.conv2",
+        "batch_size": 32,
+        "input_shape": [
+          32,
+          32
+        ],
+        "in_channels": 112,
+        "out_channels": 112,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.842414,
+        "latency_std_ms": 0.360306,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer3.0.conv1",
+        "batch_size": 32,
+        "input_shape": [
+          32,
+          32
+        ],
+        "in_channels": 112,
+        "out_channels": 224,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          2,
+          2
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.725066,
+        "latency_std_ms": 0.011678,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer3.0.conv2",
+        "batch_size": 32,
+        "input_shape": [
+          16,
+          16
+        ],
+        "in_channels": 224,
+        "out_channels": 224,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.683717,
+        "latency_std_ms": 0.015605,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer3.0.downsample.0",
+        "batch_size": 32,
+        "input_shape": [
+          32,
+          32
+        ],
+        "in_channels": 112,
+        "out_channels": 224,
+        "kernel_size": [
+          1,
+          1
+        ],
+        "stride": [
+          2,
+          2
+        ],
+        "padding": [
+          0,
+          0
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.243121,
+        "latency_std_ms": 0.004172,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer3.1.conv1",
+        "batch_size": 32,
+        "input_shape": [
+          16,
+          16
+        ],
+        "in_channels": 224,
+        "out_channels": 224,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.682786,
+        "latency_std_ms": 0.038893,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer3.1.conv2",
+        "batch_size": 32,
+        "input_shape": [
+          16,
+          16
+        ],
+        "in_channels": 224,
+        "out_channels": 224,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.676779,
+        "latency_std_ms": 0.007307,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer4.0.conv1",
+        "batch_size": 32,
+        "input_shape": [
+          16,
+          16
+        ],
+        "in_channels": 224,
+        "out_channels": 448,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          2,
+          2
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.719767,
+        "latency_std_ms": 0.005789,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer4.0.conv2",
+        "batch_size": 32,
+        "input_shape": [
+          8,
+          8
+        ],
+        "in_channels": 448,
+        "out_channels": 448,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.648989,
+        "latency_std_ms": 0.007497,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer4.0.downsample.0",
+        "batch_size": 32,
+        "input_shape": [
+          16,
+          16
+        ],
+        "in_channels": 224,
+        "out_channels": 448,
+        "kernel_size": [
+          1,
+          1
+        ],
+        "stride": [
+          2,
+          2
+        ],
+        "padding": [
+          0,
+          0
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.251408,
+        "latency_std_ms": 0.003655,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer4.1.conv1",
+        "batch_size": 32,
+        "input_shape": [
+          8,
+          8
+        ],
+        "in_channels": 448,
+        "out_channels": 448,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.64726,
+        "latency_std_ms": 0.003701,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer4.1.conv2",
+        "batch_size": 32,
+        "input_shape": [
+          8,
+          8
+        ],
+        "in_channels": 448,
+        "out_channels": 448,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.650646,
+        "latency_std_ms": 0.006101,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "conv1",
+        "batch_size": 32,
+        "input_shape": [
+          64,
+          64
+        ],
+        "in_channels": 3,
+        "out_channels": 48,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.328545,
+        "latency_std_ms": 0.038143,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer1.0.conv1",
+        "batch_size": 32,
+        "input_shape": [
+          64,
+          64
+        ],
+        "in_channels": 48,
+        "out_channels": 48,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.709865,
+        "latency_std_ms": 0.006263,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer1.0.conv2",
+        "batch_size": 32,
+        "input_shape": [
+          64,
+          64
+        ],
+        "in_channels": 48,
+        "out_channels": 48,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.709894,
+        "latency_std_ms": 0.005209,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer1.1.conv1",
+        "batch_size": 32,
+        "input_shape": [
+          64,
+          64
+        ],
+        "in_channels": 48,
+        "out_channels": 48,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.715682,
+        "latency_std_ms": 0.011329,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer1.1.conv2",
+        "batch_size": 32,
+        "input_shape": [
+          64,
+          64
+        ],
+        "in_channels": 48,
+        "out_channels": 48,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.751101,
+        "latency_std_ms": 0.31207,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer2.0.conv1",
+        "batch_size": 32,
+        "input_shape": [
+          64,
+          64
+        ],
+        "in_channels": 48,
+        "out_channels": 96,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          2,
+          2
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.543432,
+        "latency_std_ms": 0.005296,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer2.0.conv2",
+        "batch_size": 32,
+        "input_shape": [
+          32,
+          32
+        ],
+        "in_channels": 96,
+        "out_channels": 96,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.554218,
+        "latency_std_ms": 0.034935,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer2.0.downsample.0",
+        "batch_size": 32,
+        "input_shape": [
+          64,
+          64
+        ],
+        "in_channels": 48,
+        "out_channels": 96,
+        "kernel_size": [
+          1,
+          1
+        ],
+        "stride": [
+          2,
+          2
+        ],
+        "padding": [
+          0,
+          0
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.232486,
+        "latency_std_ms": 0.004037,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer2.1.conv1",
+        "batch_size": 32,
+        "input_shape": [
+          32,
+          32
+        ],
+        "in_channels": 96,
+        "out_channels": 96,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.597615,
+        "latency_std_ms": 0.334426,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer2.1.conv2",
+        "batch_size": 32,
+        "input_shape": [
+          32,
+          32
+        ],
+        "in_channels": 96,
+        "out_channels": 96,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.551662,
+        "latency_std_ms": 0.011751,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer3.0.conv1",
+        "batch_size": 32,
+        "input_shape": [
+          32,
+          32
+        ],
+        "in_channels": 96,
+        "out_channels": 192,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          2,
+          2
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.539177,
+        "latency_std_ms": 0.013848,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer3.0.conv2",
+        "batch_size": 32,
+        "input_shape": [
+          16,
+          16
+        ],
+        "in_channels": 192,
+        "out_channels": 192,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.730731,
+        "latency_std_ms": 1.128716,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer3.0.downsample.0",
+        "batch_size": 32,
+        "input_shape": [
+          32,
+          32
+        ],
+        "in_channels": 96,
+        "out_channels": 192,
+        "kernel_size": [
+          1,
+          1
+        ],
+        "stride": [
+          2,
+          2
+        ],
+        "padding": [
+          0,
+          0
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.180612,
+        "latency_std_ms": 0.008479,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer3.1.conv1",
+        "batch_size": 32,
+        "input_shape": [
+          16,
+          16
+        ],
+        "in_channels": 192,
+        "out_channels": 192,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.574339,
+        "latency_std_ms": 0.008111,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer3.1.conv2",
+        "batch_size": 32,
+        "input_shape": [
+          16,
+          16
+        ],
+        "in_channels": 192,
+        "out_channels": 192,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.581996,
+        "latency_std_ms": 0.015384,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer4.0.conv1",
+        "batch_size": 32,
+        "input_shape": [
+          16,
+          16
+        ],
+        "in_channels": 192,
+        "out_channels": 384,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          2,
+          2
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.598863,
+        "latency_std_ms": 0.012352,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer4.0.conv2",
+        "batch_size": 32,
+        "input_shape": [
+          8,
+          8
+        ],
+        "in_channels": 384,
+        "out_channels": 384,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.5645,
+        "latency_std_ms": 0.008707,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer4.0.downsample.0",
+        "batch_size": 32,
+        "input_shape": [
+          16,
+          16
+        ],
+        "in_channels": 192,
+        "out_channels": 384,
+        "kernel_size": [
+          1,
+          1
+        ],
+        "stride": [
+          2,
+          2
+        ],
+        "padding": [
+          0,
+          0
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.183199,
+        "latency_std_ms": 0.010833,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer4.1.conv1",
+        "batch_size": 32,
+        "input_shape": [
+          8,
+          8
+        ],
+        "in_channels": 384,
+        "out_channels": 384,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.571565,
+        "latency_std_ms": 0.013789,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer4.1.conv2",
+        "batch_size": 32,
+        "input_shape": [
+          8,
+          8
+        ],
+        "in_channels": 384,
+        "out_channels": 384,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.56349,
+        "latency_std_ms": 0.009523,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "linear",
+        "name": "fc",
+        "batch_size": 32,
+        "in_features": 384,
+        "out_features": 6,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.126094,
+        "latency_std_ms": 0.017759,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "conv1",
+        "batch_size": 32,
+        "input_shape": [
+          64,
+          64
+        ],
+        "in_channels": 3,
+        "out_channels": 48,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.449694,
+        "latency_std_ms": 0.022678,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer1.0.conv1",
+        "batch_size": 32,
+        "input_shape": [
+          64,
+          64
+        ],
+        "in_channels": 48,
+        "out_channels": 48,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.823644,
+        "latency_std_ms": 0.004709,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer1.0.conv2",
+        "batch_size": 32,
+        "input_shape": [
+          64,
+          64
+        ],
+        "in_channels": 48,
+        "out_channels": 48,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.823571,
+        "latency_std_ms": 0.008714,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer1.1.conv1",
+        "batch_size": 32,
+        "input_shape": [
+          64,
+          64
+        ],
+        "in_channels": 48,
+        "out_channels": 48,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.821314,
+        "latency_std_ms": 0.003208,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer1.1.conv2",
+        "batch_size": 32,
+        "input_shape": [
+          64,
+          64
+        ],
+        "in_channels": 48,
+        "out_channels": 48,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.860273,
+        "latency_std_ms": 0.296567,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer2.0.conv1",
+        "batch_size": 32,
+        "input_shape": [
+          64,
+          64
+        ],
+        "in_channels": 48,
+        "out_channels": 96,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          2,
+          2
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.603415,
+        "latency_std_ms": 0.004372,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer2.0.conv2",
+        "batch_size": 32,
+        "input_shape": [
+          32,
+          32
+        ],
+        "in_channels": 96,
+        "out_channels": 96,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.606269,
+        "latency_std_ms": 0.002905,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer2.0.downsample.0",
+        "batch_size": 32,
+        "input_shape": [
+          64,
+          64
+        ],
+        "in_channels": 48,
+        "out_channels": 96,
+        "kernel_size": [
+          1,
+          1
+        ],
+        "stride": [
+          2,
+          2
+        ],
+        "padding": [
+          0,
+          0
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.297136,
+        "latency_std_ms": 0.002988,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer2.1.conv1",
+        "batch_size": 32,
+        "input_shape": [
+          32,
+          32
+        ],
+        "in_channels": 96,
+        "out_channels": 96,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.607259,
+        "latency_std_ms": 0.003784,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer2.1.conv2",
+        "batch_size": 32,
+        "input_shape": [
+          32,
+          32
+        ],
+        "in_channels": 96,
+        "out_channels": 96,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.606206,
+        "latency_std_ms": 0.002376,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer3.0.conv1",
+        "batch_size": 32,
+        "input_shape": [
+          32,
+          32
+        ],
+        "in_channels": 96,
+        "out_channels": 192,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          2,
+          2
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.561298,
+        "latency_std_ms": 0.002893,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer3.0.conv2",
+        "batch_size": 32,
+        "input_shape": [
+          16,
+          16
+        ],
+        "in_channels": 192,
+        "out_channels": 192,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.606407,
+        "latency_std_ms": 0.002796,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer3.0.downsample.0",
+        "batch_size": 32,
+        "input_shape": [
+          32,
+          32
+        ],
+        "in_channels": 96,
+        "out_channels": 192,
+        "kernel_size": [
+          1,
+          1
+        ],
+        "stride": [
+          2,
+          2
+        ],
+        "padding": [
+          0,
+          0
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.218377,
+        "latency_std_ms": 0.003023,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer3.1.conv1",
+        "batch_size": 32,
+        "input_shape": [
+          16,
+          16
+        ],
+        "in_channels": 192,
+        "out_channels": 192,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.606761,
+        "latency_std_ms": 0.00302,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer3.1.conv2",
+        "batch_size": 32,
+        "input_shape": [
+          16,
+          16
+        ],
+        "in_channels": 192,
+        "out_channels": 192,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.606912,
+        "latency_std_ms": 0.003117,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer4.0.conv1",
+        "batch_size": 32,
+        "input_shape": [
+          16,
+          16
+        ],
+        "in_channels": 192,
+        "out_channels": 384,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          2,
+          2
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.714785,
+        "latency_std_ms": 0.740471,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer4.0.conv2",
+        "batch_size": 32,
+        "input_shape": [
+          8,
+          8
+        ],
+        "in_channels": 384,
+        "out_channels": 384,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.579082,
+        "latency_std_ms": 0.002623,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer4.0.downsample.0",
+        "batch_size": 32,
+        "input_shape": [
+          16,
+          16
+        ],
+        "in_channels": 192,
+        "out_channels": 384,
+        "kernel_size": [
+          1,
+          1
+        ],
+        "stride": [
+          2,
+          2
+        ],
+        "padding": [
+          0,
+          0
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.204132,
+        "latency_std_ms": 0.003746,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer4.1.conv1",
+        "batch_size": 32,
+        "input_shape": [
+          8,
+          8
+        ],
+        "in_channels": 384,
+        "out_channels": 384,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.580527,
+        "latency_std_ms": 0.003616,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer4.1.conv2",
+        "batch_size": 32,
+        "input_shape": [
+          8,
+          8
+        ],
+        "in_channels": 384,
+        "out_channels": 384,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.580447,
+        "latency_std_ms": 0.003004,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "conv1",
+        "batch_size": 32,
+        "input_shape": [
+          64,
+          64
+        ],
+        "in_channels": 3,
+        "out_channels": 40,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.334712,
+        "latency_std_ms": 0.035167,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer1.0.conv1",
+        "batch_size": 32,
+        "input_shape": [
+          64,
+          64
+        ],
+        "in_channels": 40,
+        "out_channels": 40,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.63759,
+        "latency_std_ms": 0.007667,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer1.0.conv2",
+        "batch_size": 32,
+        "input_shape": [
+          64,
+          64
+        ],
+        "in_channels": 40,
+        "out_channels": 40,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.63177,
+        "latency_std_ms": 0.006563,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer1.1.conv1",
+        "batch_size": 32,
+        "input_shape": [
+          64,
+          64
+        ],
+        "in_channels": 40,
+        "out_channels": 40,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.630813,
+        "latency_std_ms": 0.004152,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer1.1.conv2",
+        "batch_size": 32,
+        "input_shape": [
+          64,
+          64
+        ],
+        "in_channels": 40,
+        "out_channels": 40,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.63959,
+        "latency_std_ms": 0.010742,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer2.0.conv1",
+        "batch_size": 32,
+        "input_shape": [
+          64,
+          64
+        ],
+        "in_channels": 40,
+        "out_channels": 80,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          2,
+          2
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.475231,
+        "latency_std_ms": 0.006925,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer2.0.conv2",
+        "batch_size": 32,
+        "input_shape": [
+          32,
+          32
+        ],
+        "in_channels": 80,
+        "out_channels": 80,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.479935,
+        "latency_std_ms": 0.007744,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer2.0.downsample.0",
+        "batch_size": 32,
+        "input_shape": [
+          64,
+          64
+        ],
+        "in_channels": 40,
+        "out_channels": 80,
+        "kernel_size": [
+          1,
+          1
+        ],
+        "stride": [
+          2,
+          2
+        ],
+        "padding": [
+          0,
+          0
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.209055,
+        "latency_std_ms": 0.004066,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer2.1.conv1",
+        "batch_size": 32,
+        "input_shape": [
+          32,
+          32
+        ],
+        "in_channels": 80,
+        "out_channels": 80,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.477012,
+        "latency_std_ms": 0.003147,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer2.1.conv2",
+        "batch_size": 32,
+        "input_shape": [
+          32,
+          32
+        ],
+        "in_channels": 80,
+        "out_channels": 80,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.478921,
+        "latency_std_ms": 0.005476,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer3.0.conv1",
+        "batch_size": 32,
+        "input_shape": [
+          32,
+          32
+        ],
+        "in_channels": 80,
+        "out_channels": 160,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          2,
+          2
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.459745,
+        "latency_std_ms": 0.004214,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer3.0.conv2",
+        "batch_size": 32,
+        "input_shape": [
+          16,
+          16
+        ],
+        "in_channels": 160,
+        "out_channels": 160,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.416217,
+        "latency_std_ms": 0.003819,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer3.0.downsample.0",
+        "batch_size": 32,
+        "input_shape": [
+          32,
+          32
+        ],
+        "in_channels": 80,
+        "out_channels": 160,
+        "kernel_size": [
+          1,
+          1
+        ],
+        "stride": [
+          2,
+          2
+        ],
+        "padding": [
+          0,
+          0
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.171444,
+        "latency_std_ms": 0.004099,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer3.1.conv1",
+        "batch_size": 32,
+        "input_shape": [
+          16,
+          16
+        ],
+        "in_channels": 160,
+        "out_channels": 160,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.415607,
+        "latency_std_ms": 0.003483,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer3.1.conv2",
+        "batch_size": 32,
+        "input_shape": [
+          16,
+          16
+        ],
+        "in_channels": 160,
+        "out_channels": 160,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.41526,
+        "latency_std_ms": 0.004523,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer4.0.conv1",
+        "batch_size": 32,
+        "input_shape": [
+          16,
+          16
+        ],
+        "in_channels": 160,
+        "out_channels": 320,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          2,
+          2
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.518116,
+        "latency_std_ms": 0.004497,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer4.0.conv2",
+        "batch_size": 32,
+        "input_shape": [
+          8,
+          8
+        ],
+        "in_channels": 320,
+        "out_channels": 320,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.486612,
+        "latency_std_ms": 0.004054,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer4.0.downsample.0",
+        "batch_size": 32,
+        "input_shape": [
+          16,
+          16
+        ],
+        "in_channels": 160,
+        "out_channels": 320,
+        "kernel_size": [
+          1,
+          1
+        ],
+        "stride": [
+          2,
+          2
+        ],
+        "padding": [
+          0,
+          0
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.169808,
+        "latency_std_ms": 0.003855,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer4.1.conv1",
+        "batch_size": 32,
+        "input_shape": [
+          8,
+          8
+        ],
+        "in_channels": 320,
+        "out_channels": 320,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.514686,
+        "latency_std_ms": 0.191029,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer4.1.conv2",
+        "batch_size": 32,
+        "input_shape": [
+          8,
+          8
+        ],
+        "in_channels": 320,
+        "out_channels": 320,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.487308,
+        "latency_std_ms": 0.005586,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "linear",
+        "name": "fc",
+        "batch_size": 32,
+        "in_features": 320,
+        "out_features": 6,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.111661,
+        "latency_std_ms": 0.003008,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "conv1",
+        "batch_size": 32,
+        "input_shape": [
+          64,
+          64
+        ],
+        "in_channels": 3,
+        "out_channels": 40,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.43656,
+        "latency_std_ms": 0.031504,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer1.0.conv1",
+        "batch_size": 32,
+        "input_shape": [
+          64,
+          64
+        ],
+        "in_channels": 40,
+        "out_channels": 40,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.730274,
+        "latency_std_ms": 0.00214,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer1.0.conv2",
+        "batch_size": 32,
+        "input_shape": [
+          64,
+          64
+        ],
+        "in_channels": 40,
+        "out_channels": 40,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.731903,
+        "latency_std_ms": 0.002227,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer1.1.conv1",
+        "batch_size": 32,
+        "input_shape": [
+          64,
+          64
+        ],
+        "in_channels": 40,
+        "out_channels": 40,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.731873,
+        "latency_std_ms": 0.002791,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer1.1.conv2",
+        "batch_size": 32,
+        "input_shape": [
+          64,
+          64
+        ],
+        "in_channels": 40,
+        "out_channels": 40,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.731911,
+        "latency_std_ms": 0.002886,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer2.0.conv1",
+        "batch_size": 32,
+        "input_shape": [
+          64,
+          64
+        ],
+        "in_channels": 40,
+        "out_channels": 80,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          2,
+          2
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.525175,
+        "latency_std_ms": 0.002812,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer2.0.conv2",
+        "batch_size": 32,
+        "input_shape": [
+          32,
+          32
+        ],
+        "in_channels": 80,
+        "out_channels": 80,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.687591,
+        "latency_std_ms": 1.138107,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer2.0.downsample.0",
+        "batch_size": 32,
+        "input_shape": [
+          64,
+          64
+        ],
+        "in_channels": 40,
+        "out_channels": 80,
+        "kernel_size": [
+          1,
+          1
+        ],
+        "stride": [
+          2,
+          2
+        ],
+        "padding": [
+          0,
+          0
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.265834,
+        "latency_std_ms": 0.002617,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer2.1.conv1",
+        "batch_size": 32,
+        "input_shape": [
+          32,
+          32
+        ],
+        "in_channels": 80,
+        "out_channels": 80,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.535764,
+        "latency_std_ms": 0.005167,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer2.1.conv2",
+        "batch_size": 32,
+        "input_shape": [
+          32,
+          32
+        ],
+        "in_channels": 80,
+        "out_channels": 80,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.537571,
+        "latency_std_ms": 0.006926,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer3.0.conv1",
+        "batch_size": 32,
+        "input_shape": [
+          32,
+          32
+        ],
+        "in_channels": 80,
+        "out_channels": 160,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          2,
+          2
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.497451,
+        "latency_std_ms": 0.005956,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer3.0.conv2",
+        "batch_size": 32,
+        "input_shape": [
+          16,
+          16
+        ],
+        "in_channels": 160,
+        "out_channels": 160,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.452524,
+        "latency_std_ms": 0.003565,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer3.0.downsample.0",
+        "batch_size": 32,
+        "input_shape": [
+          32,
+          32
+        ],
+        "in_channels": 80,
+        "out_channels": 160,
+        "kernel_size": [
+          1,
+          1
+        ],
+        "stride": [
+          2,
+          2
+        ],
+        "padding": [
+          0,
+          0
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.20591,
+        "latency_std_ms": 0.003095,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer3.1.conv1",
+        "batch_size": 32,
+        "input_shape": [
+          16,
+          16
+        ],
+        "in_channels": 160,
+        "out_channels": 160,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.456587,
+        "latency_std_ms": 0.037037,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer3.1.conv2",
+        "batch_size": 32,
+        "input_shape": [
+          16,
+          16
+        ],
+        "in_channels": 160,
+        "out_channels": 160,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.491129,
+        "latency_std_ms": 0.285528,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer4.0.conv1",
+        "batch_size": 32,
+        "input_shape": [
+          16,
+          16
+        ],
+        "in_channels": 160,
+        "out_channels": 320,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          2,
+          2
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.57961,
+        "latency_std_ms": 0.297814,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer4.0.conv2",
+        "batch_size": 32,
+        "input_shape": [
+          8,
+          8
+        ],
+        "in_channels": 320,
+        "out_channels": 320,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.510533,
+        "latency_std_ms": 0.002693,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer4.0.downsample.0",
+        "batch_size": 32,
+        "input_shape": [
+          16,
+          16
+        ],
+        "in_channels": 160,
+        "out_channels": 320,
+        "kernel_size": [
+          1,
+          1
+        ],
+        "stride": [
+          2,
+          2
+        ],
+        "padding": [
+          0,
+          0
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.192174,
+        "latency_std_ms": 0.002293,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer4.1.conv1",
+        "batch_size": 32,
+        "input_shape": [
+          8,
+          8
+        ],
+        "in_channels": 320,
+        "out_channels": 320,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.510496,
+        "latency_std_ms": 0.002412,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer4.1.conv2",
+        "batch_size": 32,
+        "input_shape": [
+          8,
+          8
+        ],
+        "in_channels": 320,
+        "out_channels": 320,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.612735,
+        "latency_std_ms": 0.765868,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "conv1",
+        "batch_size": 32,
+        "input_shape": [
+          64,
+          64
+        ],
+        "in_channels": 3,
+        "out_channels": 24,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.24126,
+        "latency_std_ms": 0.004432,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer1.0.conv1",
+        "batch_size": 32,
+        "input_shape": [
+          64,
+          64
+        ],
+        "in_channels": 24,
+        "out_channels": 24,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.312687,
+        "latency_std_ms": 0.003471,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer1.0.conv2",
+        "batch_size": 32,
+        "input_shape": [
+          64,
+          64
+        ],
+        "in_channels": 24,
+        "out_channels": 24,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.31483,
+        "latency_std_ms": 0.004142,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer1.1.conv1",
+        "batch_size": 32,
+        "input_shape": [
+          64,
+          64
+        ],
+        "in_channels": 24,
+        "out_channels": 24,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.315577,
+        "latency_std_ms": 0.005107,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer1.1.conv2",
+        "batch_size": 32,
+        "input_shape": [
+          64,
+          64
+        ],
+        "in_channels": 24,
+        "out_channels": 24,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.313162,
+        "latency_std_ms": 0.003738,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer2.0.conv1",
+        "batch_size": 32,
+        "input_shape": [
+          64,
+          64
+        ],
+        "in_channels": 24,
+        "out_channels": 48,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          2,
+          2
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.246847,
+        "latency_std_ms": 0.004886,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer2.0.conv2",
+        "batch_size": 32,
+        "input_shape": [
+          32,
+          32
+        ],
+        "in_channels": 48,
+        "out_channels": 48,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.293027,
+        "latency_std_ms": 0.004664,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer2.0.downsample.0",
+        "batch_size": 32,
+        "input_shape": [
+          64,
+          64
+        ],
+        "in_channels": 24,
+        "out_channels": 48,
+        "kernel_size": [
+          1,
+          1
+        ],
+        "stride": [
+          2,
+          2
+        ],
+        "padding": [
+          0,
+          0
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.163226,
+        "latency_std_ms": 0.00436,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer2.1.conv1",
+        "batch_size": 32,
+        "input_shape": [
+          32,
+          32
+        ],
+        "in_channels": 48,
+        "out_channels": 48,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.293017,
+        "latency_std_ms": 0.005075,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer2.1.conv2",
+        "batch_size": 32,
+        "input_shape": [
+          32,
+          32
+        ],
+        "in_channels": 48,
+        "out_channels": 48,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.293203,
+        "latency_std_ms": 0.003958,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer3.0.conv1",
+        "batch_size": 32,
+        "input_shape": [
+          32,
+          32
+        ],
+        "in_channels": 48,
+        "out_channels": 96,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          2,
+          2
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.287078,
+        "latency_std_ms": 0.00363,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer3.0.conv2",
+        "batch_size": 32,
+        "input_shape": [
+          16,
+          16
+        ],
+        "in_channels": 96,
+        "out_channels": 96,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.25199,
+        "latency_std_ms": 0.004531,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer3.0.downsample.0",
+        "batch_size": 32,
+        "input_shape": [
+          32,
+          32
+        ],
+        "in_channels": 48,
+        "out_channels": 96,
+        "kernel_size": [
+          1,
+          1
+        ],
+        "stride": [
+          2,
+          2
+        ],
+        "padding": [
+          0,
+          0
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.149522,
+        "latency_std_ms": 0.003759,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer3.1.conv1",
+        "batch_size": 32,
+        "input_shape": [
+          16,
+          16
+        ],
+        "in_channels": 96,
+        "out_channels": 96,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.255844,
+        "latency_std_ms": 0.008536,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer3.1.conv2",
+        "batch_size": 32,
+        "input_shape": [
+          16,
+          16
+        ],
+        "in_channels": 96,
+        "out_channels": 96,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.25868,
+        "latency_std_ms": 0.009625,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer4.0.conv1",
+        "batch_size": 32,
+        "input_shape": [
+          16,
+          16
+        ],
+        "in_channels": 96,
+        "out_channels": 192,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          2,
+          2
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.318172,
+        "latency_std_ms": 0.009763,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer4.0.conv2",
+        "batch_size": 32,
+        "input_shape": [
+          8,
+          8
+        ],
+        "in_channels": 192,
+        "out_channels": 192,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.25562,
+        "latency_std_ms": 0.01109,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer4.0.downsample.0",
+        "batch_size": 32,
+        "input_shape": [
+          16,
+          16
+        ],
+        "in_channels": 96,
+        "out_channels": 192,
+        "kernel_size": [
+          1,
+          1
+        ],
+        "stride": [
+          2,
+          2
+        ],
+        "padding": [
+          0,
+          0
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.148286,
+        "latency_std_ms": 0.005531,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer4.1.conv1",
+        "batch_size": 32,
+        "input_shape": [
+          8,
+          8
+        ],
+        "in_channels": 192,
+        "out_channels": 192,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.246044,
+        "latency_std_ms": 0.00413,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer4.1.conv2",
+        "batch_size": 32,
+        "input_shape": [
+          8,
+          8
+        ],
+        "in_channels": 192,
+        "out_channels": 192,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": false
+      },
+      "benchmark": {
+        "latency_ms": 0.24517,
+        "latency_std_ms": 0.004582,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "linear",
+        "name": "fc",
+        "batch_size": 32,
+        "in_features": 192,
+        "out_features": 6,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.185532,
+        "latency_std_ms": 0.544201,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "conv1",
+        "batch_size": 32,
+        "input_shape": [
+          64,
+          64
+        ],
+        "in_channels": 3,
+        "out_channels": 24,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.306526,
+        "latency_std_ms": 0.006499,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer1.0.conv1",
+        "batch_size": 32,
+        "input_shape": [
+          64,
+          64
+        ],
+        "in_channels": 24,
+        "out_channels": 24,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.402467,
+        "latency_std_ms": 0.005115,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer1.0.conv2",
+        "batch_size": 32,
+        "input_shape": [
+          64,
+          64
+        ],
+        "in_channels": 24,
+        "out_channels": 24,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.407345,
+        "latency_std_ms": 0.012296,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer1.1.conv1",
+        "batch_size": 32,
+        "input_shape": [
+          64,
+          64
+        ],
+        "in_channels": 24,
+        "out_channels": 24,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.413418,
+        "latency_std_ms": 0.052697,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer1.1.conv2",
+        "batch_size": 32,
+        "input_shape": [
+          64,
+          64
+        ],
+        "in_channels": 24,
+        "out_channels": 24,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.408665,
+        "latency_std_ms": 0.029435,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer2.0.conv1",
+        "batch_size": 32,
+        "input_shape": [
+          64,
+          64
+        ],
+        "in_channels": 24,
+        "out_channels": 48,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          2,
+          2
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.285853,
+        "latency_std_ms": 0.004222,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer2.0.conv2",
+        "batch_size": 32,
+        "input_shape": [
+          32,
+          32
+        ],
+        "in_channels": 48,
+        "out_channels": 48,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.333957,
+        "latency_std_ms": 0.002814,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer2.0.downsample.0",
+        "batch_size": 32,
+        "input_shape": [
+          64,
+          64
+        ],
+        "in_channels": 24,
+        "out_channels": 48,
+        "kernel_size": [
+          1,
+          1
+        ],
+        "stride": [
+          2,
+          2
+        ],
+        "padding": [
+          0,
+          0
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.200674,
+        "latency_std_ms": 0.002738,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer2.1.conv1",
+        "batch_size": 32,
+        "input_shape": [
+          32,
+          32
+        ],
+        "in_channels": 48,
+        "out_channels": 48,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.334376,
+        "latency_std_ms": 0.005109,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer2.1.conv2",
+        "batch_size": 32,
+        "input_shape": [
+          32,
+          32
+        ],
+        "in_channels": 48,
+        "out_channels": 48,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.333805,
+        "latency_std_ms": 0.003295,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer3.0.conv1",
+        "batch_size": 32,
+        "input_shape": [
+          32,
+          32
+        ],
+        "in_channels": 48,
+        "out_channels": 96,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          2,
+          2
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.307867,
+        "latency_std_ms": 0.002636,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer3.0.conv2",
+        "batch_size": 32,
+        "input_shape": [
+          16,
+          16
+        ],
+        "in_channels": 96,
+        "out_channels": 96,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.276874,
+        "latency_std_ms": 0.003002,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer3.0.downsample.0",
+        "batch_size": 32,
+        "input_shape": [
+          32,
+          32
+        ],
+        "in_channels": 48,
+        "out_channels": 96,
+        "kernel_size": [
+          1,
+          1
+        ],
+        "stride": [
+          2,
+          2
+        ],
+        "padding": [
+          0,
+          0
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.173614,
+        "latency_std_ms": 0.003099,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer3.1.conv1",
+        "batch_size": 32,
+        "input_shape": [
+          16,
+          16
+        ],
+        "in_channels": 96,
+        "out_channels": 96,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.277722,
+        "latency_std_ms": 0.008078,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer3.1.conv2",
+        "batch_size": 32,
+        "input_shape": [
+          16,
+          16
+        ],
+        "in_channels": 96,
+        "out_channels": 96,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.276737,
+        "latency_std_ms": 0.003477,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer4.0.conv1",
+        "batch_size": 32,
+        "input_shape": [
+          16,
+          16
+        ],
+        "in_channels": 96,
+        "out_channels": 192,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          2,
+          2
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.369429,
+        "latency_std_ms": 0.271083,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer4.0.conv2",
+        "batch_size": 32,
+        "input_shape": [
+          8,
+          8
+        ],
+        "in_channels": 192,
+        "out_channels": 192,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.262816,
+        "latency_std_ms": 0.003473,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer4.0.downsample.0",
+        "batch_size": 32,
+        "input_shape": [
+          16,
+          16
+        ],
+        "in_channels": 96,
+        "out_channels": 192,
+        "kernel_size": [
+          1,
+          1
+        ],
+        "stride": [
+          2,
+          2
+        ],
+        "padding": [
+          0,
+          0
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.165446,
+        "latency_std_ms": 0.00271,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer4.1.conv1",
+        "batch_size": 32,
+        "input_shape": [
+          8,
+          8
+        ],
+        "in_channels": 192,
+        "out_channels": 192,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.262846,
+        "latency_std_ms": 0.003264,
+        "samples": 60
+      }
+    },
+    {
+      "signature": {
+        "op": "conv2d",
+        "name": "layer4.1.conv2",
+        "batch_size": 32,
+        "input_shape": [
+          8,
+          8
+        ],
+        "in_channels": 192,
+        "out_channels": 192,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "bias": true
+      },
+      "benchmark": {
+        "latency_ms": 0.268754,
+        "latency_std_ms": 0.02909,
+        "samples": 60
+      }
+    }
+  ]
+}
