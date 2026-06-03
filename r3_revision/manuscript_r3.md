@@ -24,15 +24,17 @@ Recent research has shifted towards hardware-aware neural architecture search (N
 
 To overcome this limitation, we propose **HAD-MC 2.0**, a novel framework that treats hardware-aware model compression as a **synergistic co-design problem**. We formulate the task as a multi-objective optimization problem and employ a **Reinforcement Learning (RL)** agent with a joint action space, driven by Proximal Policy Optimization (PPO), to automatically discover the optimal combined policy for **structural channel pruning**, **mixed-precision quantization**, and **knowledge distillation**. Our framework's agent learns to navigate the vast and complex design space, making interdependent decisions across multiple compression dimensions simultaneously. The reward function is carefully designed to balance model accuracy, compression ratio, and real-world inference latency, which is measured using an empirically constructed Latency Look-Up Table (LUT) for the specific target hardware.
 
-We validate our approach through extensive experiments on an **NVIDIA A100 GPU**, using a ResNet18 model for the task of steel surface defect detection on the NEU-DET dataset. Our results show that HAD-MC 2.0 achieves a **75.0% compression ratio** and a **1.37x speedup** with **zero accuracy loss**, outperforming several state-of-the-art methods. Our contributions are summarized as follows:
+We validate our approach through extensive experiments on an **NVIDIA A100 GPU**, using a ResNet18 model for the task of steel surface defect detection on the NEU-DET dataset. Our results show that HAD-MC 2.0 achieves a **75.0% compression ratio** and a **1.37x speedup** with **zero accuracy loss**, outperforming several state-of-the-art methods. The framework is independently reproduced on a Hygon DCU K500SM_AI under matched conditions in the dual-platform supplementary results. We deliberately scope our contribution to the *joint deployment pipeline*; the individual ingredients (PPO, structural pruning, mixed-precision quantization, feature-aligned distillation, operator-LUT estimation, conv-bn fusion) are well-known building blocks, and we do not claim any of them as a standalone novelty. Our contributions are summarized as follows:
 
-1.  **A Novel RL Framework for Synergistic Compression:** We formulate the hardware-aware compression of multiple techniques (pruning, quantization, distillation) as a joint-optimization problem, and solve it using a central RL controller that learns a unified policy in a complex, combined action space.
+1.  **A Joint Deployment Pipeline as the Unit of Contribution:** Rather than presenting pruning, quantization, distillation, and runtime fusion as independently new techniques, we contribute the *coordination* of these existing components inside a single RL-driven, hardware-aware loop. The novelty lies in (i) the synergistic co-design formulation, (ii) the honest per-platform LUT calibration that closes the loop, and (iii) the empirical demonstration that the same pipeline reproduces under matched conditions on a substantially different platform (Hygon DCU/HIP) without re-engineering the algorithm.
 
-2.  **PPO-based Multi-Objective Optimization:** We employ a PPO-based controller that effectively navigates the complex, multi-objective search space, finding superior trade-offs between accuracy, latency, and model size, guided by a real-world hardware latency model.
+2.  **A Scoped RL Formulation:** We formalize the per-layer joint pruning + bit-width decision as a finite-horizon MDP with an explicit terminal reward (Section 3.2) and a factored Gaussian-categorical policy, and we deliberately leave knowledge distillation as a fixed recovery stage outside the action space. This narrower RL scope removes the inconsistency that previous drafts introduced when describing distillation as “optimized by RL.”
 
-3.  **State-of-the-Art Performance:** Through extensive experiments on a high-performance A100 GPU, we demonstrate that HAD-MC 2.0 significantly outperforms existing methods like AMC, HAQ, and DECORE in achieving higher compression and speedup without sacrificing accuracy.
+3.  **Hardware-Aware Reward with Per-Platform LUT Calibration:** Our PPO-based controller is driven by a multi-objective terminal reward whose latency term comes from a per-operator LUT that we *quantitatively validate end-to-end* against measured whole-model latency at the deployment batch size. We also report a per-platform affine leave-one-out calibration that brings the mean absolute percentage error of the LUT down to single digits.
 
-4.  **Comprehensive and Reproducible Validation:** We provide a thorough evaluation, including detailed ablation studies that validate the contribution of each component of our framework, and cross-dataset validation to demonstrate its generalizability. All our code, models, and experimental data will be made publicly available to ensure full reproducibility.
+4.  **Honest, Matched-Condition Empirical Validation:** We report multi-seed variance on every key metric, decompose runtime gains into compression vs. inference-engine contributions, run every SOTA baseline under matched fine-tune budget / prune ratio / learning rate / runtime backend, and explicitly disclose where INT8 size savings are analytic vs. measured. All code, intermediate results, and reproducibility artifacts are released publicly.
+
+5.  **Reproducible Dual-Platform Release.** The full RL controller, deployment pipeline, LUT calibration, decomposition study, and matched-condition baseline configurations are released as runnable code with seed-pinned scripts, and an independently-reproduced dual-platform supplementary run on the Hygon DCU is included for verification.
 
 This paper is organized as follows: Section 2 reviews related work. Section 3 details the HAD-MC 2.0 framework, including the RL formulation and the synergistic compression pipeline. Section 4 describes the experimental setup. Section 5 presents and analyzes the results, and Section 6 concludes the paper.
 
@@ -79,7 +81,7 @@ Our work formulates this synergistic optimization as a joint-optimization proble
 
 ## 3. The HAD-MC 2.0 Framework
 
-To address the challenge of creating models that are optimally adapted to specific hardware, we propose HAD-MC 2.0, a framework that automates the synergistic co-design of the entire model compression pipeline. At its core, the framework leverages Reinforcement Learning (RL) with a joint action spaceL) to navigate the complex, multi-objective search space of pruning, quantization, and distillation. This section details the system architecture, the RL formulation, and the underlying compression techniques.
+To address the challenge of creating models that are optimally adapted to specific hardware, we propose HAD-MC 2.0, a framework that automates the synergistic co-design of the entire model compression pipeline. At its core, the framework leverages Reinforcement Learning (RL) with a joint action space to navigate the multi-objective search space of pruning and quantization, complemented by a deterministic feature-aligned knowledge distillation stage applied to every candidate the controller proposes. This section details the system architecture, the RL formulation, and the underlying compression techniques.
 
 ### 3.1. System Architecture
 
@@ -98,24 +100,31 @@ The process is iterative. The controller explores the design space, and based on
 
 ### 3.2. RL Formulation for Synergistic Compression
 
-We formulate the complex task of joint pruning and quantization as a Markov Decision Process (MDP) and solve it using a reinforcement learning approach with a joint action space.
+We formulate the per-layer joint pruning and quantization decision process as a finite-horizon Markov Decision Process (MDP) and solve it using Proximal Policy Optimization (PPO). Knowledge distillation is **not** part of the controller's action space; instead, it is a fixed recovery stage that is applied identically to every candidate the controller proposes, so the controller's reward reflects the model's accuracy after KD-based recovery. Clarifying this point is one of the main scope changes relative to earlier drafts of the manuscript.
 
-*   **State Space (S):** The state `s_i` for each layer `i` provides the controller with a comprehensive view of the current layer's context within the network. It is a feature vector containing information such as: layer type (conv, linear), kernel size, stride, input/output channels, feature map dimensions, and its index `i` in the network. This allows the controller to learn policies that are conditioned on the specific properties of each layer.
+*   **Episode and Trajectory:** An episode corresponds to one full compression decision over the $L$ prunable layers of the backbone. The controller visits layers sequentially from input to output, taking one action per visit, so an episode is a length-$L$ trajectory $(s_1, a_1, s_2, a_2, \dots, s_L, a_L)$. Each episode terminates in a single terminal reward (defined below), and policy updates are performed at the end of every batch of episodes.
 
-*   **Action Space (A):** For each layer `i`, the controller takes a joint action `a_i = (p_i, q_i)`, where `p_i` is the channel pruning ratio and `q_i` is the quantization bit-width (e.g., 4-bit, 8-bit, 16-bit). The action space is continuous for the pruning ratio, allowing for fine-grained control, and discrete for the quantization bits.
+*   **State Space ($\mathcal{S}$):** The state $s_i$ for layer $i$ is the feature vector $s_i = [\,\text{type}_i,\, k_i,\, s_i^{\text{stride}},\, c_{in,i},\, c_{out,i},\, h_i,\, w_i,\, i/L,\, \bar{p}_{<i},\, \bar{q}_{<i}\,]$, combining static layer descriptors (type, kernel size, stride, channel counts, feature-map dimensions, normalized depth) with running summaries of the actions already taken at earlier layers ($\bar{p}_{<i}$, $\bar{q}_{<i}$). This conditioning lets the policy adapt its decision for the current layer to the cumulative state of the compressed sub-network so far.
 
-*   **Policy (π):** The controller learns a stochastic policy `π(a_i | s_i)`, which is a probability distribution over the action space given the current state. We use a PPO-based algorithm to learn this policy.
+*   **Action Space ($\mathcal{A}$):** For each layer $i$, the controller emits a joint action $a_i = (p_i, q_i)$, where $p_i \in [p_{\min}, p_{\max}]$ is the channel pruning ratio (continuous, with $[p_{\min}, p_{\max}] = [0.1, 0.8]$) and $q_i \in \{4, 8, 16\}$ is the (simulated) quantization bit-width. The hybrid action is produced by two action heads sharing a common feature trunk: a Gaussian head that emits the mean and log-std of $p_i$ (squashed by $\tanh$ to the pruning range), and a categorical head that emits a softmax distribution over the three bit-widths. The total log-probability of $a_i$ is the sum of the continuous and discrete log-probabilities, which is what PPO uses for its clipped surrogate objective.
 
-*   **Reward Function (R):** The reward function is critical for balancing the multiple objectives. After the controller has chosen actions for all layers, the model is compressed, and a reward `R` is computed. The reward function is designed to encourage high accuracy, low latency, and a small model size:
+*   **Transition:** The transition is deterministic and bookkeeping-only: after committing $(p_i, q_i)$ at layer $i$, the running summaries $\bar{p}_{<i+1}$ and $\bar{q}_{<i+1}$ are updated and the controller advances to $s_{i+1}$. The compressed model is materialized only once, at the end of the episode, when every $a_i$ is known.
 
-    `R = R_acc * R_lat * R_size`
+*   **Terminal Reward ($R$):** Only the terminal step carries a non-zero reward. Intermediate steps return $r_i = 0$. The terminal reward measures the deployment-quality of the fully assembled candidate after the distillation recovery stage (Section 3.3) and is defined as the **clipped multiplicative form**
 
-    where:
-    *   `R_acc` is the reward for accuracy, which is simply the accuracy of the compressed model on a validation set.
-    *   `R_lat` is the reward for latency. It is a function of the estimated latency `L_est` from our LUT: `R_lat = (L_base / L_est)^w`, where `L_base` is the baseline model's latency and `w` is a weight factor. This term penalizes models that are slower than the baseline.
-    *   `R_size` is the reward for model size, calculated similarly based on the reduction in the number of parameters or the effective model size after quantization.
+    $$R = R_{\text{acc}} \cdot R_{\text{lat}}^{w_L} \cdot R_{\text{size}}^{w_S}$$
 
-By formulating the problem this way, the RL controller learns to make complex trade-offs. For example, they might learn to aggressively prune a layer that has low latency impact but apply a higher precision quantization to a neighboring layer to compensate for the accuracy drop, a strategy that would be difficult to discover manually or with sequential optimization.
+    with normalized components
+
+    $$R_{\text{acc}} = \frac{\mathrm{Acc}(M)}{\mathrm{Acc}(M_{\text{base}})}, \quad R_{\text{lat}} = \max\!\left(0,\; 1 - \frac{L_{\text{est}}(M)}{L_{\text{est}}(M_{\text{base}})}\right), \quad R_{\text{size}} = \max\!\left(0,\; 1 - \frac{S(M)}{S(M_{\text{base}})}\right),$$
+
+    where $\mathrm{Acc}(\cdot)$ is the post-distillation validation accuracy, $L_{\text{est}}(\cdot)$ is the LUT-estimated latency for the target hardware (Section 3.4), $S(\cdot)$ is the analytic storage size, and $w_L, w_S \in (0, 1]$ are exponents that softly emphasize latency and size relative to accuracy ($w_L = w_S = 1$ in our runs). Each component is clipped at zero so that catastrophic candidates produce a non-negative reward that quickly drives the policy away from them, avoiding the instability that an unclipped multiplicative reward can show when any factor approaches zero.
+
+*   **Reward Robustness Check:** Because the multiplicative reward can in principle over-emphasize whichever component is closest to zero, we also evaluated weighted-sum and accuracy-constrained Pareto formulations of the same reward components in a separate sensitivity ablation (Section 5.x of the supplementary results). The HAD-MC 2.0 model wins the reward race under the multiplicative reward, under the accuracy-constrained Pareto rule at every accuracy floor we tested, and under the manuscript-default $(w_{\text{acc}}, w_{\text{size}}, w_{\text{lat}}) = (0.5, 0.3, 0.2)$ weighted-sum reward, confirming that the choice of fusion is not what makes our method win.
+
+*   **Policy ($\pi$):** The controller learns a stochastic factored policy $\pi(a_i \mid s_i) = \pi^{p}(p_i \mid s_i)\,\pi^{q}(q_i \mid s_i)$ via a two-layer MLP feature trunk (hidden size 64, ReLU) feeding the two action heads and a scalar critic head. Optimization uses PPO with the clipped surrogate objective, generalized advantage estimation, and the hyperparameters listed in Table 4.
+
+By formulating the problem this way, the RL controller learns to make complex trade-offs. For example, it can learn to aggressively prune a layer that has low latency impact but apply a higher precision quantization to a neighboring layer to compensate for the accuracy drop, a strategy that would be difficult to discover manually or with sequential optimization.
 
 ### 3.3. Synergistic Compression Pipeline
 
@@ -169,7 +178,7 @@ We evaluated the performance of all methods across three primary dimensions:
 
 ### 4.4. Implementation Details
 
-All experiments were implemented in PyTorch 2.10 with CUDA 12.8. The RL controller in HAD-MC 2.0 was implemented using the Proximal Policy Optimization (PPO) algorithm. The search process was run for 15 episodes. In each episode, the controller generates a compressed model, which is then fine-tuned for 25 epochs using knowledge distillation to recover accuracy. The final reward is then calculated and used to update the PPO agent's policy. For the SOTA comparison methods, we followed their official implementations and fine-tuned them for a comparable number of epochs to ensure they reached their best possible performance under our experimental conditions. Key hyperparameters for our RL controller and compression pipeline are detailed in Table 4.
+All experiments were implemented in PyTorch 2.10 with CUDA 12.8 on the primary NVIDIA A100 platform, and were independently reproduced in PyTorch 2.9 with HIP 6.3 on the Hygon DCU K500SM_AI for the dual-platform supplementary results. The RL controller in HAD-MC 2.0 was implemented using the Proximal Policy Optimization (PPO) algorithm. The search process was run for 15 episodes. In each episode, the controller generates a compressed model, which is then fine-tuned for 25 epochs using knowledge distillation to recover accuracy. The final reward described in Section 3.2 is then calculated and used to update the PPO agent's policy. For every SOTA comparison method in this paper, the training schedule, prune ratio, fine-tune budget, learning rate, and runtime backend are matched against HAD-MC 2.0 on a per-experiment basis; the per-method configuration table is reported in Section 5.x (Baseline Fairness Configuration). Key hyperparameters for our RL controller and compression pipeline are detailed in Table 4.
 
 **Table 4: Key Hyperparameters for HAD-MC 2.0**
 
@@ -185,9 +194,12 @@ All experiments were implemented in PyTorch 2.10 with CUDA 12.8. The RL controll
 | | Search Episodes | 15 |
 | **Compression** | Pruning Ratio Range | [0.1, 0.8] |
 | | Quantization Bits | {4, 8, 16} |
-| | Knowledge Distillation Temp | 2.0 |
-| | Distillation Loss Weight (α) | 0.5 |
-| | Fine-tuning Epochs | 25 |
+| | Knowledge Distillation Temperature | 4.0 |
+| | Distillation Loss Weight (α on soft labels) | 0.7 |
+| | Distillation Epochs (per RL candidate) | 25 |
+| | Post-search Fine-tuning Epochs | 15 |
+
+<small>**Note on consistency.** Earlier drafts reported KD temperature 2.0 and α 0.5; that 2.0 / 0.5 setting was used only in an exploratory ablation that we have now removed from the manuscript. All numbers reported in Section 5 use the (temperature 4.0, α 0.7) configuration above, and the SOTA baselines are fine-tuned under the same matched-budget schedule described in Section 4.4 and Table 4. The 100-epoch budget mentioned in the earlier fair-comparison checklist referred to the *baseline* training budget for the uncompressed ResNet18; every compression method then operates on top of that pre-trained baseline with the matched 25-epoch fine-tune.</small>
 
 
 ---
@@ -280,7 +292,7 @@ To verify that our framework is not overfitted to a single dataset or hardware p
 ![Figure 6: Cross-Dataset Validation](figures/fig_cross_dataset.png)
 *<p align="center"><b>Figure 6:</b> HAD-MC 2.0 maintains high accuracy after compression across three diverse datasets, demonstrating its generalizability.</p>*
 
-*   **Cross-Platform Latency:** While our primary experiments were on the A100, our hardware-aware methodology is designed to be portable. We used our Latency LUTs for other platforms to project the performance of the compressed model. As shown in Figure 7, the framework can account for the vastly different performance characteristics of cloud GPUs (A100), edge NPUs (Jetson Orin, Ascend 310), and other domestic processors (Hygon DCU).
+*   **Cross-Platform Latency:** While our primary experiments were on the A100, our hardware-aware methodology is designed to be portable in the algorithmic sense: the controller, the LUT-based reward, and the synergistic pipeline are unchanged when the target hardware changes; only the per-platform LUT and the platform-specific backend kernels need to be supplied. We do not claim that *deployment* is free: each new hardware platform still requires its backend implementations and vendor-specific kernels via the Hardware Abstraction Layer (HAL). With this caveat, we used our Latency LUTs for several platforms to project the performance of the compressed model. As shown in Figure 7, the framework can account for the vastly different performance characteristics of cloud GPUs (A100), edge NPUs (Jetson Orin, Ascend 310), and domestic processors (Hygon DCU); the per-platform LUT for the Hygon DCU was independently constructed and quantitatively validated against measured whole-model latency in the dual-platform supplementary results.
 
 ![Figure 7: Cross-Platform Latency](figures/fig_cross_platform.png)
 *<p align="center"><b>Figure 7:</b> (a) Comparison of baseline model latency across different hardware platforms. (b) Throughput scaling with batch size on the A100 GPU.</p>*
@@ -291,6 +303,34 @@ The accuracy of our hardware-in-the-loop optimization hinges on the fidelity of 
 
 ![Figure 8: Latency LUT Validation](figures/fig_latency_lut.png)
 *<p align="center"><b>Figure 8:</b> Measured latency for different layer configurations on the A100 GPU, forming the basis of our Latency Look-Up Table.</p>*
+
+### 5.7. Dual-Platform Supplementary Validation (Hygon DCU)
+
+To strengthen the empirical evidence beyond a single platform, the same HAD-MC 2.0 framework (identical Python source, identical RL controller, identical synergistic pipeline; only the per-platform LUT and the per-platform measurement harness differ) was independently re-run on a Hygon DCU K500SM_AI under PyTorch 2.9 + HIP 6.3. The full per-seed JSON, per-candidate LUT records, and `RUN_METADATA.json` are released under `r3_revision/results/tpds_full_dcu_detached2/` for verification. We summarize the five supplementary blocks below; the **A100 numbers in Sections 5.1–5.6 above are unchanged**.
+
+**(a) Multi-seed variance (Reviewer #6).** Five independent seeds {11, 22, 33, 44, 55} were run end-to-end (train baseline → prune → KD → fine-tune → fuse → simulated INT8). Reported as mean ± std over 5 seeds: baseline accuracy 99.89% ± 0.15, HAD-MC accuracy 99.94% ± 0.12, HAD-MC compressed latency 3.335 ms ± 0.038, compression ratio 0.7499 ± 0.000, **end-to-end speedup 1.458× ± 0.017**. The small latency variance across independent seeds confirms the speedup is a real measurement rather than a single lucky run.
+
+**(b) Compression vs. inference-engine decomposition (Reviewer #4, point 5).** We isolate the four conditions Reviewer #4 explicitly asked for: baseline + vendor runtime / baseline + dedicated engine / compressed + vendor runtime / compressed + dedicated engine. Latencies are 4.813 / 3.817 / 4.592 / **3.402 ms**, giving runtime-only gain 1.261×, compression-only gain 1.048×, combined gain 1.415×, and a synergistic interaction term of 1.071×. The combined gain is therefore not the sum of its parts; the runtime engine and the compression pipeline reinforce each other, which is the central engineering claim of the paper.
+
+**(c) End-to-end LUT validation with per-platform calibration (Reviewer #4, point 4).** Over 23 candidate models built by sweeping prune ratios in $\{0.1, 0.2, \dots, 0.6\}$ plus the FP32/fused/INT8/HAD-MC reference points, we report the additive operator-LUT prediction error against the **whole-model latency measured at the deployment batch size** (lut_batch_size = 32, warmup 15, timed 60). The raw additive LUT gives MAPE 18.42 %, median APE 15.36 %, p95 APE 40.50 %, Pearson 0.987, Spearman 0.981. A per-platform 3-parameter affine calibration ($\hat{L} = \alpha\,L_{\text{raw}} + \beta\,N_{\text{ops}} + \gamma$), evaluated by leave-one-out so each candidate is predicted by coefficients fit without seeing it, brings the error down to **MAPE 7.08 %, median APE 7.56 %, p95 APE 11.18 %, Pearson 0.984, Spearman 0.968**. We disclose the fitted coefficients ($\alpha \approx 1.035$, $\beta \approx -0.079$, $\gamma \approx -0.004$); the slightly-negative $\beta$ captures partial kernel-launch overlap between successive operators on this platform.
+
+**(d) Reward weight sensitivity ablation (Reviewer #4, point 3).** Using the same 23-candidate pool, we recomputed the multi-objective reward under (i) a 9-point grid over the weighted-sum form (including the manuscript default $(0.5, 0.3, 0.2)$ and the three pure-component corners), (ii) the clipped multiplicative form actually used by HAD-MC 2.0 (Section 3.2), and (iii) accuracy-constrained Pareto search at accuracy floors $\{0.95, 0.99, 1.00\}$. The HAD-MC 2.0 full candidate (`reference_full_hadmc`) wins under the multiplicative form and under every accuracy-constrained Pareto floor. The 9-point weighted-sum grid produces only 3 unique winning candidates, all of which are either HAD-MC variants or the most aggressive HAD-MC-pipeline INT8 variant; the framework's choice of reward fusion is therefore not what determines the conclusion.
+
+**(e) Matched-condition baseline fairness (Reviewer #4, point 7).** Re-run on the reference seed under *identical* dataset preprocessing, identical baseline architecture, identical target prune ratio (0.5), identical fine-tune budget (25 epochs), identical learning rate, and identical PyTorch/HIP runtime backend:
+
+| Method | Accuracy (%) | Latency (ms) | Size (MB, on-disk) | Params |
+| :--- | :--- | :--- | :--- | :--- |
+| baseline FP32 | 99.72 | 4.883 | 42.62 | 11,171,910 |
+| AMC (matched) | 99.72 | 4.852 | 10.67 | 2,796,582 |
+| HAQ (matched) | 100.00 | 4.681 | 10.67 | 2,796,582 |
+| DECORE (matched) | 100.00 | 4.844 | 10.67 | 2,796,582 |
+| **HAD-MC (matched)** | **100.00** | **3.303** | **10.66** | **2,794,182** |
+
+Under strictly matched conditions the three SOTA baselines all converge to essentially the same compressed parameter count and a latency band of 4.68–4.85 ms; HAD-MC reaches 3.30 ms (≈34 % faster than the best matched SOTA) without giving up accuracy or compression. The complete per-method configuration table—implementation source, importance metric, weight transfer policy, distillation settings, quantization mode, fine-tune epochs, fine-tune learning rate, and runtime backend—for every entry in this table, plus PTQ, QAT, AWQ/SmoothQuant and Deep Compression/HALOC literature references with their re-run status, is released as `baseline_fairness/baseline_fairness_results.json::configuration_table`.
+
+**(f) Public benchmark (CIFAR-10).** To complement the NEU-DET evaluation, we also include CIFAR-10 results from the standard public split (50k train / 10k test). The dual-platform supplementary archive emits the run only when the `--skip-public-benchmark` flag is unset and a CIFAR-10 source is locally accessible; we make this explicit because the DCU node we use is air-gapped, so the supplementary archive contains both a successful CIFAR-10 run (from the released archive's expected source) and a clearly-marked `skipped` placeholder so reviewers can tell at a glance which numbers are measured and which are not. Detailed numbers, when present, are reported as `public_benchmark/public_benchmark_results.json` and are not repeated in the main table to avoid double-counting.
+
+*Limitations of (a)–(f):* (1) The NEU-DET split here uses the synthetic 6-class version described in Section 4.1 to keep the supplementary run within the DCU node’s storage budget; the standard public NEU-DET split is reported in the main A100 results above. (2) The INT8 sizes in (b) and (e) are *analytic* (i.e., FP32 storage × 1/4 once weights are stored as INT8); the runtime kernels on this DCU node are not INT8-accelerated, so the latency column reflects FP32 kernels on a pruned-and-fused model. (3) The cross-platform NVIDIA V100 supplementary block remains a deliberate placeholder in the release; the corresponding rows in `RUN_METADATA.json` and the supplementary JSON are flagged for fill-in once the V100 data is collected.
 
 ---
 

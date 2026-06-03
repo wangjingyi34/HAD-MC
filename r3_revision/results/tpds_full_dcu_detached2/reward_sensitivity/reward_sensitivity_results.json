@@ -1,0 +1,775 @@
+{
+  "baseline": {
+    "name": "baseline_fp32",
+    "accuracy": 99.7222,
+    "latency_ms": 14.980118,
+    "size_mb": 42.617455
+  },
+  "pool_size": 23,
+  "pool_summary": [
+    {
+      "name": "baseline_fp32",
+      "accuracy": 99.7222,
+      "latency_ms": 14.980118,
+      "num_params": 11171910,
+      "size_mb": 42.617455,
+      "is_int8": false
+    },
+    {
+      "name": "baseline_fused",
+      "accuracy": 99.7222,
+      "latency_ms": 15.255569,
+      "num_params": 11167110,
+      "size_mb": 42.599144,
+      "is_int8": false
+    },
+    {
+      "name": "baseline_int8",
+      "accuracy": 99.7222,
+      "latency_ms": 15.247731,
+      "num_params": 11167110,
+      "size_mb": 10.649786,
+      "is_int8": true
+    },
+    {
+      "name": "reference_compressed",
+      "accuracy": 100.0,
+      "latency_ms": 6.008104,
+      "num_params": 2796582,
+      "size_mb": 10.668114,
+      "is_int8": false
+    },
+    {
+      "name": "reference_full_hadmc",
+      "accuracy": 100.0,
+      "latency_ms": 6.0998,
+      "num_params": 2794182,
+      "size_mb": 2.66474,
+      "is_int8": true
+    },
+    {
+      "name": "pruned_0p1",
+      "accuracy": 18.0556,
+      "latency_ms": 12.092383,
+      "num_params": 8555070,
+      "size_mb": 32.635002,
+      "is_int8": false
+    },
+    {
+      "name": "pruned_fused_0p1",
+      "accuracy": 18.0556,
+      "latency_ms": 12.38747,
+      "num_params": 8550870,
+      "size_mb": 32.61898,
+      "is_int8": false
+    },
+    {
+      "name": "pruned_int8_0p1",
+      "accuracy": 17.7778,
+      "latency_ms": 12.354034,
+      "num_params": 8550870,
+      "size_mb": 8.154745,
+      "is_int8": true
+    },
+    {
+      "name": "pruned_0p2",
+      "accuracy": 17.2222,
+      "latency_ms": 10.230746,
+      "num_params": 6286902,
+      "size_mb": 23.982628,
+      "is_int8": false
+    },
+    {
+      "name": "pruned_fused_0p2",
+      "accuracy": 17.2222,
+      "latency_ms": 10.420898,
+      "num_params": 6283302,
+      "size_mb": 23.968895,
+      "is_int8": false
+    },
+    {
+      "name": "pruned_int8_0p2",
+      "accuracy": 17.2222,
+      "latency_ms": 10.403746,
+      "num_params": 6283302,
+      "size_mb": 5.992224,
+      "is_int8": true
+    },
+    {
+      "name": "pruned_0p3",
+      "accuracy": 17.2222,
+      "latency_ms": 8.523984,
+      "num_params": 4367406,
+      "size_mb": 16.660332,
+      "is_int8": false
+    },
+    {
+      "name": "pruned_fused_0p3",
+      "accuracy": 17.2222,
+      "latency_ms": 8.664533,
+      "num_params": 4364406,
+      "size_mb": 16.648888,
+      "is_int8": false
+    },
+    {
+      "name": "pruned_int8_0p3",
+      "accuracy": 17.2222,
+      "latency_ms": 8.643095,
+      "num_params": 4364406,
+      "size_mb": 4.162222,
+      "is_int8": true
+    },
+    {
+      "name": "pruned_0p4",
+      "accuracy": 17.2222,
+      "latency_ms": 6.022202,
+      "num_params": 2796582,
+      "size_mb": 10.668114,
+      "is_int8": false
+    },
+    {
+      "name": "pruned_fused_0p4",
+      "accuracy": 17.2222,
+      "latency_ms": 6.105917,
+      "num_params": 2794182,
+      "size_mb": 10.658958,
+      "is_int8": false
+    },
+    {
+      "name": "pruned_int8_0p4",
+      "accuracy": 17.2222,
+      "latency_ms": 6.093971,
+      "num_params": 2794182,
+      "size_mb": 2.66474,
+      "is_int8": true
+    },
+    {
+      "name": "pruned_0p5",
+      "accuracy": 17.2222,
+      "latency_ms": 6.08478,
+      "num_params": 2796582,
+      "size_mb": 10.668114,
+      "is_int8": false
+    },
+    {
+      "name": "pruned_fused_0p5",
+      "accuracy": 17.2222,
+      "latency_ms": 6.24417,
+      "num_params": 2794182,
+      "size_mb": 10.658958,
+      "is_int8": false
+    },
+    {
+      "name": "pruned_int8_0p5",
+      "accuracy": 17.2222,
+      "latency_ms": 6.130061,
+      "num_params": 2794182,
+      "size_mb": 2.66474,
+      "is_int8": true
+    },
+    {
+      "name": "pruned_0p6",
+      "accuracy": 17.2222,
+      "latency_ms": 4.549187,
+      "num_params": 1574430,
+      "size_mb": 6.005974,
+      "is_int8": false
+    },
+    {
+      "name": "pruned_fused_0p6",
+      "accuracy": 17.2222,
+      "latency_ms": 4.414924,
+      "num_params": 1572630,
+      "size_mb": 5.999107,
+      "is_int8": false
+    },
+    {
+      "name": "pruned_int8_0p6",
+      "accuracy": 17.2222,
+      "latency_ms": 4.375051,
+      "num_params": 1572630,
+      "size_mb": 1.499777,
+      "is_int8": true
+    }
+  ],
+  "weighted_sum_grid": [
+    {
+      "label": "manuscript_default",
+      "weights": {
+        "w_acc": 0.5,
+        "w_size": 0.3,
+        "w_lat": 0.2
+      },
+      "winner": {
+        "name": "reference_full_hadmc",
+        "accuracy": 100.0,
+        "latency_ms": 6.0998,
+        "size_mb": 2.66474,
+        "num_params": 2794182,
+        "reward_components": {
+          "acc_reward": 1.002786,
+          "size_reward": 0.937473,
+          "lat_reward": 0.592807,
+          "lat_reward_clipped": 0.592807
+        },
+        "reward_total": 0.901196
+      },
+      "top5": [
+        {
+          "name": "reference_full_hadmc",
+          "score": 0.901196
+        },
+        {
+          "name": "reference_compressed",
+          "score": 0.846082
+        },
+        {
+          "name": "baseline_int8",
+          "score": 0.725032
+        },
+        {
+          "name": "pruned_int8_0p6",
+          "score": 0.517382
+        },
+        {
+          "name": "baseline_fused",
+          "score": 0.500129
+        }
+      ]
+    },
+    {
+      "label": "accuracy_heavy",
+      "weights": {
+        "w_acc": 0.7,
+        "w_size": 0.2,
+        "w_lat": 0.1
+      },
+      "winner": {
+        "name": "reference_full_hadmc",
+        "accuracy": 100.0,
+        "latency_ms": 6.0998,
+        "size_mb": 2.66474,
+        "num_params": 2794182,
+        "reward_components": {
+          "acc_reward": 1.002786,
+          "size_reward": 0.937473,
+          "lat_reward": 0.592807,
+          "lat_reward_clipped": 0.592807
+        },
+        "reward_total": 0.948725
+      },
+      "top5": [
+        {
+          "name": "reference_full_hadmc",
+          "score": 0.948725
+        },
+        {
+          "name": "reference_compressed",
+          "score": 0.911778
+        },
+        {
+          "name": "baseline_int8",
+          "score": 0.850021
+        },
+        {
+          "name": "baseline_fused",
+          "score": 0.700086
+        },
+        {
+          "name": "baseline_fp32",
+          "score": 0.7
+        }
+      ]
+    },
+    {
+      "label": "size_heavy",
+      "weights": {
+        "w_acc": 0.3,
+        "w_size": 0.5,
+        "w_lat": 0.2
+      },
+      "winner": {
+        "name": "reference_full_hadmc",
+        "accuracy": 100.0,
+        "latency_ms": 6.0998,
+        "size_mb": 2.66474,
+        "num_params": 2794182,
+        "reward_components": {
+          "acc_reward": 1.002786,
+          "size_reward": 0.937473,
+          "lat_reward": 0.592807,
+          "lat_reward_clipped": 0.592807
+        },
+        "reward_total": 0.888134
+      },
+      "top5": [
+        {
+          "name": "reference_full_hadmc",
+          "score": 0.888134
+        },
+        {
+          "name": "reference_compressed",
+          "score": 0.79546
+        },
+        {
+          "name": "pruned_int8_0p6",
+          "score": 0.675803
+        },
+        {
+          "name": "baseline_int8",
+          "score": 0.675053
+        },
+        {
+          "name": "pruned_int8_0p4",
+          "score": 0.639186
+        }
+      ]
+    },
+    {
+      "label": "latency_heavy",
+      "weights": {
+        "w_acc": 0.3,
+        "w_size": 0.2,
+        "w_lat": 0.5
+      },
+      "winner": {
+        "name": "reference_full_hadmc",
+        "accuracy": 100.0,
+        "latency_ms": 6.0998,
+        "size_mb": 2.66474,
+        "num_params": 2794182,
+        "reward_components": {
+          "acc_reward": 1.002786,
+          "size_reward": 0.937473,
+          "lat_reward": 0.592807,
+          "lat_reward_clipped": 0.592807
+        },
+        "reward_total": 0.784734
+      },
+      "top5": [
+        {
+          "name": "reference_full_hadmc",
+          "score": 0.784734
+        },
+        {
+          "name": "reference_compressed",
+          "score": 0.750235
+        },
+        {
+          "name": "pruned_int8_0p6",
+          "score": 0.598744
+        },
+        {
+          "name": "pruned_fused_0p6",
+          "score": 0.576298
+        },
+        {
+          "name": "pruned_0p6",
+          "score": 0.571784
+        }
+      ]
+    },
+    {
+      "label": "balanced_thirds",
+      "weights": {
+        "w_acc": 0.34,
+        "w_size": 0.33,
+        "w_lat": 0.33
+      },
+      "winner": {
+        "name": "reference_full_hadmc",
+        "accuracy": 100.0,
+        "latency_ms": 6.0998,
+        "size_mb": 2.66474,
+        "num_params": 2794182,
+        "reward_components": {
+          "acc_reward": 1.002786,
+          "size_reward": 0.937473,
+          "lat_reward": 0.592807,
+          "lat_reward_clipped": 0.592807
+        },
+        "reward_total": 0.84594
+      },
+      "top5": [
+        {
+          "name": "reference_full_hadmc",
+          "score": 0.84594
+        },
+        {
+          "name": "reference_compressed",
+          "score": 0.785987
+        },
+        {
+          "name": "pruned_int8_0p6",
+          "score": 0.610727
+        },
+        {
+          "name": "baseline_int8",
+          "score": 0.587535
+        },
+        {
+          "name": "pruned_fused_0p6",
+          "score": 0.575009
+        }
+      ]
+    },
+    {
+      "label": "size_latency_focus",
+      "weights": {
+        "w_acc": 0.2,
+        "w_size": 0.4,
+        "w_lat": 0.4
+      },
+      "winner": {
+        "name": "reference_full_hadmc",
+        "accuracy": 100.0,
+        "latency_ms": 6.0998,
+        "size_mb": 2.66474,
+        "num_params": 2794182,
+        "reward_components": {
+          "acc_reward": 1.002786,
+          "size_reward": 0.937473,
+          "lat_reward": 0.592807,
+          "lat_reward_clipped": 0.592807
+        },
+        "reward_total": 0.812669
+      },
+      "top5": [
+        {
+          "name": "reference_full_hadmc",
+          "score": 0.812669
+        },
+        {
+          "name": "reference_compressed",
+          "score": 0.739999
+        },
+        {
+          "name": "pruned_int8_0p6",
+          "score": 0.703641
+        },
+        {
+          "name": "pruned_fused_0p6",
+          "score": 0.660346
+        },
+        {
+          "name": "pruned_0p6",
+          "score": 0.656696
+        }
+      ]
+    },
+    {
+      "label": "pure_accuracy",
+      "weights": {
+        "w_acc": 1.0,
+        "w_size": 0.0,
+        "w_lat": 0.0
+      },
+      "winner": {
+        "name": "reference_compressed",
+        "accuracy": 100.0,
+        "latency_ms": 6.008104,
+        "size_mb": 10.668114,
+        "num_params": 2796582,
+        "reward_components": {
+          "acc_reward": 1.002786,
+          "size_reward": 0.749677,
+          "lat_reward": 0.598928,
+          "lat_reward_clipped": 0.598928
+        },
+        "reward_total": 1.002786
+      },
+      "top5": [
+        {
+          "name": "reference_compressed",
+          "score": 1.002786
+        },
+        {
+          "name": "reference_full_hadmc",
+          "score": 1.002786
+        },
+        {
+          "name": "baseline_fp32",
+          "score": 1.0
+        },
+        {
+          "name": "baseline_fused",
+          "score": 1.0
+        },
+        {
+          "name": "baseline_int8",
+          "score": 1.0
+        }
+      ]
+    },
+    {
+      "label": "pure_size",
+      "weights": {
+        "w_acc": 0.0,
+        "w_size": 1.0,
+        "w_lat": 0.0
+      },
+      "winner": {
+        "name": "pruned_int8_0p6",
+        "accuracy": 17.2222,
+        "latency_ms": 4.375051,
+        "size_mb": 1.499777,
+        "num_params": 1572630,
+        "reward_components": {
+          "acc_reward": 0.172702,
+          "size_reward": 0.964808,
+          "lat_reward": 0.707943,
+          "lat_reward_clipped": 0.707943
+        },
+        "reward_total": 0.964808
+      },
+      "top5": [
+        {
+          "name": "pruned_int8_0p6",
+          "score": 0.964808
+        },
+        {
+          "name": "reference_full_hadmc",
+          "score": 0.937473
+        },
+        {
+          "name": "pruned_int8_0p4",
+          "score": 0.937473
+        },
+        {
+          "name": "pruned_int8_0p5",
+          "score": 0.937473
+        },
+        {
+          "name": "pruned_int8_0p3",
+          "score": 0.902335
+        }
+      ]
+    },
+    {
+      "label": "pure_latency",
+      "weights": {
+        "w_acc": 0.0,
+        "w_size": 0.0,
+        "w_lat": 1.0
+      },
+      "winner": {
+        "name": "pruned_int8_0p6",
+        "accuracy": 17.2222,
+        "latency_ms": 4.375051,
+        "size_mb": 1.499777,
+        "num_params": 1572630,
+        "reward_components": {
+          "acc_reward": 0.172702,
+          "size_reward": 0.964808,
+          "lat_reward": 0.707943,
+          "lat_reward_clipped": 0.707943
+        },
+        "reward_total": 0.707943
+      },
+      "top5": [
+        {
+          "name": "pruned_int8_0p6",
+          "score": 0.707943
+        },
+        {
+          "name": "pruned_fused_0p6",
+          "score": 0.705281
+        },
+        {
+          "name": "pruned_0p6",
+          "score": 0.696318
+        },
+        {
+          "name": "reference_compressed",
+          "score": 0.598928
+        },
+        {
+          "name": "pruned_0p4",
+          "score": 0.597987
+        }
+      ]
+    }
+  ],
+  "multiplicative_reward": {
+    "formulation": "acc_reward * size_reward * max(0, lat_reward)",
+    "winner": {
+      "name": "reference_full_hadmc",
+      "accuracy": 100.0,
+      "latency_ms": 6.0998,
+      "size_mb": 2.66474,
+      "num_params": 2794182,
+      "reward_components": {
+        "acc_reward": 1.002786,
+        "size_reward": 0.937473,
+        "lat_reward": 0.592807,
+        "lat_reward_clipped": 0.592807
+      },
+      "reward_total": 0.557289
+    },
+    "top5": [
+      {
+        "name": "reference_full_hadmc",
+        "score": 0.557289
+      },
+      {
+        "name": "reference_compressed",
+        "score": 0.450253
+      },
+      {
+        "name": "pruned_int8_0p6",
+        "score": 0.11796
+      },
+      {
+        "name": "pruned_fused_0p6",
+        "score": 0.104658
+      },
+      {
+        "name": "pruned_0p6",
+        "score": 0.103308
+      }
+    ]
+  },
+  "constrained_pareto": [
+    {
+      "acc_floor": 0.95,
+      "feasible_count": 5,
+      "winner": {
+        "name": "reference_full_hadmc",
+        "accuracy": 100.0,
+        "latency_ms": 6.0998,
+        "size_mb": 2.66474,
+        "num_params": 2794182,
+        "reward_components": {
+          "acc_reward": 1.002786,
+          "size_reward": 0.937473,
+          "lat_reward": 0.592807,
+          "lat_reward_clipped": 0.592807
+        },
+        "objective_total": 1.53028
+      },
+      "top5": [
+        {
+          "name": "reference_full_hadmc",
+          "score": 1.53028
+        },
+        {
+          "name": "reference_compressed",
+          "score": 1.348605
+        },
+        {
+          "name": "baseline_int8",
+          "score": 0.750107
+        },
+        {
+          "name": "baseline_fused",
+          "score": 0.00043
+        },
+        {
+          "name": "baseline_fp32",
+          "score": 0.0
+        }
+      ]
+    },
+    {
+      "acc_floor": 0.99,
+      "feasible_count": 5,
+      "winner": {
+        "name": "reference_full_hadmc",
+        "accuracy": 100.0,
+        "latency_ms": 6.0998,
+        "size_mb": 2.66474,
+        "num_params": 2794182,
+        "reward_components": {
+          "acc_reward": 1.002786,
+          "size_reward": 0.937473,
+          "lat_reward": 0.592807,
+          "lat_reward_clipped": 0.592807
+        },
+        "objective_total": 1.53028
+      },
+      "top5": [
+        {
+          "name": "reference_full_hadmc",
+          "score": 1.53028
+        },
+        {
+          "name": "reference_compressed",
+          "score": 1.348605
+        },
+        {
+          "name": "baseline_int8",
+          "score": 0.750107
+        },
+        {
+          "name": "baseline_fused",
+          "score": 0.00043
+        },
+        {
+          "name": "baseline_fp32",
+          "score": 0.0
+        }
+      ]
+    },
+    {
+      "acc_floor": 1.0,
+      "feasible_count": 5,
+      "winner": {
+        "name": "reference_full_hadmc",
+        "accuracy": 100.0,
+        "latency_ms": 6.0998,
+        "size_mb": 2.66474,
+        "num_params": 2794182,
+        "reward_components": {
+          "acc_reward": 1.002786,
+          "size_reward": 0.937473,
+          "lat_reward": 0.592807,
+          "lat_reward_clipped": 0.592807
+        },
+        "objective_total": 1.53028
+      },
+      "top5": [
+        {
+          "name": "reference_full_hadmc",
+          "score": 1.53028
+        },
+        {
+          "name": "reference_compressed",
+          "score": 1.348605
+        },
+        {
+          "name": "baseline_int8",
+          "score": 0.750107
+        },
+        {
+          "name": "baseline_fused",
+          "score": 0.00043
+        },
+        {
+          "name": "baseline_fp32",
+          "score": 0.0
+        }
+      ]
+    }
+  ],
+  "stability_summary": {
+    "unique_weighted_sum_winners": [
+      "pruned_int8_0p6",
+      "reference_compressed",
+      "reference_full_hadmc"
+    ],
+    "unique_winner_count": 3,
+    "winner_accuracy_range": [
+      17.2222,
+      100.0
+    ],
+    "winner_latency_ms_range": [
+      4.375051,
+      6.0998
+    ],
+    "winner_size_mb_range": [
+      1.499777,
+      10.668114
+    ]
+  },
+  "method": "Post-hoc reward sweep over the LUT validation candidate pool. Each candidate is independently trained / pruned / quantized; reward scoring does not alter measurements. Accuracy, latency, and params come from the LUT validation phase; storage size is the analytic deployment size (4 B/param FP32, 1 B/param INT8)."
+}

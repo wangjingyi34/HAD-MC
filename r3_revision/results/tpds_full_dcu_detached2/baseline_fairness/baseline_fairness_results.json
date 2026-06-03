@@ -1,0 +1,377 @@
+{
+  "reference_seed": 11,
+  "matched_conditions": {
+    "dataset": "NEU-DET (synthetic, num_per_class=300, img_size=64)",
+    "baseline_arch": "ResNet18Small(base_width=64, num_classes=6)",
+    "reference_seed": 11,
+    "baseline_train_epochs": 40,
+    "baseline_train_lr": 0.01,
+    "finetune_epochs": 25,
+    "finetune_lr": 0.005,
+    "target_prune_ratio": 0.5,
+    "runtime_backend": "PyTorch eager on DCU/HIP",
+    "latency_measurement": "evaluate_model warmup=10 runs=50 batch=1"
+  },
+  "runs": [
+    {
+      "name": "baseline_fp32",
+      "method_tag": "reference_baseline_no_compression",
+      "accuracy": 99.7222,
+      "latency_ms": 4.8827,
+      "latency_std_ms": 0.3794,
+      "model_size_mb": 42.6175,
+      "num_params": 11171910,
+      "per_class_accuracy": {
+        "0": 100.0,
+        "1": 100.0,
+        "2": 100.0,
+        "3": 100.0,
+        "4": 98.27586206896552,
+        "5": 100.0
+      },
+      "pruning_info": null,
+      "quantization_info": null,
+      "matched_conditions": {
+        "dataset": "NEU-DET (synthetic, num_per_class=300, img_size=64)",
+        "baseline_arch": "ResNet18Small(base_width=64, num_classes=6)",
+        "reference_seed": 11,
+        "baseline_train_epochs": 40,
+        "baseline_train_lr": 0.01,
+        "finetune_epochs": 25,
+        "finetune_lr": 0.005,
+        "target_prune_ratio": 0.5,
+        "runtime_backend": "PyTorch eager on DCU/HIP",
+        "latency_measurement": "evaluate_model warmup=10 runs=50 batch=1"
+      }
+    },
+    {
+      "name": "AMC",
+      "method_tag": "amc_simplified_l1_no_kd",
+      "accuracy": 99.7222,
+      "latency_ms": 4.852,
+      "latency_std_ms": 0.2794,
+      "model_size_mb": 10.6681,
+      "num_params": 2796582,
+      "per_class_accuracy": {
+        "0": 100.0,
+        "1": 100.0,
+        "2": 100.0,
+        "3": 100.0,
+        "4": 98.27586206896552,
+        "5": 100.0
+      },
+      "pruning_info": {
+        "importance_metric": "l1",
+        "stage_widths_old": [
+          64,
+          64,
+          128,
+          256,
+          512
+        ],
+        "stage_widths_new": [
+          32,
+          32,
+          64,
+          128,
+          256
+        ],
+        "target_prune_ratio": 0.5,
+        "weight_transfer": "full_all_layers"
+      },
+      "quantization_info": null,
+      "matched_conditions": {
+        "dataset": "NEU-DET (synthetic, num_per_class=300, img_size=64)",
+        "baseline_arch": "ResNet18Small(base_width=64, num_classes=6)",
+        "reference_seed": 11,
+        "baseline_train_epochs": 40,
+        "baseline_train_lr": 0.01,
+        "finetune_epochs": 25,
+        "finetune_lr": 0.005,
+        "target_prune_ratio": 0.5,
+        "runtime_backend": "PyTorch eager on DCU/HIP",
+        "latency_measurement": "evaluate_model warmup=10 runs=50 batch=1"
+      }
+    },
+    {
+      "name": "HAQ",
+      "method_tag": "haq_simplified_l2_plus_sim_int8",
+      "accuracy": 100.0,
+      "latency_ms": 4.6811,
+      "latency_std_ms": 0.8632,
+      "model_size_mb": 10.6681,
+      "num_params": 2796582,
+      "per_class_accuracy": {
+        "0": 100.0,
+        "1": 100.0,
+        "2": 100.0,
+        "3": 100.0,
+        "4": 100.0,
+        "5": 100.0
+      },
+      "pruning_info": {
+        "importance_metric": "l2",
+        "stage_widths_old": [
+          64,
+          64,
+          128,
+          256,
+          512
+        ],
+        "stage_widths_new": [
+          32,
+          32,
+          64,
+          128,
+          256
+        ],
+        "target_prune_ratio": 0.5,
+        "weight_transfer": "full_all_layers"
+      },
+      "quantization_info": {
+        "mode": "fake_int8_per_tensor_weight_only",
+        "is_simulated": true,
+        "kernels_are_int8": false,
+        "latency_reflects_int8": false,
+        "size_mb_is_analytic": true,
+        "quantized_layers": 21
+      },
+      "matched_conditions": {
+        "dataset": "NEU-DET (synthetic, num_per_class=300, img_size=64)",
+        "baseline_arch": "ResNet18Small(base_width=64, num_classes=6)",
+        "reference_seed": 11,
+        "baseline_train_epochs": 40,
+        "baseline_train_lr": 0.01,
+        "finetune_epochs": 25,
+        "finetune_lr": 0.005,
+        "target_prune_ratio": 0.5,
+        "runtime_backend": "PyTorch eager on DCU/HIP",
+        "latency_measurement": "evaluate_model warmup=10 runs=50 batch=1"
+      }
+    },
+    {
+      "name": "DECORE",
+      "method_tag": "decore_simplified_bn_gamma_no_kd",
+      "accuracy": 100.0,
+      "latency_ms": 4.8439,
+      "latency_std_ms": 0.5725,
+      "model_size_mb": 10.6681,
+      "num_params": 2796582,
+      "per_class_accuracy": {
+        "0": 100.0,
+        "1": 100.0,
+        "2": 100.0,
+        "3": 100.0,
+        "4": 100.0,
+        "5": 100.0
+      },
+      "pruning_info": {
+        "importance_metric": "bn_gamma",
+        "stage_widths_old": [
+          64,
+          64,
+          128,
+          256,
+          512
+        ],
+        "stage_widths_new": [
+          32,
+          32,
+          64,
+          128,
+          256
+        ],
+        "target_prune_ratio": 0.5,
+        "weight_transfer": "full_all_layers"
+      },
+      "quantization_info": null,
+      "matched_conditions": {
+        "dataset": "NEU-DET (synthetic, num_per_class=300, img_size=64)",
+        "baseline_arch": "ResNet18Small(base_width=64, num_classes=6)",
+        "reference_seed": 11,
+        "baseline_train_epochs": 40,
+        "baseline_train_lr": 0.01,
+        "finetune_epochs": 25,
+        "finetune_lr": 0.005,
+        "target_prune_ratio": 0.5,
+        "runtime_backend": "PyTorch eager on DCU/HIP",
+        "latency_measurement": "evaluate_model warmup=10 runs=50 batch=1"
+      }
+    },
+    {
+      "name": "HAD-MC",
+      "method_tag": "hadmc_full_l1_kd_simint8",
+      "accuracy": 100.0,
+      "latency_ms": 3.3026,
+      "latency_std_ms": 0.0257,
+      "model_size_mb": 10.659,
+      "num_params": 2794182,
+      "per_class_accuracy": {
+        "0": 100.0,
+        "1": 100.0,
+        "2": 100.0,
+        "3": 100.0,
+        "4": 100.0,
+        "5": 100.0
+      },
+      "pruning_info": {
+        "importance_metric": "l1",
+        "stage_widths_old": [
+          64,
+          64,
+          128,
+          256,
+          512
+        ],
+        "stage_widths_new": [
+          32,
+          32,
+          64,
+          128,
+          256
+        ],
+        "target_prune_ratio": 0.5,
+        "weight_transfer": "full_all_layers"
+      },
+      "quantization_info": {
+        "mode": "fake_int8_per_tensor_weight_only",
+        "is_simulated": true,
+        "kernels_are_int8": false,
+        "latency_reflects_int8": false,
+        "size_mb_is_analytic": true,
+        "quantized_layers": 21
+      },
+      "matched_conditions": {
+        "dataset": "NEU-DET (synthetic, num_per_class=300, img_size=64)",
+        "baseline_arch": "ResNet18Small(base_width=64, num_classes=6)",
+        "reference_seed": 11,
+        "baseline_train_epochs": 40,
+        "baseline_train_lr": 0.01,
+        "finetune_epochs": 25,
+        "finetune_lr": 0.005,
+        "target_prune_ratio": 0.5,
+        "runtime_backend": "PyTorch eager on DCU/HIP",
+        "latency_measurement": "evaluate_model warmup=10 runs=50 batch=1"
+      }
+    }
+  ],
+  "configuration_table": [
+    {
+      "method": "HAD-MC",
+      "role": "proposed",
+      "implementation_source": "this work, hadmc_experiments_complete.hadmc2_compress / build_hadmc_variants",
+      "importance_metric": "L1 channel norm (smart_structural_prune)",
+      "prune_ratio_target": 0.5,
+      "weight_transfer": "full_all_layers (real structural pruning)",
+      "distillation": "KD temperature=4.0, alpha=0.7, epochs=25",
+      "quantization": "fake_int8_per_tensor_weight_only (simulated, size analytic)",
+      "finetune_epochs": 25,
+      "finetune_lr": 0.005,
+      "runtime_backend": "PyTorch eager on DCU/HIP",
+      "reported_in_this_run": true
+    },
+    {
+      "method": "AMC",
+      "role": "baseline",
+      "implementation_source": "this work, hadmc_experiments_complete.amc_compress (L1-channel surrogate of the AMC search policy)",
+      "importance_metric": "L1 channel norm",
+      "prune_ratio_target": 0.5,
+      "weight_transfer": "full_all_layers",
+      "distillation": "none",
+      "quantization": "none",
+      "finetune_epochs": 25,
+      "finetune_lr": 0.01,
+      "runtime_backend": "PyTorch eager on DCU/HIP",
+      "reported_in_this_run": true
+    },
+    {
+      "method": "HAQ",
+      "role": "baseline",
+      "implementation_source": "this work, hadmc_experiments_complete.haq_compress (L2-channel + fake INT8 surrogate of HAQ's policy)",
+      "importance_metric": "L2 channel norm",
+      "prune_ratio_target": 0.5,
+      "weight_transfer": "full_all_layers",
+      "distillation": "none",
+      "quantization": "fake_int8_per_tensor_weight_only (matched with HAD-MC)",
+      "finetune_epochs": 25,
+      "finetune_lr": 0.01,
+      "runtime_backend": "PyTorch eager on DCU/HIP",
+      "reported_in_this_run": true
+    },
+    {
+      "method": "DECORE",
+      "role": "baseline",
+      "implementation_source": "this work, hadmc_experiments_complete.decore_compress (BN-gamma channel selection)",
+      "importance_metric": "BatchNorm gamma magnitude",
+      "prune_ratio_target": 0.5,
+      "weight_transfer": "full_all_layers",
+      "distillation": "none",
+      "quantization": "none",
+      "finetune_epochs": 25,
+      "finetune_lr": 0.008,
+      "runtime_backend": "PyTorch eager on DCU/HIP",
+      "reported_in_this_run": true
+    },
+    {
+      "method": "PTQ (INT8)",
+      "role": "baseline",
+      "implementation_source": "hadmc_experiments_complete.quantize_model_int8 (per-tensor min-max fake quant)",
+      "importance_metric": "n/a",
+      "prune_ratio_target": 0.0,
+      "weight_transfer": "n/a",
+      "distillation": "none",
+      "quantization": "fake_int8_per_tensor_weight_only (size analytic)",
+      "finetune_epochs": 0,
+      "finetune_lr": null,
+      "runtime_backend": "PyTorch eager on DCU/HIP",
+      "reported_in_this_run": false,
+      "note": "Quantization-only; numerical metrics are captured by lut_validation.candidates['baseline_int8']."
+    },
+    {
+      "method": "QAT (INT8)",
+      "role": "baseline (literature)",
+      "implementation_source": "not re-implemented in this supplementary run",
+      "importance_metric": "n/a",
+      "prune_ratio_target": 0.0,
+      "weight_transfer": "n/a",
+      "distillation": "none",
+      "quantization": "would require true INT8 kernels; deferred per cross-platform disclaimer",
+      "finetune_epochs": null,
+      "finetune_lr": null,
+      "runtime_backend": "not measured",
+      "reported_in_this_run": false,
+      "note": "Documented for transparency; not in this supplementary phase to avoid mis-attributing fake-quant savings to QAT."
+    },
+    {
+      "method": "AWQ / SmoothQuant",
+      "role": "literature reference",
+      "implementation_source": "original LLM-quantization papers; not applied to YOLOv5/ResNet here",
+      "importance_metric": "activation-aware scaling (per original paper)",
+      "prune_ratio_target": 0.0,
+      "weight_transfer": "n/a",
+      "distillation": "none",
+      "quantization": "weight-only INT4/INT8 (LLM-tuned)",
+      "finetune_epochs": null,
+      "finetune_lr": null,
+      "runtime_backend": "not measured (LLM-focused)",
+      "reported_in_this_run": false,
+      "note": "Cited in the manuscript for context. Not re-run because applying them to convolutional vision backbones requires non-trivial calibration outside the supplementary scope."
+    },
+    {
+      "method": "Deep Compression / HALOC",
+      "role": "literature reference",
+      "implementation_source": "original papers; numbers in the manuscript are reported from their respective sources",
+      "importance_metric": "varies (magnitude + Huffman / hardware-aware LUT)",
+      "prune_ratio_target": "as reported in original papers",
+      "weight_transfer": "n/a",
+      "distillation": "varies",
+      "quantization": "varies",
+      "finetune_epochs": null,
+      "finetune_lr": null,
+      "runtime_backend": "as reported in original papers",
+      "reported_in_this_run": false,
+      "note": "Numbers in the manuscript come from the original publications. The matched-condition table above only covers baselines we re-execute."
+    }
+  ],
+  "note": "Every entry with reported_in_this_run=true was executed in this phase under identical matched conditions. Entries with reported_in_this_run=false are documented for transparency only."
+}

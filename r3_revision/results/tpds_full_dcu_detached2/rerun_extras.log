@@ -1,0 +1,38 @@
+======================================================================
+HAD-MC 2.0 Complete Experiment Suite
+======================================================================
+Device: cuda
+GPU: K500SM_AI
+CUDA: None
+Memory: 68.7 GB
+PyTorch: 2.9.0
+Platform Tag: dcu
+
+======================================================================
+SUPPLEMENTARY EXPERIMENT 4: Public Benchmark
+======================================================================
+
+======================================================================
+SUPPLEMENTARY EXPERIMENT 5: Reward Weight Sensitivity Ablation
+======================================================================
+  Pool size: 23, baseline = baseline_fp32
+  Weighted-sum grid: 9 configurations, 3 unique winning candidates
+
+======================================================================
+SUPPLEMENTARY EXPERIMENT 6: Matched-Condition Baseline Fairness
+======================================================================
+
+[Dataset] Creating NEU-DET style dataset: 300×6 samples, 64×64
+  Train: torch.Size([1440, 3, 64, 64]), Test: torch.Size([360, 3, 64, 64])
+  Classes: [0, 1, 2, 3, 4, 5]
+  [AMC] training under matched conditions...
+  [HAQ] training under matched conditions...
+  [DECORE] training under matched conditions...
+  [HAD-MC] training under matched conditions...
+    Distill Epoch 5/25: loss=0.2691, acc=99.79%
+    Distill Epoch 10/25: loss=0.1579, acc=99.93%
+    Distill Epoch 15/25: loss=0.1165, acc=100.00%
+    Distill Epoch 20/25: loss=0.1606, acc=99.79%
+    Distill Epoch 25/25: loss=0.1421, acc=99.93%
+
+Extras re-run complete. Combined results written to: /root/HAD-MC-worktree/r3_revision/results/tpds_full_dcu_detached2/TPDS_SUPPLEMENTARY_RESULTS.json
