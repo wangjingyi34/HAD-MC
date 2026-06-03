@@ -269,8 +269,10 @@ To understand the contribution of each component in our synergistic pipeline (Pr
 | Pruning + Distillation | 100.00 | 2.01 |
 | **Full HAD-MC 2.0** | **100.00** | **1.49** |
 
-![Figure 4: Ablation Study Results](figures/fig_ablation_study.png)
-*<p align="center"><b>Figure 4:</b> Impact of different components on (a) Accuracy and (b) Inference Latency. The full HAD-MC 2.0 pipeline achieves the lowest latency by far, highlighting the benefits of synergistic optimization.</p>*
+The accuracy column is uninformative here because the synthetic NEU-DET split saturates at 100.00 % for every variant — the ablation signal therefore lives entirely in the **latency** column. The figure below replaces the saturated bar chart with two discriminative views: (a) the four-condition latency decomposition on DCU NEU-DET, and (b) the CIFAR-10 50 000 / 10 000 public benchmark where the accuracy axis does separate (see §5.7(b) and §5.7(f)).
+
+![Figure 4: DCU §5.7 Supplementary Evidence](figures/fig_dcu_supplementary.png)
+*<p align="center"><b>Figure 4:</b> (a) 4-condition latency decomposition on DCU NEU-DET: runtime-only 1.261×, compression-only 1.048×, combined 1.415× (synergy 1.122×), with std error bars. (b) CIFAR-10 ResNet18 on the full 50 000 / 10 000 public split: 1.499× speedup, +3.00 acc points at a matched 15-epoch training budget (caveat in §5.7(f)). The earlier saturated `fig_ablation_study.png` is retained on disk for traceability but is no longer the headline ablation figure.</p>*
 
 The results are striking. The analysis reveals two key insights:
 
