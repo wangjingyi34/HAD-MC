@@ -16,12 +16,11 @@
       55
     ],
     "results_dir": "/root/HAD-MC-worktree/r3_revision/results/tpds_full_dcu_detached2",
-    "rerun_timestamp": "2026-06-03T14:54:31.152208",
+    "rerun_timestamp": "2026-06-03T19:39:25.591929",
     "rerun_phases": [
-      "public_benchmark",
-      "reward_sensitivity",
-      "baseline_fairness"
-    ]
+      "public_benchmark"
+    ],
+    "rerun_note": "reward_sensitivity and baseline_fairness reused from prior successful run (commit 23273fb); only public_benchmark was re-run on the full CIFAR-10 train/test partition"
   },
   "variance": {
     "seeds": [
@@ -10327,8 +10326,122 @@
     ]
   },
   "public_benchmark": {
-    "skipped": true,
-    "reason": "torchvision unavailable: No module named 'torchvision'"
+    "skipped": false,
+    "dataset": "CIFAR-10",
+    "loader_source": "local_binary:cifar-10-binary.tar.gz",
+    "train_size": 50000,
+    "test_size": 10000,
+    "baseline": {
+      "accuracy": 82.54,
+      "loss": 0.701796,
+      "latency_ms": 4.8997,
+      "latency_std_ms": 0.44,
+      "throughput_fps": 204.09,
+      "num_params": 11173962,
+      "model_size_mb": 42.6253,
+      "per_class_accuracy": {
+        "0": 86.9,
+        "1": 92.1,
+        "2": 71.7,
+        "3": 62.4,
+        "4": 81.7,
+        "5": 74.7,
+        "6": 88.6,
+        "7": 87.3,
+        "8": 89.6,
+        "9": 90.4
+      },
+      "train_losses": [
+        1.4085601400375367,
+        0.8472701857376098,
+        0.5935155229568482,
+        0.4108848754501343,
+        0.25800798755645754,
+        0.14252699606895447,
+        0.06433043980598449,
+        0.021436572799384594,
+        0.00556159982778132,
+        0.002952320559322834,
+        0.0020730779038369658,
+        0.0018006431171298028,
+        0.001608573338277638,
+        0.0016195792847871781,
+        0.0015790207117423415
+      ],
+      "train_accs": [
+        48.574,
+        70.128,
+        79.198,
+        85.672,
+        91.182,
+        95.19,
+        97.926,
+        99.504,
+        99.954,
+        99.988,
+        100.0,
+        100.0,
+        100.0,
+        99.998,
+        99.998
+      ]
+    },
+    "compressed": {
+      "accuracy": 85.54,
+      "loss": 0.554054,
+      "latency_ms": 3.2688,
+      "latency_std_ms": 0.2282,
+      "throughput_fps": 305.92,
+      "num_params": 2795210,
+      "model_size_mb": 10.6629,
+      "per_class_accuracy": {
+        "0": 89.7,
+        "1": 93.2,
+        "2": 74.8,
+        "3": 71.9,
+        "4": 84.7,
+        "5": 77.8,
+        "6": 89.7,
+        "7": 88.8,
+        "8": 92.7,
+        "9": 92.1
+      },
+      "compression_info": {
+        "prune_ratio": 0.7496313304090348,
+        "compression_ratio": 0.7498461154602101,
+        "size_reduction": 0.7498457488862249,
+        "speedup": 1.498929270680372
+      },
+      "effective_size_mb": 2.6657,
+      "pruning_info": {
+        "importance_metric": "l1",
+        "stage_widths_old": [
+          64,
+          64,
+          128,
+          256,
+          512
+        ],
+        "stage_widths_new": [
+          32,
+          32,
+          64,
+          128,
+          256
+        ],
+        "target_prune_ratio": 0.5,
+        "weight_transfer": "full_all_layers"
+      },
+      "quantization_info": {
+        "mode": "fake_int8_per_tensor_weight_only",
+        "is_simulated": true,
+        "kernels_are_int8": false,
+        "latency_reflects_int8": false,
+        "size_mb_is_analytic": true,
+        "quantized_layers": 21
+      }
+    },
+    "compression_only_base_width": 32
   },
   "reward_sensitivity": {
     "baseline": {
