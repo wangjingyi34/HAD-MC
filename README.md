@@ -46,18 +46,11 @@ A hardware-aware deep model compression framework that achieves synergistic opti
 | HAQ | 88.9 | 9.8 | 1.82 | 6.8 | 4.6× |
 | **HAD-MC (Ours)** | **88.7** | **7.6** | **0.91** | **5.5** | **5.82×** |
 
-### Cross-Platform Validation (GPU)
+### Cross-Platform Validation (R3 Revision)
 
-To demonstrate the generalizability of HAD-MC methodology, we conducted additional experiments on NVIDIA A100 GPU:
+The small A100/COCO128 sanity-check table that appeared in earlier README drafts is intentionally removed from the headline results here because it is **not** part of the final R3 paper evidence package. The final cross-platform validation used in the manuscript is the fully released §5.7 supplementary block below: two complete six-phase measured runs on **Hygon DCU K500SM_AI** and **NVIDIA Tesla V100-SXM2-32GB**, with the corresponding JSON artifacts published under `r3_revision/results/tpds_full_dcu_detached2/` and `r3_revision/results/tpds_full_v100/`.
 
-| Configuration | mAP@0.5 | mAP@0.5:0.95 | Note |
-|:---|:---:|:---:|:---|
-| FP32 Baseline | 0.961 | 0.778 | 100 epochs training |
-| PTQ-INT8 | 0.961 | 0.778 | Post-training quantization |
-| QAT-INT8 | 0.958 | 0.779 | Quantization-aware training |
-| L1-Norm Pruning | 0.955 | 0.746 | 30% pruning ratio |
-
-*Data source: Real experiments on NVIDIA A100 80GB PCIe with COCO128 dataset*
+In other words: if you are checking the final paper's cross-platform claims, use the §5.7 tables and the released supplementary JSON files below, not the historical COCO128 sanity-check snippet from older drafts.
 
 ### Ablation Study on FS-DS Dataset
 
