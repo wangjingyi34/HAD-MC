@@ -1,0 +1,118 @@
+{
+  "skipped": false,
+  "dataset": "CIFAR-10",
+  "loader_source": "torchvision.datasets.CIFAR10",
+  "train_size": 50000,
+  "test_size": 10000,
+  "baseline": {
+    "accuracy": 82.83,
+    "loss": 0.68966,
+    "latency_ms": 2.2168,
+    "latency_std_ms": 0.0227,
+    "throughput_fps": 451.1,
+    "num_params": 11173962,
+    "model_size_mb": 42.6253,
+    "per_class_accuracy": {
+      "0": 86.2,
+      "1": 93.3,
+      "2": 74.0,
+      "3": 59.4,
+      "4": 82.2,
+      "5": 76.0,
+      "6": 88.1,
+      "7": 86.8,
+      "8": 91.5,
+      "9": 90.8
+    },
+    "train_losses": [
+      1.4102232454299928,
+      0.8549491873550416,
+      0.5950242968940734,
+      0.4149054232597351,
+      0.26184702564239504,
+      0.13941067411661148,
+      0.06679092034459114,
+      0.02518393206268549,
+      0.007024390408471227,
+      0.003120712827295065,
+      0.0021207485170289873,
+      0.0018155781387537717,
+      0.0016277180894464255,
+      0.0015651911152899265,
+      0.0015644657734408974
+    ],
+    "train_accs": [
+      48.884,
+      69.826,
+      79.096,
+      85.616,
+      91.016,
+      95.316,
+      97.854,
+      99.314,
+      99.928,
+      99.988,
+      99.998,
+      99.994,
+      100.0,
+      100.0,
+      99.998
+    ]
+  },
+  "compressed": {
+    "accuracy": 86.02,
+    "loss": 0.558624,
+    "latency_ms": 1.5323,
+    "latency_std_ms": 0.0278,
+    "throughput_fps": 652.63,
+    "num_params": 2795210,
+    "model_size_mb": 10.6629,
+    "per_class_accuracy": {
+      "0": 89.7,
+      "1": 94.8,
+      "2": 75.0,
+      "3": 73.6,
+      "4": 84.4,
+      "5": 78.8,
+      "6": 90.4,
+      "7": 88.5,
+      "8": 92.9,
+      "9": 92.1
+    },
+    "compression_info": {
+      "prune_ratio": 0.7496313304090348,
+      "compression_ratio": 0.7498461154602101,
+      "size_reduction": 0.7498457488862249,
+      "speedup": 1.4467140899301705
+    },
+    "effective_size_mb": 2.6657,
+    "pruning_info": {
+      "importance_metric": "l1",
+      "stage_widths_old": [
+        64,
+        64,
+        128,
+        256,
+        512
+      ],
+      "stage_widths_new": [
+        32,
+        32,
+        64,
+        128,
+        256
+      ],
+      "target_prune_ratio": 0.5,
+      "weight_transfer": "full_all_layers"
+    },
+    "quantization_info": {
+      "mode": "fake_int8_per_tensor_weight_only",
+      "is_simulated": true,
+      "kernels_are_int8": false,
+      "latency_reflects_int8": false,
+      "size_mb_is_analytic": true,
+      "quantized_layers": 21
+    }
+  },
+  "compression_only_base_width": 32
+}

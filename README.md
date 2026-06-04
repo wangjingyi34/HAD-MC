@@ -336,8 +336,8 @@ HAD-MC 2.0 introduces a **Proximal Policy Optimization (PPO)**-based reinforceme
 </p>
 
 <p align="center">
-  <img src="r3_revision/figures/fig_dcu_supplementary.png" alt="DCU Supplementary" width="850"/>
-  <br><em>Figure: DCU §5.7 supplementary — (a) 4-condition decomposition on NEU-DET shows runtime-only 1.261×, compression-only 1.048×, combined 1.415× (synergy 1.122×); (b) CIFAR-10 full 50k/10k public benchmark shows compressed model is 1.499× faster and +3.00 acc points over the FP32 baseline at a matched 15-epoch training budget. (Synthetic NEU-DET accuracy is near-saturated, so we report latency-based decomposition there. The CIFAR-10 +3.00 acc gain reflects the regularization effect of pruning + distillation at matched budget — not a claim that compression alone raises accuracy — see §5.7(f); the latency and size numbers are independent of this caveat.)</em>
+  <img src="r3_revision/figures/fig_v100_vs_dcu_supplementary.png" alt="Cross-platform Supplementary" width="950"/>
+  <br><em>Figure: Cross-platform §5.7 supplementary — Hygon DCU K500SM_AI vs. NVIDIA Tesla V100. (a) 4-condition latency decomposition: combined synergistic gain 1.415× on DCU and 1.502× on V100, both above the better single-axis gain. (b) CIFAR-10 50k/10k public-benchmark latency: HAD-MC compressed is 1.499× faster on DCU and 1.447× faster on V100 over the FP32 baseline. (c) CIFAR-10 top-1 accuracy: +3.00 / +3.19 acc points at a matched 15-epoch training budget on the two platforms (synthetic NEU-DET would be near-saturated, so we use CIFAR-10 for the accuracy view; see §5.7(f)). (d) Matched-condition fairness: HAD-MC reaches 3.30 ms on DCU and 1.48 ms on V100, the fastest among AMC / HAQ / DECORE / HAD-MC on both platforms at identical seed / prune-ratio. The earlier DCU-only `fig_dcu_supplementary.png` is retained on disk for traceability.</em>
 </p>
 
 ### Experiments
@@ -354,82 +354,95 @@ HAD-MC 2.0 includes 7 comprehensive experiments:
 
 All experiments are fully reproducible via the one-click script in `r3_revision/run_all.sh`.
 
-### Dual-Platform TPDS Supplementary (Hygon DCU, §5.7)
+### Cross-Platform TPDS Supplementary (Hygon DCU + NVIDIA V100, §5.7)
 
-The R3 revision adds a dual-platform supplementary validation block executed on a Hygon DCU node (PyTorch 2.9.0 + HIP 6.3 / DTK 2604). All six sub-experiments are real measurements (no `skipped` placeholders); only the optional NVIDIA V100 cross-platform block is a deliberate placeholder for later fill-in.
+The R3 revision adds a cross-platform supplementary validation block executed on **two independent GPU classes**: a Hygon DCU node (PyTorch 2.9.0 + HIP 6.3 / DTK 2604) and an NVIDIA Tesla V100-SXM2-32GB node (PyTorch 2.4.1 + CUDA 12.4, driver 535.216.01). All six sub-experiments are real measurements on **both** platforms (no `skipped` placeholders).
 
 - **Driver**: [`r3_revision/code/tpds_supplementary_experiments.py`](r3_revision/code/tpds_supplementary_experiments.py)
 - **Cached rerun**: [`r3_revision/code/tpds_rerun_extras.py`](r3_revision/code/tpds_rerun_extras.py)
-- **Combined results**: [`r3_revision/results/tpds_full_dcu_detached2/TPDS_SUPPLEMENTARY_RESULTS.json`](r3_revision/results/tpds_full_dcu_detached2/TPDS_SUPPLEMENTARY_RESULTS.json)
+- **DCU combined results**: [`r3_revision/results/tpds_full_dcu_detached2/TPDS_SUPPLEMENTARY_RESULTS.json`](r3_revision/results/tpds_full_dcu_detached2/TPDS_SUPPLEMENTARY_RESULTS.json)
+- **V100 combined results**: [`r3_revision/results/tpds_full_v100/TPDS_SUPPLEMENTARY_RESULTS.json`](r3_revision/results/tpds_full_v100/TPDS_SUPPLEMENTARY_RESULTS.json) (git_commit `92ae190`)
 
-#### (a) 5-Seed Variance — NEU-DET, ResNet18 (DCU)
+#### (a) 5-Seed Variance — NEU-DET, ResNet18
 
-| Metric | Baseline FP32 | HAD-MC compressed |
-|:---|:---:|:---:|
-| Top-1 accuracy (%) | 99.89 ± 0.15 | **99.94 ± 0.12** |
-| Latency (ms, batch=1) | 4.866 ± 0.044 | **3.335 ± 0.038** |
-| Speedup over baseline (×) | 1.000 | **1.458 ± 0.017** |
+| Platform | Baseline FP32 acc (%) | HAD-MC acc (%) | HAD-MC latency (ms, batch=1) | Speedup over baseline (×) | Compression ratio |
+|:---|:---:|:---:|:---:|:---:|:---:|
+| **Hygon DCU**  | 99.89 ± 0.15 | **99.94 ± 0.12** | **3.335 ± 0.038** | **1.458 ± 0.017** | 0.7499 ± 0.000 |
+| **NVIDIA V100** | 99.89 ± 0.15 | **100.00 ± 0.00** | **1.422 ± 0.028** | **1.540 ± 0.029** | 0.7499 ± 0.000 |
 
-#### (b) 4-Condition Decomposition (DCU)
+The same compression ratio (0.7499 to four decimals) is recovered on both hardware classes, evidencing that the search outcome is policy-driven rather than hardware-driven noise. The end-to-end speedup is real on both platforms; the V100 is roughly 2.3× faster than the DCU node in absolute terms, which is consistent with the V100's higher per-SM FLOP throughput.
 
-| Variant | Latency (ms) | Gain over baseline (×) |
-|:---|:---:|:---:|
-| Baseline                              | 4.813 | 1.000 |
-| Runtime-only (fuse, no compress)      | 3.817 | 1.261 |
-| Compression-only (prune + sim INT8)   | 4.592 | 1.048 |
-| **Combined (HAD-MC full)**            | **3.402** | **1.415** |
+#### (b) 4-Condition Decomposition
 
-Synergy factor (combined / max single-axis) = **1.071×**, confirming non-trivial co-design gain beyond either axis alone.
+| Variant | DCU latency (ms) | DCU gain (×) | V100 latency (ms) | V100 gain (×) |
+|:---|:---:|:---:|:---:|:---:|
+| Baseline                              | 4.813 | 1.000 | 2.191 | 1.000 |
+| Runtime-only (fuse, no compress)      | 3.817 | 1.261 | 1.702 | 1.287 |
+| Compression-only (prune + sim INT8)   | 4.592 | 1.048 | 2.089 | 1.049 |
+| **Combined (HAD-MC full)**            | **3.402** | **1.415** | **1.459** | **1.502** |
 
-#### (c) Per-Operator Latency LUT (DCU)
+Synergistic interaction factor (combined / [runtime-only × compression-only]) = **1.071× on DCU** and **1.113× on V100**, confirming non-trivial co-design gain beyond either axis alone on both platforms.
 
-| | Raw additive LUT | Affine LOO-calibrated |
-|:---|:---:|:---:|
-| MAPE | 18.42 % | **7.08 %** |
-| Pearson r | 0.987 | 0.984 |
-| Calibration | — | `measured ≈ α·raw + β·num_ops + γ`, α ≈ 1.035, β ≈ -0.079, γ ≈ -0.004 |
+#### (c) Per-Operator Latency LUT
+
+| Platform | Raw additive MAPE | Calibrated LOO MAPE | Pearson r (raw) | Calibration coefficients |
+|:---|:---:|:---:|:---:|:---|
+| Hygon DCU  | 18.42 % | **7.08 %**  | 0.987 | α≈1.035, β≈-0.079, γ≈-0.004 |
+| NVIDIA V100 | **8.33 %**  | 9.38 %  | 0.980 | calibration is essentially a no-op (raw is already inside the LOO error bar) |
+
+The affine LOO calibration helps the DCU substantially (raw→18.42% → calibrated 7.08%) because of partial kernel-launch overlap that the raw additive LUT cannot capture, while V100's more uniform kernel-launch latency makes the raw additive LUT already accurate (8.33%). We report this honestly rather than tune the V100 calibration to artificially "win" twice.
 
 #### (d) Reward-Weight Sensitivity
 
-23-candidate post-hoc pool, three reward forms:
-- **Weighted-sum 9-point grid** (the live PPO reward): 3 distinct winners across the grid (`pruned_int8_0p6`, `reference_compressed`, `reference_full_hadmc`)
-- **Multiplicative**: winner = `reference_full_hadmc`
-- **Constrained Pareto** (acc floor ∈ {0.95, 0.99, 1.00}): winner = `reference_full_hadmc` at every floor
+23-candidate post-hoc pool, three reward forms, on **both platforms**:
+- **Weighted-sum 9-point grid** (the live PPO reward): 3 distinct winners on DCU, 4 on V100 (an extra `pruned_fused_0p6` variant becomes competitive on V100); every winner is a HAD-MC variant or the most aggressive HAD-MC-pipeline INT8/fused variant.
+- **Multiplicative**: winner = `reference_full_hadmc` (same on both platforms)
+- **Constrained Pareto** (acc floor ∈ {0.95, 0.99, 1.00}): winner = `reference_full_hadmc` at every floor on both platforms
 
-Demonstrates that HAD-MC's selected operating point is stable under reward-weight perturbation.
+Demonstrates that HAD-MC's selected operating point is stable under reward-weight perturbation **and** under hardware class perturbation.
 
-#### (e) Matched-Condition Baseline Fairness — NEU-DET (DCU, seed 11, prune 0.5, ft 25 ep, lr 0.005)
+#### (e) Matched-Condition Baseline Fairness — NEU-DET (seed 11, prune 0.5, ft 25 ep, lr 0.005)
 
-| Method | Top-1 (%) | Latency (ms) | Size (MB) | Params |
-|:---|:---:|:---:|:---:|:---:|
-| Baseline FP32 | 99.7222 | 4.8827 | 42.6175 | 11,171,910 |
-| AMC          | 99.7222 | 4.8520 | 10.66   |  2.80 M  |
-| HAQ          | 100.00  | 4.6811 | 10.66   |  2.80 M  |
-| DECORE       | 100.00  | 4.8439 | 10.67   |  2.80 M  |
-| **HAD-MC**   | **100.00**  | **3.3026** | **10.6590** | **2,794,182** |
+| Method | DCU acc (%) | DCU latency (ms) | V100 acc (%) | V100 latency (ms) | Size (MB) | Params |
+|:---|:---:|:---:|:---:|:---:|:---:|:---:|
+| Baseline FP32 | 99.7222 | 4.8827 | 99.7222 | 2.2695 | 42.6175 | 11,171,910 |
+| AMC          | 99.7222 | 4.8520 | 99.7222 | 2.1552 | 10.66   |  2.80 M  |
+| HAQ          | 100.00  | 4.6811 | 100.00  | 2.1135 | 10.66   |  2.80 M  |
+| DECORE       | 100.00  | 4.8439 | 100.00  | 2.1497 | 10.67   |  2.80 M  |
+| **HAD-MC**   | **100.00**  | **3.3026** | **100.00** | **1.4828** | **10.6590** | **2,794,182** |
 
-Under identical seed / split / fine-tune budget, HAD-MC reaches **3.30 ms (≈ 34 % faster than the best matched SOTA)** without any accuracy or compression sacrifice.
+Under identical seed / split / fine-tune budget HAD-MC is the fastest method on **both** platforms: **3.30 ms (≈34% faster than the best matched SOTA, HAQ at 4.68 ms) on DCU** and **1.48 ms (≈30% faster than HAQ at 2.11 ms) on V100**, without any accuracy or compression sacrifice.
 
-#### (f) CIFAR-10 Full Public Benchmark — ResNet18 (DCU, train 50 000 / test 10 000)
+#### (f) CIFAR-10 Full Public Benchmark — ResNet18 (train 50 000 / test 10 000)
 
-Loaded via the torchvision-free [`_load_cifar10_binary`](r3_revision/code/tpds_supplementary_experiments.py) so it runs on air-gapped clusters (`loader_source: local_binary:cifar-10-binary.tar.gz`).
+On DCU we use the torchvision-free [`_load_cifar10_binary`](r3_revision/code/tpds_supplementary_experiments.py) (`loader_source: local_binary:cifar-10-binary.tar.gz`); on V100 the same script calls `torchvision.datasets.CIFAR10` directly (`loader_source: torchvision.datasets.CIFAR10`). Both deliver the exact same 50 000 / 10 000 split.
 
-| Model | Top-1 (%) | Latency (ms) | Params | Size (MB) | Effective size (MB) |
-|:---|:---:|:---:|:---:|:---:|:---:|
-| Baseline ResNet18 (FP32) | 82.54 | 4.900 | 11.17 M | 42.63 | 42.63 |
-| **HAD-MC compressed**    | **85.54** | **3.269** | **2.80 M** | 10.66 | **2.67** |
+| Platform | Model | Top-1 (%) | Latency (ms) | Throughput (fps) | Params | Size (MB) | Effective size (MB) |
+|:---|:---|:---:|:---:|:---:|:---:|:---:|:---:|
+| Hygon DCU  | Baseline ResNet18 (FP32) | 82.54 | 4.900 | 204.1 | 11.17 M | 42.63 | 42.63 |
+| Hygon DCU  | **HAD-MC compressed**    | **85.54** | **3.269** | **305.9** | **2.80 M** | 10.66 | **2.67** |
+| NVIDIA V100 | Baseline ResNet18 (FP32) | 82.83 | 2.217 | 451.1 | 11.17 M | 42.63 | 42.63 |
+| NVIDIA V100 | **HAD-MC compressed**    | **86.02** | **1.532** | **652.6** | **2.80 M** | 10.66 | **2.67** |
 
-→ **1.499× speedup**, **+3.00 acc points**, **4.0× weight-storage reduction** (16.0× with INT8 analytic storage). *Caveat:* the 82.54 % baseline is well below the ~93 % typically reported for a fully-trained CIFAR-10 ResNet18 — both models use a 15-epoch train-from-scratch budget constrained by the DCU queue, so the +3.00 acc gain reflects the regularization effect of pruning + distillation at a matched training budget, **not** a claim that compression magically improves accuracy. Latency/size numbers are independent of this caveat. See [§5.7(f)](r3_revision/manuscript_r3.md) of the manuscript.
+→ **1.499× speedup on DCU**, **1.447× speedup on V100**, **+3.00 / +3.19 acc points**, **4.0× weight-storage reduction** on both (16.0× with INT8 analytic storage). *Caveat:* the 82–83 % baseline is below the ~93 % typically reported for fully-trained CIFAR-10 ResNet18 — both models on both platforms use a 15-epoch train-from-scratch budget constrained by the per-node queue, so the +3.00 / +3.19 acc gain reflects the regularization effect of pruning + distillation at a matched training budget, **not** a claim that compression magically improves accuracy. The latency / size / speedup numbers are independent of this caveat. See [§5.7(f)](r3_revision/manuscript_r3.md) of the manuscript.
 
-#### (g) NVIDIA V100 Cross-Platform — *Deferred placeholder*
+#### (g) NVIDIA V100 cross-platform reproducibility command
 
-The V100 row in `RUN_METADATA.json` and the corresponding paragraph in §5.7 are deliberate placeholders. Re-running on a V100 node only requires:
+The V100 supplementary block above was produced by:
 
 ```bash
-python3 r3_revision/code/tpds_rerun_extras.py \
+export HADMC_PLATFORM_TAG=v100 HADMC_LUT_BATCH_SIZE=32 CUDA_VISIBLE_DEVICES=0
+python3 r3_revision/code/tpds_supplementary_experiments.py \
     --results-dir r3_revision/results/tpds_full_v100/ \
-    --platform-tag v100 --seeds 11,22,33,44,55 --lut-batch-size 32
+    --platform-tag v100 --seeds 11,22,33,44,55 \
+    --neudet-num-per-class 300 --batch-size 64 --num-workers 2 \
+    --baseline-epochs 40 --public-epochs 15 \
+    --prune-ratio 0.5 --lut-prune-ratios 0.1,0.2,0.3,0.4,0.5,0.6 \
+    --lut-warmup 15 --lut-runs 60 --lut-batch-size 32 \
+    --baseline-fairness-ft-epochs 25 --baseline-fairness-prune-ratio 0.5
 ```
+
+Full host metadata, driver, PyTorch / CUDA version, git commit (`92ae190`), per-seed JSON, partial checkpoints, and the consolidated `TPDS_SUPPLEMENTARY_RESULTS.json` are all released under [`r3_revision/results/tpds_full_v100/`](r3_revision/results/tpds_full_v100/) for verification.
 
 ### Documentation
 
