@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import json
 import os
+import shutil
 import ssl
 from datetime import datetime, timezone
 from http import HTTPStatus
@@ -209,6 +210,31 @@ def real_qwen_runs() -> list[dict]:
     return records[:24]
 
 
+def clear_real_qwen_history() -> dict:
+    """Remove completed/failed Qwen demo jobs and their artifacts, never model cache."""
+    active = [
+        record for record in job_records(limit=None)
+        if record["kind"] == "qwen-real" and record["status"] == "running"
+    ]
+    if active:
+        names = ", ".join(record["id"] for record in active)
+        raise RuntimeError(f"real Qwen jobs are still running: {names}")
+
+    deleted_jobs: list[str] = []
+    deleted_artifacts: list[str] = []
+    for record in job_records(limit=None):
+        if record["kind"] != "qwen-real":
+            continue
+        kube_json(f"/apis/batch/v1/namespaces/{K8S_NAMESPACE}/jobs/{record['id']}", "DELETE")
+        deleted_jobs.append(record["id"])
+    if JOBS.exists():
+        for directory in JOBS.glob("hadmc-qwen-real-*"):
+            if directory.is_dir():
+                shutil.rmtree(directory)
+                deleted_artifacts.append(directory.name)
+    return {"deleted_jobs": deleted_jobs, "deleted_artifacts": deleted_artifacts}
+
+
 class StudioHandler(SimpleHTTPRequestHandler):
     server_version = "HADMCStudio/0.1"
 
@@ -272,7 +298,17 @@ class StudioHandler(SimpleHTTPRequestHandler):
         super().do_GET()
 
     def do_POST(self) -> None:
-        if urlparse(self.path).path != "/api/jobs":
+        path = urlparse(self.path).path
+        if path == "/api/real-qwen-history/reset":
+            if not kubernetes_enabled():
+                self.send_json({"ok": False, "error": "Kubernetes service account is unavailable"}, HTTPStatus.SERVICE_UNAVAILABLE)
+                return
+            try:
+                self.send_json({"ok": True, "data": clear_real_qwen_history()})
+            except (OSError, RuntimeError, ValueError) as exc:
+                self.send_json({"ok": False, "error": str(exc)}, HTTPStatus.CONFLICT)
+            return
+        if path != "/api/jobs":
             self.send_json({"ok": False, "error": "not found"}, HTTPStatus.NOT_FOUND)
             return
         size = int(self.headers.get("Content-Length", "0"))

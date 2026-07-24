@@ -206,6 +206,7 @@ def main() -> None:
         storage_reduction = 1.0 - candidate_bytes / baseline_bytes
         speedup = baseline_latency / candidate_latency
         quality_retention = sum(cosine_scores) / len(cosine_scores)
+        calibration_precision_loss = 1.0 - quality_retention
         reward = (
             args.quality_weight * quality_retention
             + args.storage_weight * structural_reduction
@@ -242,7 +243,8 @@ def main() -> None:
                 },
                 "structural_compression_pct": round(structural_reduction * 100.0, 3),
                 "fp16_storage_reduction_pct": round(storage_reduction * 100.0, 3),
-                "quality_retention_cosine": round(quality_retention, 6),
+                "calibration_logit_cosine": round(quality_retention, 6),
+                "calibration_precision_loss_pct": round(calibration_precision_loss * 100.0, 3),
                 "baseline_latency_ms": round(baseline_latency, 3),
                 "candidate_latency_ms": round(candidate_latency, 3),
                 "speedup": round(speedup, 4),
