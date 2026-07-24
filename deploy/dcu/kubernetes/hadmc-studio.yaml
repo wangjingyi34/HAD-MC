@@ -107,6 +107,8 @@ spec:
                 path: server.py
               - key: index.html
                 path: static/index.html
+              - key: three.min.js
+                path: static/vendor/three.min.js
         - name: artifacts
           hostPath:
             path: /data/hadmc/artifacts

@@ -1,4 +1,4 @@
-# HAD-MC DCU deployment
+# QLight DCU deployment
 
 This directory is the reproducible deployment layer for the Hygon DCU bare-metal environment. HAD-MC is isolated in its own `hadmc` Kubernetes namespace and does not alter existing Kubeflow, GPUStack, monitoring, or control-plane workloads.
 
@@ -11,7 +11,7 @@ This directory is the reproducible deployment layer for the Hygon DCU bare-metal
 | Experiment workers | `gpu-01`, `gpu-02` | Each submitted job requests exactly one `hygon.com/dcunum` DCU allocation. |
 | Shared state | `/data/hadmc` | Shared source, non-secret manifests, and experiment artifacts. |
 
-The Studio endpoint is intentionally private to the Supercomputing Internet VPN:
+The QLight Studio endpoint is intentionally private to the Supercomputing Internet VPN:
 
 ```text
 http://10.8.159.54:18888/
@@ -29,13 +29,14 @@ sudo bash deploy/dcu/bootstrap-kubernetes.sh
 sudo bash deploy/dcu/verify-kubernetes.sh
 ```
 
-`bootstrap-kubernetes.sh` creates the Studio ConfigMap from this repository, applies the `hadmc` namespace/RBAC/Deployment manifest, and waits for the controller rollout. Re-running it is safe and updates only HAD-MC resources.
+`bootstrap-kubernetes.sh` creates the QLight Studio ConfigMap from this repository, applies the `hadmc` namespace/RBAC/Deployment manifest, and waits for the controller rollout. Re-running it is safe and updates only HAD-MC resources.
 
 ## Runtime contract
 
 - Jobs use the proven DTK/HYHAL-compatible training image `llama-factory-trainer-dcu:v1.17-isolated-compat`.
 - Each job mounts the original HAD-MC source read-only and writes artifacts to `/data/hadmc/artifacts/jobs/<job-id>`.
 - The Studio `DCU probe` runs a PyTorch DCU matrix multiplication. The `R3 full suite` runs `r3_revision/code/hadmc_experiments_complete.py` with `--allow-missing-financial`; missing proprietary financial data is reported as skipped rather than fabricated.
+- The Chinese QLight Studio includes a bundled Three.js visualization, a capability case, and a `Qwen` structure-compression experiment. The Qwen experiment executes four structured FFN pruning candidates on a real DCU, measures latency, and records an output-similarity proxy. It is explicitly a Qwen-compatible architecture experiment until an approved external Qwen checkpoint is supplied; it must not be described as compression of an official Qwen checkpoint.
 - The generic root `deploy.sh` is not valid for DCU deployment because its generic Python path does not validate the installed Hygon runtime.
 
 ## Acceptance
@@ -44,5 +45,6 @@ The baseline acceptance gate is:
 
 1. `verify-kubernetes.sh` reports two ready DCU nodes.
 2. A DCU probe completes on both `gpu-01` and `gpu-02` and writes a `platform_probe_dcu.json` artifact.
-3. The Studio UI can submit and display a job through its browser controls.
+3. The QLight UI can submit and display a job through its browser controls.
 4. A full R3 suite reaches a terminal `Complete` state with its `COMPLETE_EXPERIMENT_RESULTS.json` artifact preserved.
+5. A Qwen structure-compression job reaches `Complete` and writes `QLIGHT_QWEN_DEMO_RESULTS.json`; its best candidate is visible in the QLight UI.

@@ -100,6 +100,8 @@ def job_manifest(kind: str, node: str) -> dict:
     name = f"hadmc-{kind}-{node}-{suffix}"
     if kind == "probe":
         command = "python3 /workspace/r3_revision/code/platform_probe.py --platform-tag dcu --output-dir /artifacts/jobs/$HADMC_JOB_ID"
+    elif kind == "qwen-demo":
+        command = "python3 -u /workspace/studio/qwen_compression_demo.py --platform-tag dcu --output-dir /artifacts/jobs/$HADMC_JOB_ID"
     else:
         command = "python3 -u /workspace/r3_revision/code/hadmc_experiments_complete.py --platform-tag dcu --results-dir /artifacts/jobs/$HADMC_JOB_ID --allow-missing-financial"
     return {
@@ -180,6 +182,20 @@ class StudioHandler(SimpleHTTPRequestHandler):
             ] if (ROOT / "artifacts").exists() else []
             self.send_json({"ok": True, "data": artifacts})
             return
+        if path == "/api/qwen-results":
+            results: list[dict] = []
+            artifacts_root = ROOT / "artifacts"
+            if artifacts_root.exists():
+                for item in artifacts_root.rglob("QLIGHT_QWEN_DEMO_RESULTS.json"):
+                    try:
+                        payload = json.loads(item.read_text(encoding="utf-8"))
+                        payload["artifact"] = str(item.relative_to(artifacts_root))
+                        results.append(payload)
+                    except (OSError, ValueError):
+                        continue
+            results.sort(key=lambda item: item.get("completed_at_utc", ""), reverse=True)
+            self.send_json({"ok": True, "data": results[:12]})
+            return
         if path == "/":
             self.path = "/index.html"
         super().do_GET()
@@ -199,7 +215,7 @@ class StudioHandler(SimpleHTTPRequestHandler):
             self.send_json({"ok": False, "error": "invalid request"}, HTTPStatus.BAD_REQUEST)
             return
         node = request.get("node", "gpu-02")
-        if kind not in {"probe", "full"} or node not in {"gpu-01", "gpu-02"}:
+        if kind not in {"probe", "full", "qwen-demo"} or node not in {"gpu-01", "gpu-02"}:
             self.send_json({"ok": False, "error": "unsupported job kind"}, HTTPStatus.BAD_REQUEST)
             return
         if kubernetes_enabled():
