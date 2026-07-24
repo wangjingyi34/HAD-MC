@@ -24,12 +24,6 @@ K8S_NAMESPACE = os.environ.get("HADMC_NAMESPACE", "hadmc")
 K8S_TOKEN = Path("/var/run/secrets/kubernetes.io/serviceaccount/token")
 K8S_CA = Path("/var/run/secrets/kubernetes.io/serviceaccount/ca.crt")
 JOB_IMAGE = os.environ.get("HADMC_JOB_IMAGE", "10.8.144.65/platform/llama-factory-trainer-dcu:v1.17-isolated-compat")
-REAL_QWEN_POLICIES = (
-    {"id": "quality-guard", "ratio": 0.10, "weights": (0.70, 0.20, 0.10)},
-    {"id": "balanced", "ratio": 0.25, "weights": (0.55, 0.30, 0.15)},
-    {"id": "storage-first", "ratio": 0.40, "weights": (0.35, 0.50, 0.15)},
-    {"id": "latency-seeker", "ratio": 0.55, "weights": (0.35, 0.30, 0.35)},
-)
 
 
 def kubernetes_enabled() -> bool:
@@ -127,6 +121,12 @@ def job_manifest(kind: str, node: str, policy: dict | None = None) -> dict:
             f"--candidate-id {policy['id']} --prune-ratio {policy['ratio']} "
             f"--quality-weight {quality} --storage-weight {storage} --latency-weight {latency}"
         )
+    elif kind == "qwen-ppo":
+        command = (
+            "cd /workspace && python3 -u /workspace/studio/qwen_ppo_campaign.py "
+            "--output-dir /artifacts/jobs/$HADMC_JOB_ID "
+            f"--node {node} --rounds 4 --seed {20260724 if node == 'gpu-01' else 20260725}"
+        )
     else:
         command = "python3 -u /workspace/r3_revision/code/hadmc_experiments_complete.py --platform-tag dcu --results-dir /artifacts/jobs/$HADMC_JOB_ID --allow-missing-financial"
     return {
@@ -207,6 +207,51 @@ def real_qwen_runs() -> list[dict]:
             "evidence_scope": result_data.get("evidence_scope", {}),
             "artifact": str(directory.relative_to(ROOT / "artifacts")),
         })
+    for directory in sorted(JOBS.glob("hadmc-qwen-ppo-*"), key=lambda item: item.stat().st_mtime, reverse=True):
+        progress_file = directory / "QLIGHT_PPO_PROGRESS.json"
+        result_file = directory / "QLIGHT_PPO_CAMPAIGN.json"
+        progress_data: dict = {}
+        result_data: dict = {}
+        try:
+            if progress_file.exists():
+                progress_data = json.loads(progress_file.read_text(encoding="utf-8"))
+            if result_file.exists():
+                result_data = json.loads(result_file.read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            continue
+        status = statuses.get(directory.name)
+        if status is None:
+            continue
+        best_candidate = result_data.get("best_candidate") or progress_data.get("best_candidate") or {}
+        trajectory = result_data.get("trajectory") or progress_data.get("trajectory") or []
+        evaluator_progress: dict = {}
+        round_directories = sorted(directory.glob("round-*"), key=lambda item: item.stat().st_mtime, reverse=True)
+        if round_directories:
+            evaluator_progress_file = round_directories[0] / "QLIGHT_REAL_QWEN_PROGRESS.json"
+            try:
+                if evaluator_progress_file.exists():
+                    evaluator_progress = json.loads(evaluator_progress_file.read_text(encoding="utf-8"))
+            except (OSError, ValueError):
+                evaluator_progress = {}
+        records.append({
+            "job_id": directory.name,
+            "policy": "HAD-MC PPO 多轮闭环",
+            "node": status.get("node", "unknown"),
+            "job_status": status.get("status", "archived"),
+            "phase": progress_data.get("phase", "queued"),
+            "algorithm_phase": evaluator_progress.get("phase") or progress_data.get("phase", "queued"),
+            "updated_at_utc": progress_data.get("updated_at_utc"),
+            "error": progress_data.get("error"),
+            "candidate": best_candidate,
+            "trajectory": trajectory,
+            "round": progress_data.get("round"),
+            "total_rounds": progress_data.get("total_rounds"),
+            "threshold_met": result_data.get("threshold_met", progress_data.get("threshold_met")),
+            "model": {"id": result_data.get("model_id", "Qwen/Qwen2.5-7B-Instruct")},
+            "evidence_scope": result_data.get("evidence_scope", {}),
+            "artifact": str(directory.relative_to(ROOT / "artifacts")),
+        })
+    records.sort(key=lambda item: item.get("updated_at_utc") or "", reverse=True)
     return records[:24]
 
 
@@ -214,7 +259,7 @@ def clear_real_qwen_history() -> dict:
     """Remove completed/failed Qwen demo jobs and their artifacts, never model cache."""
     active = [
         record for record in job_records(limit=None)
-        if record["kind"] == "qwen-real" and record["status"] == "running"
+        if record["kind"] in {"qwen-real", "qwen-ppo"} and record["status"] == "running"
     ]
     if active:
         names = ", ".join(record["id"] for record in active)
@@ -223,15 +268,16 @@ def clear_real_qwen_history() -> dict:
     deleted_jobs: list[str] = []
     deleted_artifacts: list[str] = []
     for record in job_records(limit=None):
-        if record["kind"] != "qwen-real":
+        if record["kind"] not in {"qwen-real", "qwen-ppo"}:
             continue
         kube_json(f"/apis/batch/v1/namespaces/{K8S_NAMESPACE}/jobs/{record['id']}", "DELETE")
         deleted_jobs.append(record["id"])
     if JOBS.exists():
-        for directory in JOBS.glob("hadmc-qwen-real-*"):
-            if directory.is_dir():
-                shutil.rmtree(directory)
-                deleted_artifacts.append(directory.name)
+        for pattern in ("hadmc-qwen-real-*", "hadmc-qwen-ppo-*"):
+            for directory in JOBS.glob(pattern):
+                if directory.is_dir():
+                    shutil.rmtree(directory)
+                    deleted_artifacts.append(directory.name)
     return {"deleted_jobs": deleted_jobs, "deleted_artifacts": deleted_artifacts}
 
 
@@ -329,14 +375,17 @@ class StudioHandler(SimpleHTTPRequestHandler):
             try:
                 if kind == "qwen-real-campaign":
                     created_jobs = []
-                    for index, policy in enumerate(REAL_QWEN_POLICIES):
-                        target_node = ("gpu-01", "gpu-02")[index % 2]
+                    for target_node in ("gpu-01", "gpu-02"):
                         created = kube_json(
                             f"/apis/batch/v1/namespaces/{K8S_NAMESPACE}/jobs",
                             "POST",
-                            job_manifest("qwen-real", target_node, policy),
+                            job_manifest("qwen-ppo", target_node),
                         )
-                        created_jobs.append({"id": created.get("metadata", {}).get("name"), "node": target_node, "policy": policy["id"]})
+                        created_jobs.append({
+                            "id": created.get("metadata", {}).get("name"),
+                            "node": target_node,
+                            "policy": "HAD-MC PPO 4轮闭环",
+                        })
                     self.send_json({"ok": True, "data": {"kind": kind, "jobs": created_jobs, "status": "accepted"}}, HTTPStatus.ACCEPTED)
                     return
                 created = kube_json(f"/apis/batch/v1/namespaces/{K8S_NAMESPACE}/jobs", "POST", job_manifest(kind, node))

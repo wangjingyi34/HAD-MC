@@ -399,14 +399,19 @@ class PPOController:
             gae = delta + self.gamma * self.gae_lambda * (1 - dones[t]) * gae
             advantages.insert(0, gae)
 
-        advantages = torch.tensor(advantages, dtype=torch.float32, device=self.device)
-        values_tensor = torch.tensor(values, dtype=torch.float32, device=self.device)
+        advantages = torch.stack([
+            item.detach().to(self.device, dtype=torch.float32)
+            if torch.is_tensor(item)
+            else torch.tensor(item, dtype=torch.float32, device=self.device)
+            for item in advantages
+        ]).reshape(-1)
+        values_tensor = values.detach().to(self.device, dtype=torch.float32).reshape(-1)
 
         # Compute returns
         returns = advantages + values_tensor
 
         # Normalize advantages (important for training stability)
-        advantages = (advantages - advantages.mean()) / (advantages.std() + 1e-8)
+        advantages = (advantages - advantages.mean()) / (advantages.std(unbiased=False) + 1e-8)
 
         return advantages, returns
 
@@ -432,6 +437,12 @@ class PPOController:
 
         # Get all experiences from buffer
         states, actions, old_log_probs, rewards, dones, values = self.buffer.get_all()
+        states = states.to(self.device)
+        actions = {key: value.to(self.device) for key, value in actions.items()}
+        old_log_probs = old_log_probs.to(self.device).reshape(-1)
+        rewards = rewards.to(self.device)
+        dones = dones.to(self.device)
+        values = values.to(self.device)
 
         # Compute GAE
         with torch.no_grad():
@@ -442,13 +453,15 @@ class PPOController:
         total_policy_loss = 0
         total_value_loss = 0
         total_entropy = 0
+        total_approx_kl = 0
+        total_clip_fraction = 0
+        total_updates = 0
 
         for epoch in range(num_epochs):
             # Shuffle indices for stochastic gradient descent
-            indices = torch.randperm(len(states))
+            indices = torch.randperm(len(states), device=self.device)
 
             # Mini-batch updates
-            num_updates = 0
             for start in range(0, len(states), batch_size):
                 end = min(start + batch_size, len(states))
                 batch_indices = indices[start:end]
@@ -469,10 +482,8 @@ class PPOController:
                 # For discrete agents: compute log prob of taken action
                 new_log_probs = 0.0
                 for key in ['pruning', 'quantization', 'fusion', 'update']:
-                    # Get log probs of taken actions
-                    batch_log_probs_new = torch.log_softmax(distributions[key], dim=-1)[
-                        torch.arange(len(batch_indices)), batch_actions[key]]
-                    new_log_probs += batch_log_probs_new
+                    action_dist = torch.distributions.Categorical(probs=distributions[key])
+                    new_log_probs += action_dist.log_prob(batch_actions[key])
 
                 # For distillation (continuous), compute log prob of taken action
                 distillation_dist = torch.distributions.Normal(
@@ -482,10 +493,6 @@ class PPOController:
                 distillation_log_prob = distillation_dist.log_prob(batch_actions['distillation']).sum(dim=-1)
                 new_log_probs += distillation_log_prob
 
-                # Normalize by number of agents
-                new_log_probs = new_log_probs / 5
-
-                # Simplified PPO update using the computed log_probs
                 ratio = torch.exp(new_log_probs - batch_old_log_probs)
 
                 # Compute PPO clipped objective
@@ -494,15 +501,13 @@ class PPOController:
                 policy_loss = -torch.min(surr1, surr2).mean()
 
                 # Compute value loss
-                new_values = self.value_network(batch_states).squeeze()
+                new_values = self.value_network(batch_states).squeeze(-1)
                 value_loss = F.mse_loss(new_values, batch_returns)
-
-                # Total loss
-                total_loss = policy_loss + self.value_coef * value_loss - self.entropy_coef * entropy
 
                 # Update policy network
                 self.policy_optimizer.zero_grad()
-                total_loss.backward(retain_graph=True)
+                policy_objective = policy_loss - self.entropy_coef * entropy
+                policy_objective.backward()
                 torch.nn.utils.clip_grad_norm_(
                     self.policy_network.parameters(),
                     self.max_grad_norm
@@ -521,13 +526,20 @@ class PPOController:
                 total_policy_loss += policy_loss.item()
                 total_value_loss += value_loss.item()
                 total_entropy += entropy.item()
-                num_updates += 1
+                with torch.no_grad():
+                    total_approx_kl += (batch_old_log_probs - new_log_probs).mean().item()
+                    total_clip_fraction += (
+                        (torch.abs(ratio - 1.0) > self.clip_epsilon).float().mean().item()
+                    )
+                total_updates += 1
 
         # Average over all updates
-        if num_updates > 0:
-            total_policy_loss /= num_updates
-            total_value_loss /= num_updates
-            total_entropy /= num_updates
+        if total_updates > 0:
+            total_policy_loss /= total_updates
+            total_value_loss /= total_updates
+            total_entropy /= total_updates
+            total_approx_kl /= total_updates
+            total_clip_fraction /= total_updates
 
         # Clear buffer
         self.buffer.clear()
@@ -541,6 +553,8 @@ class PPOController:
             'value_loss': total_value_loss,
             'entropy': total_entropy,
             'total_loss': total_policy_loss + self.value_coef * total_value_loss - self.entropy_coef * total_entropy,
+            'approx_kl': total_approx_kl,
+            'clip_fraction': total_clip_fraction,
         }
 
     def _compute_entropy(self, distributions: Dict[str, torch.Tensor]) -> torch.Tensor:
